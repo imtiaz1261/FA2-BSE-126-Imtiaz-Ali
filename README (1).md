@@ -8,7 +8,9 @@ Ek simple Python script jo:
 
 Ye script kisi bhi paid API key ke bina chalti hai — response yahan simulate kiya gaya hai
 taake token counting aur cost calculation ka pura flow test ho sake bina billing ke.
-![Script Output](./screenshots/output.png)
+
+<img width="479" height="237" alt="output png" src="https://github.com/user-attachments/assets/d33f719a-51be-4964-b28e-b36a3e7280f9" />
+
 ---
 
 ## Requirements
