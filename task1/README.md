@@ -44,6 +44,7 @@ python project1.py
 4. Total time measure kiya jata hai taake concurrency ka fayda dikh sake.
 
 ---
+<img width="461" height="262" alt="Screenshot 2026-07-07 161329" src="https://github.com/user-attachments/assets/3ac50fcb-545d-4729-a3a3-1860663a0536" />
 
 ## Output Example
 
