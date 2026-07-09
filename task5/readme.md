@@ -49,6 +49,7 @@ It will prompt you for a topic and a tone.
 python email_generator.py --topic "asking for a deadline extension" --tone professional
 python email_generator.py --topic "reminding the team about the office party" --tone funny
 ```
+<img width="491" height="447" alt="Screenshot 2026-07-09 093808" src="https://github.com/user-attachments/assets/bb038178-4327-45d6-a2bd-a96d64802031" />
 
 ## Example output
 
