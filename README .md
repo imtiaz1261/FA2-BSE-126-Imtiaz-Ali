@@ -3,6 +3,8 @@
 A command-line chatbot built with the OpenAI SDK's async client that streams
 the model's reply token-by-token as it's generated, instead of waiting for
 the full response.
+<img width="517" height="233" alt="Screenshot 2026-07-08 165408" src="https://github.com/user-attachments/assets/53fe2b7b-0860-47b8-a09d-7221ec3e3912" />
+<img width="594" height="328" alt="Screenshot 2026-07-08 165705" src="https://github.com/user-attachments/assets/f221b667-5302-4ec0-ac32-5de1330d16d0" />
 
 ## What it demonstrates
 
