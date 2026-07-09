@@ -53,6 +53,7 @@ pattern.
 ```
 python lcel_intro.py
 ```
+<img width="569" height="357" alt="Screenshot 2026-07-08 171554" src="https://github.com/user-attachments/assets/b806ed18-f3f4-49f9-8ced-de2fecf243a1" />
 
 ## Expected output
 
