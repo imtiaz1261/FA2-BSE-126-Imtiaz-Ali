@@ -54,6 +54,9 @@ python recipe_chain.py
 ```
 python recipe_chain.py --dish "chicken biryani"
 ```
+<img width="491" height="390" alt="Screenshot 2026-07-09 095306" src="https://github.com/user-attachments/assets/66111244-8733-4f50-b724-f67b6dde0bfd" />
+<img width="506" height="391" alt="Screenshot 2026-07-09 095239" src="https://github.com/user-attachments/assets/26e5f9ba-c847-40d4-a79a-2a78cb0dd7ec" />
+<img width="482" height="326" alt="Screenshot 2026-07-09 095149" src="https://github.com/user-attachments/assets/aadb0312-c4ae-4ca5-9c64-c44a4737fc68" />
 
 ## Example output
 
