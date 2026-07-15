@@ -1,0 +1,7 @@
+secret_key.py
+usage_log.jsonl
+usage_log.jsonl.*
+__pycache__/
+*.pyc
+.venv/
+venv/

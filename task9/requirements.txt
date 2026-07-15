@@ -1,0 +1,4 @@
+openai>=1.30.0
+
+# Only required if you use CloudWatchLogBackend / LOG_BACKEND=cloudwatch
+boto3>=1.34.0
