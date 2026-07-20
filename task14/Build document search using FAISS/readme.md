@@ -1,4 +1,4 @@
-<img width="546" height="346" alt="Screenshot 2026-07-19 201525" src="https://github.com/user-attachments/assets/dbcb9e31-2b1f-4622-8ec5-efa4172922a3" />
+
 # Semantic Document Search using FAISS
 
 A beginner-to-intermediate LLM/NLP project: load PDF/TXT documents, split
@@ -24,6 +24,9 @@ Search> how does FAISS store vectors for fast search
 ```
 
 ## Features
+<img width="476" height="298" alt="Screenshot 2026-07-19 201458" src="https://github.com/user-attachments/assets/9c5c9c0e-80f1-4937-98ae-48b922669bc3" />
+<img width="476" height="338" alt="Screenshot 2026-07-19 201411" src="https://github.com/user-attachments/assets/4e32f36e-c9f6-40e4-8bcc-1f899b784f2b" />
+<img width="546" height="346" alt="Screenshot 2026-07-19 201525" src="https://github.com/user-attachments/assets/7dc92e29-15dd-43d5-972a-c296a00678c2" />
 
 - ✅ Loads documents from a local folder — supports **PDF** and **TXT**
 - ✅ Extracts text (PDF text extraction is page-aware)
