@@ -1,0 +1,28 @@
+# Core LangChain
+# Pinned below v0.4 deliberately — LangChain 1.0+ (released very recently)
+# restructured the package significantly (e.g. RecursiveCharacterTextSplitter
+# and RetrievalQA moved to different modules/packages). This project is
+# built and tested against the 0.3.x line, which is what most current
+# tutorials and documentation still assume.
+langchain>=0.3.0,<0.4.0
+langchain-community>=0.3.0,<0.4.0
+
+# LLM provider (Groq — free, OpenAI-compatible API)
+langchain-groq>=0.2.0,<0.3.0
+
+# Embeddings (free, runs locally — no API key needed)
+langchain-huggingface>=0.1.0,<0.2.0
+sentence-transformers>=3.0.0
+
+# Vector database
+langchain-chroma>=0.1.4,<0.2.0
+chromadb>=0.5.0,<0.6.0
+
+# PDF loading
+pypdf>=4.0.0
+
+# Environment variable management
+python-dotenv>=1.0.0
+
+# Token counting (used internally by LangChain/OpenAI-style tooling)
+tiktoken>=0.7.0
