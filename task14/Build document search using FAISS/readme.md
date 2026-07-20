@@ -7,6 +7,9 @@ Top-K most semantically relevant chunks for any natural-language query.
 
 ```
 Search> how does FAISS store vectors for fast search
+<img width="546" height="346" alt="Screenshot 2026-07-19 201525" src="https://github.com/user-attachments/assets/4f5cc560-c723-47f9-adfa-bc4c3bd07611" />
+<img width="476" height="298" alt="Screenshot 2026-07-19 201458" src="https://github.com/user-attachments/assets/cc8cb722-6147-4b8a-a716-7f49cca0b89d" />
+<img width="476" height="338" alt="Screenshot 2026-07-19 201411" src="https://github.com/user-attachments/assets/4b50da90-8ca4-4809-85dd-3648ad7611bf" />
 
 [Result #1]
   Document       : sample1.pdf
