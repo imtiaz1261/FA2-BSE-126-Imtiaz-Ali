@@ -72,6 +72,10 @@ the "Retrieval" + "Augmented" + "Generation" in RAG.
 3. **Add your PDF(s)**
 
    Place one or more `.pdf` files in the `data/` folder.
+<img width="451" height="354" alt="Screenshot 2026-07-18 151856" src="https://github.com/user-attachments/assets/0feb4ce2-a98e-4a85-be8c-5b245699a9b8" />
+<img width="527" height="362" alt="Screenshot 2026-07-18 151822" src="https://github.com/user-attachments/assets/1a3c1c91-702c-4c3d-a7b2-8cce15335eb6" />
+<img width="518" height="382" alt="Screenshot 2026-07-18 151732" src="https://github.com/user-attachments/assets/967e10f8-5f95-4f75-b55e-f119d7615caf" />
+<img width="540" height="381" alt="Screenshot 2026-07-18 151613" src="https://github.com/user-attachments/assets/a7557d77-1a8f-498c-b244-c86dc1df9834" />
 
 ## Usage
 
