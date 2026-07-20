@@ -1,0 +1,26 @@
+# Core
+numpy>=1.26
+pandas>=2.0
+scikit-learn>=1.3
+tqdm>=4.66
+joblib>=1.3
+
+# Embeddings (primary backend). Requires internet access to Hugging Face
+# Hub the first time it runs, to download the all-MiniLM-L6-v2 weights.
+# If unavailable, the project automatically falls back to a built-in
+# TF-IDF + SVD embedding (see src/embedding_generator.py), which only
+# needs scikit-learn above.
+sentence-transformers>=2.6
+
+# Vector database backends - faiss-cpu is the default; chromadb is optional
+faiss-cpu>=1.8
+chromadb>=0.5
+
+# Bonus: PDF document support
+pypdf>=4.0
+
+# Bonus: Streamlit web interface
+streamlit>=1.35
+
+# Testing
+pytest>=8.0
