@@ -1,0 +1,23 @@
+Introduction to Semantic Search
+
+Semantic search is an information retrieval technique that focuses on understanding the intent and contextual meaning behind a user's query, rather than simply matching keywords. Unlike traditional keyword-based search engines, which look for exact or partial matches of query terms within documents, semantic search systems attempt to grasp what the user actually means and retrieve information that is conceptually related, even if the exact words differ.
+
+At the heart of semantic search lies the concept of vector embeddings. An embedding model, such as Sentence-Transformers' all-MiniLM-L6-v2, converts a piece of text into a high-dimensional numerical vector that captures its semantic meaning. Texts with similar meanings end up with vectors that are close to one another in this vector space, while unrelated texts end up far apart. This property allows a computer to measure "similarity of meaning" using simple mathematical operations like cosine similarity or Euclidean distance.
+
+Vector Databases and FAISS
+
+Once documents have been converted into embeddings, they need to be stored somewhere that supports fast similarity search across potentially millions of vectors. This is where vector databases and libraries like FAISS (Facebook AI Similarity Search) come in. FAISS is an open-source library developed by Meta AI that provides highly optimized algorithms for searching through large collections of dense vectors. It supports both exact search (via flat indexes) and approximate nearest neighbor search (via inverted file indexes, product quantization, and other techniques), making it suitable for both small projects and massive production-scale systems.
+
+A typical FAISS-based workflow involves creating an index, adding vectors to it, and then querying the index with a new vector to retrieve the nearest neighbors. LangChain provides a convenient wrapper around FAISS that also manages the association between each vector and its original text content and metadata, and supports saving the entire index to disk with save_local() and reloading it later with load_local(), avoiding the need to regenerate embeddings every time the application starts.
+
+Chunking Strategies
+
+Because embedding models have a limited context window and because retrieval works best when each stored unit represents a single coherent idea, long documents are typically split into smaller chunks before being embedded. A naive approach might simply cut the text every N characters, but this risks splitting sentences or ideas awkwardly in half.
+
+RecursiveCharacterTextSplitter, provided by LangChain, addresses this by attempting to split text along a prioritized list of separators, starting with paragraph breaks, then sentence breaks, then spaces, only falling back to splitting mid-word as a last resort. It also supports a configurable overlap between consecutive chunks, so that important context near a chunk boundary is not lost. A common configuration for general-purpose retrieval applications is a chunk size of around 1000 characters with an overlap of 200 characters, which was chosen for this project because it strikes a reasonable balance between retrieval precision and preserving enough surrounding context for each chunk to remain meaningful on its own.
+
+Retrieval-Augmented Generation
+
+Retrieval-Augmented Generation, or RAG, is an architecture that combines a retrieval system, such as the semantic search engine described above, with a large language model. Instead of relying solely on what the language model learned during training, a RAG system first retrieves the most relevant chunks of text from an external knowledge base, and then provides those chunks to the language model as additional context alongside the user's question. The language model then generates its final answer grounded in that retrieved context, which helps reduce hallucination and allows the system to answer questions about information the model was never directly trained on, such as private company documents or very recent events.
+
+This particular project implements only the retrieval half of that pipeline. It loads documents, splits them into chunks, embeds them, stores them in FAISS, and retrieves the most relevant chunks for a query, but does not yet forward those chunks to a language model to generate a final natural-language answer. That final generation step is listed among the suggested future improvements, since it is a natural next stage once reliable retrieval is in place.

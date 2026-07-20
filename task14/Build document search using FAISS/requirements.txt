@@ -1,0 +1,25 @@
+# --- Core ---
+numpy>=1.26
+scikit-learn>=1.3        # used by the offline TF-IDF+SVD embedding fallback
+joblib>=1.3               # persists the fallback embedding state to disk
+
+# --- LangChain (document loading, chunking, FAISS vectorstore wrapper) ---
+langchain-core>=0.3
+langchain-community>=0.3
+langchain-text-splitters>=0.3
+
+# --- Embeddings ---
+sentence-transformers>=2.6   # primary backend: all-MiniLM-L6-v2
+# langchain-openai>=0.1       # optional: uncomment to enable --use-openai
+
+# --- Vector index ---
+faiss-cpu>=1.8
+
+# --- PDF text extraction ---
+pypdf>=4.0
+
+# --- Config ---
+python-dotenv>=1.0
+
+# --- Testing ---
+pytest>=8.0
