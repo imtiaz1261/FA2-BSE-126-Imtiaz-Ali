@@ -47,6 +47,7 @@ Change how many messages it remembers:
 ```
 python memory_chatbot.py --memory-size 3
 ```
+<img width="488" height="349" alt="Screenshot 2026-07-17 155207" src="https://github.com/user-attachments/assets/4fe4c0d4-5a28-44f8-908a-90ee9c4c405a" />
 
 ## Example — proving it remembers follow-ups
 
