@@ -1,3 +1,4 @@
+<img width="546" height="346" alt="Screenshot 2026-07-19 201525" src="https://github.com/user-attachments/assets/dbcb9e31-2b1f-4622-8ec5-efa4172922a3" />
 # Semantic Document Search using FAISS
 
 A beginner-to-intermediate LLM/NLP project: load PDF/TXT documents, split
