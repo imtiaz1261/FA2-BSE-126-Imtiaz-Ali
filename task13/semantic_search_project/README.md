@@ -7,6 +7,9 @@ semantic search engine on top of them — built with **Sentence-Transformers**,
 
 ```
 Search> renewable energy and climate solutions
+<img width="499" height="362" alt="Screenshot 2026-07-18 233857" src="https://github.com/user-attachments/assets/aeb044ad-e9e8-45d2-9942-9869272d7666" />
+<img width="478" height="364" alt="Screenshot 2026-07-18 233809" src="https://github.com/user-attachments/assets/da099550-2000-4b3f-b3ae-e53812567b09" />
+<img width="955" height="508" alt="Screenshot 2026-07-18 233557" src="https://github.com/user-attachments/assets/b6af8030-3a55-4d86-a89a-cf893ce84f91" />
 
 Semantic Search Results
 ------------------------
