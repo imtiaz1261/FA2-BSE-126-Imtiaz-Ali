@@ -1,0 +1,31 @@
+# --- Core LangChain ---
+langchain>=0.3.0
+langchain-core>=0.3.0
+langchain-community>=0.3.0
+langchain-text-splitters>=0.3.0
+
+# --- Embeddings ---
+langchain-huggingface>=0.1.0
+sentence-transformers>=3.0.0
+
+# --- Groq (default LLM provider — free & fast) ---
+langchain-groq>=0.2.0
+
+# --- Optional: OpenAI (embeddings + LLM) ---
+langchain-openai>=0.2.0
+
+# --- Optional: local LLM via Ollama ---
+langchain-ollama>=0.2.0
+
+# --- Vector databases ---
+langchain-chroma>=0.1.4
+chromadb>=0.5.0
+faiss-cpu>=1.8.0
+
+# --- Document parsing ---
+pypdf>=4.2.0
+python-docx>=1.1.0
+
+# --- Utilities ---
+python-dotenv>=1.0.1
+numpy>=1.26.0

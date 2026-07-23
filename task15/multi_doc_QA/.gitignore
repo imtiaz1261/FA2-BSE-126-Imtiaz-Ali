@@ -1,0 +1,16 @@
+# Secrets — never commit your real .env
+.env
+
+# Python
+__pycache__/
+*.pyc
+venv/
+.venv/
+
+# Vector store data (rebuildable, and can get large)
+chroma_db/*
+!chroma_db/.gitkeep
+faiss_index/
+
+# Logs
+logs/*.log

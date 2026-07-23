@@ -1,0 +1,16 @@
+Multi-Document QA System - Sample File
+
+This is a sample text document included so the project works out of
+the box for a first test run.
+
+Retrieval-Augmented Generation (RAG) combines a retriever and a
+generator. The retriever searches a vector database for chunks of
+text that are semantically similar to a user's question. The
+generator (an LLM) then reads only those retrieved chunks and
+produces an answer grounded in that context, rather than relying on
+its own general training knowledge.
+
+This project supports three document formats: PDF, DOCX, and TXT.
+Replace this file, or add your own PDF and DOCX files to the data/
+directory, then run "python app.py" to build the vector index and
+start asking questions.
