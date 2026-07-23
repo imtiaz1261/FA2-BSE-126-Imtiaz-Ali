@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>LLM Streaming Chat</title>
+<script>
+  (function () {
+    try {
+      var theme = localStorage.getItem('llm-streaming-theme');
+      if (!theme) {
+        theme = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+      }
+      document.documentElement.dataset.theme = theme;
+    } catch (err) {
+      document.documentElement.dataset.theme = 'dark';
+    }
+  }());
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/styles/github-dark.min.css" id="hljs-dark-theme" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/styles/github.min.css" id="hljs-light-theme" disabled />
+<link rel="stylesheet" href="/static/style.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/highlight.min.js" defer></script>
+</head>
+<body>
+  <div class="shell" id="shell">
+    <aside class="sidebar" id="sidebar" aria-label="Conversation history">
+      <div class="sidebar__top">
+        <button type="button" class="new-chat-btn" id="newChatBtn">
+          <span class="new-chat-btn__icon">+</span>
+          <span>New chat</span>
+        </button>
+      </div>
+      <div class="sidebar__section-label">Chats</div>
+      <nav class="conversation-list" id="conversationList"></nav>
+      <div class="sidebar__footer">
+        <span class="sidebar__hint">Local history only</span>
+      </div>
+    </aside>
+
+    <div class="scrim" id="scrim" hidden></div>
+
+    <main class="main-panel">
+      <header class="topbar">
+        <div class="topbar__left">
+          <button type="button" class="icon-btn menu-btn" id="menuBtn" aria-label="Open conversations">
+            <span></span><span></span><span></span>
+          </button>
+          <div class="brand-lockup">
+            <div class="brand-lockup__eyebrow">FastAPI SSE demo</div>
+            <h1 class="brand-lockup__title">Real-time LLM chat</h1>
+          </div>
+        </div>
+
+        <div class="topbar__right">
+          <div class="status-pill" id="statusPill" aria-live="polite">
+            <span class="status-pill__dot" id="statusDot"></span>
+            <span class="status-pill__text" id="statusText">idle</span>
+          </div>
+          <button type="button" class="icon-btn theme-btn" id="themeToggle" aria-label="Toggle theme">
+            <span class="theme-btn__icon theme-btn__icon--sun" aria-hidden="true">☼</span>
+            <span class="theme-btn__icon theme-btn__icon--moon" aria-hidden="true">☾</span>
+          </button>
+        </div>
+      </header>
+
+      <section class="chat-stage" id="chatStage">
+        <div class="chat-stage__inner" id="chatStageInner">
+          <div class="empty-state" id="emptyState">
+            <div class="empty-state__kicker">Ready when you are</div>
+            <div class="empty-state__title">Ask a question and watch the answer stream in real time.</div>
+            <div class="empty-state__copy">Markdown, code highlighting, cancellation, and token usage all work inline.</div>
+          </div>
+
+          <div class="message-list" id="messageList" aria-live="polite" aria-busy="false"></div>
+        </div>
+      </section>
+
+      <footer class="composer-shell">
+        <form class="composer" id="chatForm">
+          <label class="composer__label" for="promptInput">Message</label>
+          <div class="composer__surface">
+            <textarea id="promptInput" class="composer__input" rows="1" placeholder="Ask something... (Shift+Enter for newline)"></textarea>
+            <button type="submit" class="send-btn" id="sendBtn">
+              <span class="send-btn__icon" id="sendBtnIcon">↑</span>
+              <span class="send-btn__text" id="sendBtnText">Send</span>
+            </button>
+          </div>
+          <div class="composer__hint">Enter to send · Shift+Enter for newline</div>
+        </form>
+      </footer>
+    </main>
+  </div>
+
+  <script src="/static/app.js" defer></script>
+</body>
+</html>
