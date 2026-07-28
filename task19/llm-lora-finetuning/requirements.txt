@@ -1,0 +1,30 @@
+# LoRA / PEFT fine-tuning project dependencies.
+#
+# Target Python: 3.10, 3.11, or 3.12 (recommended: 3.12).
+# NOT recommended: Python 3.14 — PyTorch has no GPU wheels for it yet, and
+# `tokenizers` (a transformers dependency) has inconsistent wheel
+# availability on 3.14, which can force a source build requiring a Rust
+# toolchain. See README.md for details.
+
+# Core deep learning framework
+# Allow newer torch releases (needed if running under newer Python).
+# Project originally recommended Python 3.10-3.12; relaxing the upper
+# bound helps install a compatible wheel when only newer Python is
+# available on the system. If you have Python 3.10-3.12, prefer that.
+torch>=2.2.0
+
+# Hugging Face ecosystem
+transformers>=4.40.0,<4.45.0
+datasets>=2.19.0,<2.21.0
+accelerate>=0.30.0,<0.35.0
+peft>=0.11.0,<0.13.0
+
+# Evaluation & metrics
+evaluate>=0.4.0
+
+# Training progress / experiment tracking
+tensorboard>=2.16.0
+
+# Utilities
+sentencepiece>=0.2.0
+protobuf>=4.25.0
