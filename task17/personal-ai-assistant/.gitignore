@@ -1,0 +1,14 @@
+# Secrets
+.env
+
+# Python
+__pycache__/
+*.pyc
+venv/
+.venv/
+
+# Local data / generated artifacts
+vector_store/*
+!vector_store/.gitkeep
+db/*.db
+logs/*.log

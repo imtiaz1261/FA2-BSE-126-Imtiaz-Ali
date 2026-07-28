@@ -1,0 +1,9 @@
+Personal AI Assistant - Sample File
+
+This is a sample text file included so you can immediately test the
+file-reading tool. Try asking the assistant: "Summarize sample_notes.txt"
+or "What tools does this assistant have, according to sample_notes.txt?"
+
+This assistant can use a calculator, check the weather, search the web,
+read documents, save notes, and manage reminders -- all through natural
+language, without you needing to specify which tool to use.

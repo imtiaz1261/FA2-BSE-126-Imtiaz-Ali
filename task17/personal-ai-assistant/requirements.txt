@@ -1,0 +1,38 @@
+# --- Core LangChain ---
+# NOTE: pinned below 1.0 on purpose. LangChain 1.0 moved the legacy
+# AgentExecutor / create_tool_calling_agent API (used in agent.py) out
+# of langchain.agents into a separate langchain-classic package. This
+# project uses the pre-1.0 API, so we stay on the 0.3.x line.
+langchain>=0.3.0,<1.0
+langchain-core>=0.3.0,<1.0
+langchain-text-splitters>=0.3.0,<1.0
+
+# --- LLM: Groq (default, free & fast tool-calling) ---
+langchain-groq>=0.2.0,<0.3
+
+# --- Embeddings (local, free) + vector store for file reading ---
+langchain-huggingface>=0.1.0,<0.2
+sentence-transformers>=3.0.0
+langchain-chroma>=0.1.4,<0.2
+chromadb>=0.5.0
+
+# --- Document parsing ---
+pypdf>=4.2.0
+python-docx>=1.1.0
+
+# --- Web search (free, no API key) ---
+ddgs>=5.0.0
+
+# --- Weather: uses requests directly against the free Open-Meteo API ---
+requests>=2.31.0
+
+# --- Reminder natural-language time parsing ---
+dateparser>=1.2.0
+
+# --- Voice (optional but included by default) ---
+SpeechRecognition>=3.10.0
+pyaudio>=0.2.14
+pyttsx3>=2.90
+
+# --- Utilities ---
+python-dotenv>=1.0.1
