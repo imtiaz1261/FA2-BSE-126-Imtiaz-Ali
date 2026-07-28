@@ -1,0 +1,13 @@
+# Secrets
+.env
+
+# Python
+__pycache__/
+*.pyc
+venv/
+.venv/
+
+# Generated reports and logs
+outputs/*
+!outputs/.gitkeep
+logs/*.log
