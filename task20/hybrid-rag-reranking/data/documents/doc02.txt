@@ -1,0 +1,1 @@
+List comprehensions in Python provide a concise way to create lists based on existing sequences. Instead of writing a multi-line for loop with an append call, a list comprehension expresses the same logic in a single readable line, often improving both performance and clarity.

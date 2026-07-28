@@ -1,0 +1,1 @@
+Python's garbage collector automatically manages memory using reference counting combined with a cyclic garbage collector to detect and clean up reference cycles. This frees developers from manually allocating and freeing memory, unlike lower-level languages such as C.

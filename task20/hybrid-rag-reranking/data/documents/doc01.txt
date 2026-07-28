@@ -1,0 +1,1 @@
+Python is a high-level, interpreted programming language known for its readable syntax. It supports multiple programming paradigms including object-oriented, procedural, and functional programming. Python's extensive standard library and package ecosystem, including tools like pip, make it popular for web development, data science, and automation.

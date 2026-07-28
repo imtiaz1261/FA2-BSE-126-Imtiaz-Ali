@@ -1,0 +1,34 @@
+[
+  {
+    "query": "How does Python manage memory automatically?",
+    "relevant_doc_ids": ["doc03.txt", "doc01.txt"]
+  },
+  {
+    "query": "What causes global warming?",
+    "relevant_doc_ids": ["doc04.txt", "doc05.txt", "doc06.txt"]
+  },
+  {
+    "query": "How are rockets reused to lower launch costs?",
+    "relevant_doc_ids": ["doc09.txt"]
+  },
+  {
+    "query": "Why is dietary fiber important for health?",
+    "relevant_doc_ids": ["doc11.txt", "doc10.txt"]
+  },
+  {
+    "query": "What robotic missions have explored Mars?",
+    "relevant_doc_ids": ["doc08.txt"]
+  },
+  {
+    "query": "What is a concise way to build lists in Python?",
+    "relevant_doc_ids": ["doc02.txt"]
+  },
+  {
+    "query": "How does absorbing carbon dioxide affect the ocean?",
+    "relevant_doc_ids": ["doc06.txt", "doc04.txt"]
+  },
+  {
+    "query": "What nutrients does the body need for growth and health?",
+    "relevant_doc_ids": ["doc10.txt", "doc12.txt"]
+  }
+]
