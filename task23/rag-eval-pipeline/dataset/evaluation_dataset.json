@@ -1,0 +1,161 @@
+{
+  "records": [
+    {
+      "id": "q01",
+      "category": "fact_based",
+      "question": "What is the uptime SLA for the Pro plan?",
+      "ground_truth": "The uptime SLA for the Pro plan is 99.9%.",
+      "expected_context": ["The uptime SLA is 99.9% for the Pro plan and 99.99% for the Enterprise plan."]
+    },
+    {
+      "id": "q02",
+      "category": "fact_based",
+      "question": "How much storage does the Free tier include?",
+      "ground_truth": "The Free tier includes 5GB of storage.",
+      "expected_context": ["Storage limits by tier: the Free tier includes 5GB of storage."]
+    },
+    {
+      "id": "q03",
+      "category": "fact_based",
+      "question": "Who founded Nimbus Cloud?",
+      "ground_truth": "Nimbus Cloud was founded by Maria Chen and Raj Patel.",
+      "expected_context": ["Nimbus Cloud was founded by Maria Chen and Raj Patel in San Francisco, California in 2019."]
+    },
+    {
+      "id": "q04",
+      "category": "definition",
+      "question": "What does an 'egress fee' mean for a cloud storage service?",
+      "ground_truth": "An egress fee is a charge a cloud provider applies when data is transferred out of its storage or network to an external destination.",
+      "expected_context": ["Compared to its competitor CloudPeak, Nimbus Cloud offers lower data egress fees but supports fewer geographic regions than CloudPeak."]
+    },
+    {
+      "id": "q05",
+      "category": "definition",
+      "question": "What is a Service Level Agreement (SLA)?",
+      "ground_truth": "An SLA is a formal commitment from a service provider defining the expected level of service, such as guaranteed uptime.",
+      "expected_context": ["The uptime SLA is 99.9% for the Pro plan and 99.99% for the Enterprise plan."]
+    },
+    {
+      "id": "q06",
+      "category": "definition",
+      "question": "What is SOC 2 Type II certification?",
+      "ground_truth": "SOC 2 Type II is a compliance certification verifying that a company's security controls operate effectively over an extended period of time.",
+      "expected_context": ["Nimbus Cloud holds SOC 2 Type II certification and ISO 27001 certification, and is fully GDPR compliant for customers in the European Union."]
+    },
+    {
+      "id": "q07",
+      "category": "multi_hop",
+      "question": "For an Enterprise customer, how long is deleted data retained in backups, and what support response time would they get if they needed help restoring it?",
+      "ground_truth": "Backup copies of deleted data are purged within 90 days, and Enterprise customers get a dedicated account manager with a 1-hour response time.",
+      "expected_context": [
+        "Copies of deleted data in backup snapshots are purged within 90 days.",
+        "Enterprise tier customers get a dedicated account manager with a 1-hour response time."
+      ]
+    },
+    {
+      "id": "q08",
+      "category": "multi_hop",
+      "question": "Compare the API rate limit and storage limit between the Free and Pro tiers.",
+      "ground_truth": "The Free tier allows 100 requests/minute and 5GB storage, while the Pro tier allows 1000 requests/minute and 500GB storage.",
+      "expected_context": [
+        "API rate limits are 100 requests per minute on the Free tier, 1000 requests per minute on the Pro tier.",
+        "the Free tier includes 5GB of storage, the Pro tier includes 500GB of storage."
+      ]
+    },
+    {
+      "id": "q09",
+      "category": "multi_hop",
+      "question": "What security and compliance measures apply to data stored on Nimbus Cloud?",
+      "ground_truth": "Data is encrypted with AES-256 at rest and TLS 1.3 in transit, and Nimbus Cloud holds SOC 2 Type II and ISO 27001 certifications and is GDPR compliant.",
+      "expected_context": [
+        "All data on Nimbus Cloud is encrypted using AES-256 encryption at rest and TLS 1.3 encryption in transit.",
+        "Nimbus Cloud holds SOC 2 Type II certification and ISO 27001 certification, and is fully GDPR compliant."
+      ]
+    },
+    {
+      "id": "q10",
+      "category": "summarization",
+      "question": "Summarize Nimbus Cloud's data protection practices.",
+      "ground_truth": "Nimbus Cloud encrypts data with AES-256 at rest and TLS 1.3 in transit, holds SOC 2 Type II and ISO 27001 certifications, is GDPR compliant, takes daily backup snapshots retained 30-90 days depending on plan, and purges deleted data within 30 days (90 days for backups).",
+      "expected_context": [
+        "All data on Nimbus Cloud is encrypted using AES-256 encryption at rest and TLS 1.3 encryption in transit.",
+        "Nimbus Cloud holds SOC 2 Type II certification and ISO 27001 certification, and is fully GDPR compliant.",
+        "Backups are retained for 30 days on the Pro plan and 90 days on the Enterprise plan.",
+        "When a customer deletes data, it is purged from primary storage within 30 days."
+      ]
+    },
+    {
+      "id": "q11",
+      "category": "summarization",
+      "question": "Summarize the differences between the three pricing tiers.",
+      "ground_truth": "Free is $0/month with 5GB storage, 100 req/min API limit, and community-forum-only support. Pro is $20/month with 500GB storage, 1000 req/min API limit, and 24-hour email support. Enterprise is custom-priced with unlimited storage, custom API limits, and a dedicated account manager with 1-hour response time.",
+      "expected_context": [
+        "Nimbus Cloud offers three pricing tiers: Free ($0/month), Pro ($20/month), and Enterprise (custom pricing).",
+        "the Free tier includes 5GB of storage, the Pro tier includes 500GB of storage, and the Enterprise tier includes unlimited storage."
+      ]
+    },
+    {
+      "id": "q12",
+      "category": "comparative",
+      "question": "How does Nimbus Cloud compare to CloudPeak in terms of pricing and regions?",
+      "ground_truth": "Nimbus Cloud has lower data egress fees than CloudPeak but supports fewer geographic regions than CloudPeak.",
+      "expected_context": ["Compared to its competitor CloudPeak, Nimbus Cloud offers lower data egress fees but supports fewer geographic regions than CloudPeak."]
+    },
+    {
+      "id": "q13",
+      "category": "comparative",
+      "question": "What is the difference in customer support between the Free and Enterprise tiers?",
+      "ground_truth": "Free tier users only have access to a community forum, while Enterprise customers get a dedicated account manager with a 1-hour response time.",
+      "expected_context": ["Free tier users have access to a community forum only... Enterprise tier customers get a dedicated account manager with a 1-hour response time."]
+    },
+    {
+      "id": "q14",
+      "category": "comparative",
+      "question": "Compare backup retention between the Pro and Enterprise plans.",
+      "ground_truth": "Backups are retained for 30 days on the Pro plan and 90 days on the Enterprise plan.",
+      "expected_context": ["Backups are retained for 30 days on the Pro plan and 90 days on the Enterprise plan."]
+    },
+    {
+      "id": "q15",
+      "category": "edge_case",
+      "question": "What happens to my data if I delete my account?",
+      "ground_truth": "Deleted data is purged from primary storage within 30 days, and backup copies are purged within 90 days.",
+      "expected_context": ["When a customer deletes data, it is purged from primary storage within 30 days. Copies of deleted data in backup snapshots are purged within 90 days."]
+    },
+    {
+      "id": "q16",
+      "category": "edge_case",
+      "question": "Can a Free tier user get single sign-on (SSO)?",
+      "ground_truth": "No, the Free tier does not include single sign-on (SSO).",
+      "expected_context": ["The Free tier does not include single sign-on (SSO), does not include dedicated support, and is capped at 5GB of storage."]
+    },
+    {
+      "id": "q17",
+      "category": "out_of_context",
+      "question": "What is Nimbus Cloud's stock ticker symbol?",
+      "ground_truth": "This information is not available in the knowledge base.",
+      "expected_context": []
+    },
+    {
+      "id": "q18",
+      "category": "out_of_context",
+      "question": "Does Nimbus Cloud offer a mobile app for iOS?",
+      "ground_truth": "This information is not available in the knowledge base.",
+      "expected_context": []
+    },
+    {
+      "id": "q19",
+      "category": "ambiguous",
+      "question": "Is Nimbus Cloud good?",
+      "ground_truth": "This is subjective; the knowledge base does not contain an opinion, but factual details (pricing, uptime, compliance, support) can inform a judgment.",
+      "expected_context": []
+    },
+    {
+      "id": "q20",
+      "category": "ambiguous",
+      "question": "How much does it cost?",
+      "ground_truth": "This depends on the tier: Free is $0/month, Pro is $20/month, and Enterprise is custom-priced.",
+      "expected_context": ["Nimbus Cloud offers three pricing tiers: Free ($0/month), Pro ($20/month), and Enterprise (custom pricing, contact sales)."]
+    }
+  ]
+}
