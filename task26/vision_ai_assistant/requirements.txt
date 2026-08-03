@@ -1,0 +1,13 @@
+streamlit==1.48.0
+openai==1.99.9
+langchain==0.3.27
+langchain-openai==0.3.30
+langgraph==0.6.5
+pydantic==2.11.7
+pydantic-settings==2.10.1
+python-dotenv==1.1.1
+tenacity==9.1.2
+orjson==3.11.2
+fastapi==0.116.1
+uvicorn==0.35.0
+pytest==8.4.1

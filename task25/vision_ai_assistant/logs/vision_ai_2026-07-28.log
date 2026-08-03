@@ -1,0 +1,20 @@
+2026-07-28 22:39:25.760 | INFO     | config.logging_config:setup_logging:79 — Logging initialised | level=INFO | debug=False
+2026-07-28 23:51:28.480 | INFO     | config.logging_config:setup_logging:79 — Logging initialised | level=INFO | debug=False
+2026-07-28 23:52:17.289 | INFO     | config.logging_config:setup_logging:79 — Logging initialised | level=INFO | debug=False
+2026-07-28 23:52:17.654 | INFO     | services.vision_service:process_uploaded_file:108 — Image processed: Screenshot 2026-07-28 234951.png | 1308×961 | 90.2 KB | format=PNG
+2026-07-28 23:52:17.655 | INFO     | __main__:handle_image_upload:160 — Image uploaded: Screenshot 2026-07-28 234951.png
+2026-07-28 23:52:18.497 | INFO     | services.llm_service:get_openai_client:58 — OpenAI client initialised | model=gpt-4o
+2026-07-28 23:52:21.708 | ERROR    | services.vision_service:classify_document:212 — Classification error: Error code: 401 - {'error': {'message': 'Incorrect API key provided: sk-your-***********here. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'code': 'invalid_api_key', 'param': None}, 'status': 401}
+2026-07-28 23:52:22.347 | ERROR    | services.vision_service:run_initial_analysis:261 — Initial analysis error: Error code: 401 - {'error': {'message': 'Incorrect API key provided: sk-your-***********here. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'code': 'invalid_api_key', 'param': None}, 'status': 401}
+2026-07-28 23:52:22.348 | INFO     | __main__:handle_image_upload:205 — Analysis complete: type=unknown conf=0%
+2026-07-28 23:54:13.547 | INFO     | config.logging_config:setup_logging:79 — Logging initialised | level=INFO | debug=False
+2026-07-28 23:54:14.796 | INFO     | config.logging_config:setup_logging:79 — Logging initialised | level=INFO | debug=False
+2026-07-28 23:56:59.607 | INFO     | config.logging_config:setup_logging:79 — Logging initialised | level=INFO | debug=False
+2026-07-28 23:57:09.069 | INFO     | config.logging_config:setup_logging:79 — Logging initialised | level=INFO | debug=False
+2026-07-28 23:57:09.492 | INFO     | services.vision_service:process_uploaded_file:108 — Image processed: Screenshot 2026-07-28 234951.png | 1308×961 | 90.2 KB | format=PNG
+2026-07-28 23:57:09.497 | INFO     | __main__:handle_image_upload:160 — Image uploaded: Screenshot 2026-07-28 234951.png
+2026-07-28 23:57:10.175 | ERROR    | services.vision_service:classify_document:212 — Classification error: Error code: 401 - {'error': {'message': 'Incorrect API key provided: sk-your-***********here. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'code': 'invalid_api_key', 'param': None}, 'status': 401}
+2026-07-28 23:57:10.816 | ERROR    | services.vision_service:run_initial_analysis:261 — Initial analysis error: Error code: 401 - {'error': {'message': 'Incorrect API key provided: sk-your-***********here. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'code': 'invalid_api_key', 'param': None}, 'status': 401}
+2026-07-28 23:57:10.816 | INFO     | __main__:handle_image_upload:205 — Analysis complete: type=unknown conf=0%
+2026-07-28 23:57:25.221 | INFO     | config.logging_config:setup_logging:79 — Logging initialised | level=INFO | debug=False
+2026-07-28 23:57:26.403 | INFO     | config.logging_config:setup_logging:79 — Logging initialised | level=INFO | debug=False
