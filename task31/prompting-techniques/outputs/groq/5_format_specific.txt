@@ -1,0 +1,24 @@
+PROMPT:
+Write an email to a client about a one-week order delay, apologizing and offering a 10% discount on their next purchase. Follow this exact format:
+- Subject line (under 8 words)
+- Greeting
+- Exactly 3 short paragraphs, each no more than 2 sentences
+- One bullet point summarizing the discount offer
+- Professional sign-off
+- Total length under 130 words
+
+------------------------------------------------------------
+
+OUTPUT:
+Subject: Order Delay
+Dear Client,
+We apologize for the delay. 
+
+Your order will be shipped one week late. 
+We regret the inconvenience this causes.
+
+* 10% discount on next purchase
+We appreciate your patience. 
+
+Best,
+Customer Service

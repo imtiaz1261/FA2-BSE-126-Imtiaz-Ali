@@ -1,0 +1,26 @@
+PROMPT:
+Write an email to a client about a one-week order delay, following these steps in order:
+1. Open by acknowledging the delay clearly and directly (no burying the news).
+2. Apologize sincerely, in one or two sentences -- no over-explaining.
+3. State the new expected delivery timeframe.
+4. Offer a 10% discount on their next purchase as an apology gesture.
+5. Close with a reassuring, appreciative sign-off.
+Write the final email only, incorporating all five steps smoothly (don't label the steps in the output).
+
+------------------------------------------------------------
+
+OUTPUT:
+Subject: Update on Your Order Delivery
+
+Dear [Client],
+
+I am writing to inform you that unfortunately, your order will be delayed by one week. I apologize for the inconvenience this may cause and am truly sorry for not being able to meet our original delivery timeline.
+
+Your new expected delivery date is now [New Delivery Date]. Please be assured that we are working diligently to get your order to you as soon as possible.
+
+As a gesture of apology, we would like to offer you a 10% discount on your next purchase with us. We value your business and appreciate your patience and understanding in this matter.
+
+Thank you for your continued support, and we look forward to getting your order to you soon. We appreciate your trust in us and are committed to making things right.
+
+Best regards,
+[Your Name]

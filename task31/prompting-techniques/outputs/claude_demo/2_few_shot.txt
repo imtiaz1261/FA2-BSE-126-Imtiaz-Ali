@@ -1,0 +1,21 @@
+PROMPT:
+[two example emails provided, then:] Now write a new email in the
+same style and tone: inform a client their order is delayed by one
+week, apologize, and offer a 10% discount on their next purchase.
+
+------------------------------------------------------------
+
+OUTPUT:
+Subject: A Quick Update on Your Order
+
+Hi Alex,
+
+Thanks for your patience -- your order is running about a week behind
+schedule due to a delay on our end. We know that's not what you were
+hoping to hear, and we're sorry for the wait.
+
+As a thank-you for bearing with us, here's a 10% discount code for your
+next order: THANKS10. We appreciate you sticking with us.
+
+Warm regards,
+The Fulfillment Team

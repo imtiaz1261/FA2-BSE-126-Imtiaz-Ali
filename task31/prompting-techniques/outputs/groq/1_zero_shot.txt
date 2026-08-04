@@ -1,0 +1,27 @@
+PROMPT:
+Write an email to a client informing them their order is delayed by one week. Apologize and offer a 10% discount on their next purchase.
+
+------------------------------------------------------------
+
+OUTPUT:
+Here is an email to a client informing them of a delay in their order:
+
+Subject: Update on Your Order
+
+Dear [Client's Name],
+
+I am writing to inform you that, unfortunately, your order will be delayed by one week. I want to start by apologizing for any inconvenience this may cause and appreciate your patience and understanding in this matter.
+
+Please be assured that we are working diligently to get your order to you as soon as possible. The new estimated delivery date for your order is [new delivery date]. You will receive a shipping confirmation email as soon as your order ships, which will include tracking information.
+
+As a gesture of goodwill and apology for the delay, we would like to offer you a 10% discount on your next purchase with us. This discount will be valid for the next 30 days and can be applied to any item on our website. We value your business and appreciate your continued support.
+
+If you have any questions or concerns, please do not hesitate to reach out to us. We are always here to help and appreciate your feedback.
+
+Thank you for your understanding, and we look forward to getting your order to you soon.
+
+Best regards,
+
+[Your Name]
+[Your Company]
+[Contact Information]

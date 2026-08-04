@@ -1,0 +1,29 @@
+PROMPT:
+Write an email... following these steps in order: 1) acknowledge
+the delay clearly, 2) apologize sincerely, 3) state the new
+timeframe, 4) offer the 10% discount, 5) close with a reassuring
+sign-off. (Steps not labeled in output.)
+
+------------------------------------------------------------
+
+OUTPUT:
+Subject: Your Order Has Been Delayed by One Week
+
+Dear Customer,
+
+I want to let you know directly that your order has been delayed and
+will now arrive one week later than originally planned.
+
+We're sorry for this delay and understand it may be frustrating,
+especially if you were counting on the original delivery date.
+
+Your order is now expected to arrive within the next 7 business days.
+
+As an apology, we're offering you a 10% discount on your next purchase
+-- simply use the code SORRY10 at checkout whenever you're ready.
+
+We truly value your business and appreciate your patience while we get
+this sorted out. Thank you for continuing to shop with us.
+
+Sincerely,
+Customer Support Team

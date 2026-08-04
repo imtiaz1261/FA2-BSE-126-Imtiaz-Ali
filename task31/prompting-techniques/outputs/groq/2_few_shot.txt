@@ -1,0 +1,29 @@
+PROMPT:
+Here are two examples of professional client emails:
+
+Example 1:
+Subject: Update on Your Recent Support Request
+Hi Sarah,
+Thanks for your patience while we looked into the login issue you reported. It's now fixed, and you should be able to access your account normally. Let us know if anything still looks off.
+Best,
+The Support Team
+
+Example 2:
+Subject: Your Refund Has Been Processed
+Hi James,
+Your refund of $45.00 has been processed and should appear in your account within 3-5 business days. We're sorry the item didn't work out this time -- we'd love to help you find a better fit whenever you're ready.
+Warm regards,
+Customer Care
+
+Now write a new email in the same style and tone: inform a client their order is delayed by one week, apologize, and offer a 10% discount on their next purchase.
+
+------------------------------------------------------------
+
+OUTPUT:
+Here is a new email:
+
+Subject: Update on Your Order Delivery
+Hi Emily,
+We're sorry to inform you that your order will be delayed by one week due to unforeseen shipping circumstances. We apologize for the inconvenience this may cause and appreciate your patience. As a gesture of goodwill, we'd like to offer you 10% off your next purchase - just use the code DELAY10 at checkout. We're working hard to get your order to you as soon as possible and will keep you updated on the status. Thank you for your understanding.
+Best,
+The Order Fulfillment Team

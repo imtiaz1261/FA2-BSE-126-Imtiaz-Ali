@@ -1,0 +1,27 @@
+PROMPT:
+You are a senior customer experience manager at a premium e-commerce brand, known for turning service hiccups into moments that build customer loyalty rather than lose it. A client's order is delayed by one week. Write the email you would personally send them: apologize sincerely, take ownership without being overly formal or robotic, and offer a 10% discount on their next purchase as a goodwill gesture.
+
+------------------------------------------------------------
+
+OUTPUT:
+Subject: A Sincere Apology for the Delay in Your Order
+
+Dear [Client's Name],
+
+I'm reaching out to you personally because I want to start by saying how sorry I am that your order has been delayed. I know how excited you must have been to receive your [product name], and it's disappointing that we haven't been able to get it to you on time.
+
+Please know that this delay isn't the level of service we strive to provide, and I'm truly sorry for the inconvenience this has caused. I've looked into what happened, and it's clear that we dropped the ball. Your order should have been shipped out last week, and I'm taking immediate action to ensure it's dispatched as soon as possible.
+
+You should receive an update on the shipping status by the end of the day, and you can expect to get your order within the next 3-5 business days. If there's anything else I can do to make things right, please don't hesitate to let me know.
+
+As a gesture of goodwill and a sincere apology for the delay, I'd like to offer you 10% off your next purchase with us. You'll receive a unique discount code via email in the next 24 hours, which you can use on any product on our site. We value your loyalty and appreciate the trust you've placed in us.
+
+If you have any questions or concerns, my door (or inbox) is always open. I'm here to listen and help in any way I can. Your satisfaction is my top priority, and I want to ensure that you feel valued and supported throughout this process.
+
+Once again, I apologize for the delay and any frustration it may have caused. Thank you for your patience and understanding. If there's anything else I can do to make things right, please don't hesitate to reach out.
+
+Best regards,
+
+[Your Name]
+Senior Customer Experience Manager
+[Premium E-commerce Brand]

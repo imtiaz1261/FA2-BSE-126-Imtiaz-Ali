@@ -1,0 +1,28 @@
+PROMPT:
+You are a senior customer experience manager at a premium
+e-commerce brand... Write the email you would personally send them...
+
+------------------------------------------------------------
+
+OUTPUT:
+Subject: Your Order Is Running Late -- Here's What We're Doing About It
+
+Hi there,
+
+I'll be straightforward: your order is going to arrive about a week
+later than we promised, and that's on us. There's no excuse dressed up
+enough to make that easier to hear, so I won't try -- I just want you to
+know we noticed, we care, and we're on it.
+
+As a small way of saying sorry, I've added a 10% discount to your
+account for your next order with us. It doesn't undo the wait, but I
+hope it shows we mean it.
+
+If anything about this delay is causing you a real headache, just reply
+to this email -- I read these personally.
+
+Thanks for your patience with us.
+
+Warmly,
+Jordan
+Customer Experience

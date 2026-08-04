@@ -1,0 +1,27 @@
+PROMPT:
+Write an email... Follow this exact format: subject line under 8
+words, greeting, exactly 3 short paragraphs (max 2 sentences each),
+one bullet point summarizing the discount, professional sign-off,
+under 130 words total.
+
+------------------------------------------------------------
+
+OUTPUT:
+Subject: Your Order Is Delayed by One Week
+
+Hi there,
+
+Your recent order has been delayed and will now arrive about one week
+later than expected. We're sorry for the inconvenience this may cause.
+
+To make up for it, we'd like to offer you a small discount on your next
+order with us.
+
+- 10% off your next purchase -- code SORRY10
+
+Thank you for your patience and continued trust in us.
+
+Best regards,
+Customer Care Team
+
+(Word count: 84)
