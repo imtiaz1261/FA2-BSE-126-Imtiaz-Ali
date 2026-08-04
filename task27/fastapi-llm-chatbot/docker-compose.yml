@@ -1,0 +1,63 @@
+services:
+  chatbot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: fastapi-llm-chatbot:local
+    container_name: fastapi-llm-chatbot
+    ports:
+      - "8000:8000"
+    environment:
+      # Values here come from the .env file (docker compose loads it
+      # automatically if present in the same directory) or you can
+      # hard-set non-secret defaults directly.
+      APP_NAME: ${APP_NAME:-LLM Chatbot}
+      APP_VERSION: ${APP_VERSION:-1.0.0}
+      ENVIRONMENT: ${ENVIRONMENT:-production}
+      HOST: 0.0.0.0
+      PORT: 8000
+      LLM_PROVIDER: ${LLM_PROVIDER:-groq}
+      LLM_MODEL: ${LLM_MODEL:-}
+      GROQ_API_KEY: ${GROQ_API_KEY:-}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+      CORS_ALLOW_ORIGINS: ${CORS_ALLOW_ORIGINS:-*}
+      MAX_MESSAGE_LENGTH: ${MAX_MESSAGE_LENGTH:-4000}
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request,sys; sys.exit(0) if urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=3).status == 200 else sys.exit(1)"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+# Optional dependencies:
+# If your chatbot needs conversation history or caching, uncomment a
+# service below. Neither is required for the base chatbot in this project.
+#
+#   redis:
+#     image: redis:7-alpine
+#     container_name: chatbot-redis
+#     ports:
+#       - "6379:6379"
+#     restart: unless-stopped
+#     # Use Redis if you want to cache LLM responses or store short-lived
+#     # session/conversation state across requests.
+#
+#   postgres:
+#     image: postgres:16-alpine
+#     container_name: chatbot-postgres
+#     environment:
+#       POSTGRES_DB: chatbot
+#       POSTGRES_USER: chatbot
+#       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme}
+#     ports:
+#       - "5432:5432"
+#     volumes:
+#       - postgres_data:/var/lib/postgresql/data
+#     restart: unless-stopped
+#     # Use Postgres if you want to persist chat history or user accounts
+#     # beyond a single container's lifetime.
+#
+# volumes:
+#   postgres_data:
