@@ -1,0 +1,7 @@
+ai_cover_letter_generator/
+├── app.py
+├── .env.example
+├── .gitignore
+├── requirements.txt
+├── README.md
+└── project_structure.txt
