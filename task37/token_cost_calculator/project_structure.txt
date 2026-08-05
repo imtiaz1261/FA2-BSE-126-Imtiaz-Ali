@@ -1,0 +1,8 @@
+token_cost_calculator/
+├── app.py
+├── .env.example
+├── .gitignore
+├── requirements.txt
+├── README.md
+├── test_token_counter.py
+└── project_structure.txt
