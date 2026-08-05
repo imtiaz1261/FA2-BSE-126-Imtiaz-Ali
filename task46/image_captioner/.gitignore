@@ -1,0 +1,13 @@
+.venv/
+venv/
+__pycache__/
+*.pyc
+.env
+.pytest_cache/
+
+# Don't accidentally commit test images you drop in locally
+*.jpg
+*.jpeg
+*.png
+*.webp
+*.gif
