@@ -1,0 +1,7 @@
+api_retry_tenacity/
+├── app.py
+├── .env.example
+├── .gitignore
+├── requirements.txt
+├── README.md
+└── project_structure.txt
