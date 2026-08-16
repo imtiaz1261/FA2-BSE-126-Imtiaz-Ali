@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sentence embeddings — cosine similarity explorer</title>
+<style>
+  :root{
+    --ink:#0d0e13;
+    --paper-2:#161822;
+    --paper-3:#1e2130;
+    --line:#333a5290;
+    --text:#e8e7ee;
+    --text-dim:#8c8fa3;
+    --violet:#b48af5;
+    --violet-text:#2a1a4a;
+    --violet-dim:#6b5499;
+    --radius:10px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--ink);
+    color:var(--text);
+    font-family:'Inter',-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    min-height:100vh;
+  }
+  .wrap{max-width:960px; margin:0 auto; padding:36px 24px 60px;}
+
+  header{margin-bottom:28px;}
+  header h1{
+    font-family:'Source Serif 4', Georgia, serif;
+    font-weight:600;
+    font-size:26px;
+    margin:0 0 6px;
+  }
+  header p{font-size:14px; color:var(--text-dim); line-height:1.6; margin:0; max-width:640px;}
+
+  .card{
+    background:var(--paper-2);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:22px 24px;
+    margin-bottom:22px;
+  }
+  .card h2{
+    font-size:14px;
+    font-weight:600;
+    margin:0 0 4px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .card h2 .n{
+    font-family:'JetBrains Mono', ui-monospace, monospace;
+    font-size:11px;
+    color:var(--violet-text);
+    background:var(--violet);
+    border-radius:4px;
+    padding:1px 6px;
+  }
+  .card .hint{font-size:12.5px; color:var(--text-dim); margin:0 0 14px; line-height:1.5;}
+
+  textarea#sentences{
+    width:100%;
+    min-height:150px;
+    background:var(--paper-3);
+    border:1px solid var(--line);
+    color:var(--text);
+    border-radius:10px;
+    padding:12px 14px;
+    font-size:14px;
+    font-family:'JetBrains Mono', ui-monospace, monospace;
+    line-height:1.6;
+    resize:vertical;
+  }
+  textarea#sentences:focus{outline:none; border-color:var(--violet-dim);}
+
+  .row{display:flex; gap:10px; align-items:center; margin-top:14px; flex-wrap:wrap;}
+  button#runBtn{
+    background:var(--violet);
+    color:var(--violet-text);
+    border:none;
+    border-radius:9px;
+    padding:11px 20px;
+    font-size:14px;
+    font-weight:600;
+    cursor:pointer;
+  }
+  button#runBtn:hover:not(:disabled){filter:brightness(1.07);}
+  button#runBtn:disabled{opacity:.5; cursor:not-allowed;}
+  button.ghost{
+    background:none;
+    border:1px solid var(--line);
+    color:var(--text-dim);
+    border-radius:9px;
+    padding:11px 16px;
+    font-size:13px;
+    cursor:pointer;
+  }
+  button.ghost:hover{border-color:var(--violet-dim); color:var(--text);}
+
+  .status{font-size:12.5px; color:var(--text-dim); margin-top:10px; display:none;}
+  .status.show{display:block;}
+  .progress-bar{height:4px; border-radius:4px; background:var(--paper-3); overflow:hidden; margin-top:8px; display:none;}
+  .progress-bar.show{display:block;}
+  .progress-fill{height:100%; width:0%; background:var(--violet); transition:width .2s ease;}
+
+  #results{display:none;}
+  #results.show{display:block;}
+
+  table.simtable{
+    border-collapse:collapse;
+    width:100%;
+    font-size:12.5px;
+    table-layout:fixed;
+  }
+  table.simtable th, table.simtable td{
+    border:1px solid var(--line);
+    padding:0;
+    text-align:center;
+  }
+  table.simtable th{
+    background:var(--paper-3);
+    color:var(--text-dim);
+    font-weight:500;
+    font-size:11px;
+    padding:8px 4px;
+  }
+  table.simtable th.rowhead{
+    text-align:left;
+    padding:8px 10px;
+    color:var(--text);
+    font-family:'JetBrains Mono', ui-monospace, monospace;
+  }
+  table.simtable td.cell{
+    height:44px;
+    font-family:'JetBrains Mono', ui-monospace, monospace;
+    font-weight:500;
+    cursor:default;
+  }
+  table.simtable td.cell span{position:relative; z-index:1;}
+  .table-scroll{overflow-x:auto;}
+  .sentlabel{
+    font-family:'JetBrains Mono', ui-monospace, monospace;
+    font-size:12px;
+    color:var(--text-dim);
+    padding:8px 0 0;
+    line-height:1.7;
+  }
+  .sentlabel b{color:var(--violet); font-weight:600;}
+
+  .legend{display:flex; align-items:center; gap:10px; margin:14px 0 0; font-size:11.5px; color:var(--text-dim);}
+  .legend .grad{
+    width:160px; height:10px; border-radius:4px;
+    background:linear-gradient(90deg, #1e2130, #4a3878, #b48af5, #f3e9ff);
+  }
+
+  .pairs{display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-top:6px;}
+  @media (max-width:700px){.pairs{grid-template-columns:1fr;}}
+  .pairs h3{font-size:12.5px; text-transform:uppercase; letter-spacing:.06em; color:var(--text-dim); margin:0 0 10px;}
+  .pair-item{
+    background:var(--paper-3);
+    border-radius:8px;
+    padding:10px 12px;
+    margin-bottom:8px;
+    font-size:12.5px;
+    line-height:1.55;
+  }
+  .pair-item .score{
+    font-family:'JetBrains Mono', ui-monospace, monospace;
+    font-weight:600;
+    color:var(--violet);
+    float:right;
+  }
+  .pair-item .a, .pair-item .b{color:var(--text);}
+  .pair-item .b{color:var(--text-dim);}
+
+  #scatter-wrap{width:100%; overflow:hidden;}
+  svg#scatter{width:100%; height:auto; display:block;}
+  svg#scatter text{font-family:'Inter',sans-serif;}
+
+  ::-webkit-scrollbar{width:8px; height:8px;}
+  ::-webkit-scrollbar-thumb{background:var(--paper-3); border-radius:4px;}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <h1>Sentence embeddings — cosine similarity explorer</h1>
+    <p>Har sentence ka real semantic embedding banaya jata hai (poori tarah aapke browser mein, koi API key nahi chahiye), phir har jode ke beech cosine similarity nikaal kar dikhaya jata hai ki semantically close sentences ke vectors kitne "close" hote hain.</p>
+  </header>
+
+  <div class="card">
+    <h2>Sentences <span class="n" id="sentCount">6</span></h2>
+    <p class="hint">Ek line mein ek sentence likhein. Default example mein 3 alag-alag topics ke jode hain (food, finance, animals) — chalane ke baad dekhein ki ek hi topic wale sentences kitne close cluster karte hain.</p>
+    <textarea id="sentences">I love eating pizza on weekends.
+Pizza is my favorite food to order.
+The stock market crashed sharply today.
+Investors are worried about the economy.
+The cat sat quietly on the windowsill.
+A small cat was sleeping on the mat.</textarea>
+    <div class="row">
+      <button id="runBtn">Generate embeddings + compare</button>
+      <button class="ghost" id="resetBtn">Reset to example</button>
+    </div>
+    <div class="status" id="statusLine"></div>
+    <div class="progress-bar" id="progressBar"><div class="progress-fill" id="progressFill"></div></div>
+  </div>
+
+  <div id="results">
+    <div class="card">
+      <h2>Cosine similarity matrix</h2>
+      <p class="hint">Har cell do sentences ke embeddings ke beech cosine similarity dikhata hai (1.0 = identical direction, 0 = unrelated, closer to 1 = zyada semantically similar). Diagonal hamesha 1.0 hota hai.</p>
+      <div class="table-scroll">
+        <table class="simtable" id="simTable"></table>
+      </div>
+      <div class="legend"><span>0.0</span><span class="grad"></span><span>1.0 similarity</span></div>
+      <div class="sentlabel" id="sentLegend"></div>
+    </div>
+
+    <div class="card">
+      <h2>Most and least similar pairs</h2>
+      <p class="hint">Sabse zyada aur sabse kam similar sentence-pairs — is se pattern turant nazar aata hai.</p>
+      <div class="pairs">
+        <div>
+          <h3>Most similar</h3>
+          <div id="topPairs"></div>
+        </div>
+        <div>
+          <h3>Least similar</h3>
+          <div id="bottomPairs"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>2D projection of embeddings</h2>
+      <p class="hint">Classical MDS se saari sentences ka 2D layout — jo sentences embeddings mein close hain woh yahan bhi paas-paas dikhengi (asli embedding dimension ~384 hoti hai, yeh sirf ek 2D approximation hai).</p>
+      <div id="scatter-wrap"><svg id="scatter" viewBox="0 0 640 420"></svg></div>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import { pipeline, env } from 'https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.2';
+env.allowLocalModels = false;
+
+const sentencesEl = document.getElementById('sentences');
+const sentCount = document.getElementById('sentCount');
+const runBtn = document.getElementById('runBtn');
+const resetBtn = document.getElementById('resetBtn');
+const statusLine = document.getElementById('statusLine');
+const progressBar = document.getElementById('progressBar');
+const progressFill = document.getElementById('progressFill');
+const results = document.getElementById('results');
+const simTable = document.getElementById('simTable');
+const sentLegend = document.getElementById('sentLegend');
+const topPairs = document.getElementById('topPairs');
+const bottomPairs = document.getElementById('bottomPairs');
+const scatterSvg = document.getElementById('scatter');
+
+const DEFAULT_TEXT = sentencesEl.value;
+
+function updateCount() {
+  const lines = sentencesEl.value.split('\n').map(s => s.trim()).filter(Boolean);
+  sentCount.textContent = lines.length;
+}
+sentencesEl.addEventListener('input', updateCount);
+updateCount();
+
+resetBtn.addEventListener('click', () => {
+  sentencesEl.value = DEFAULT_TEXT;
+  updateCount();
+});
+
+let embedder = null;
+
+function setStatus(text, show) {
+  statusLine.textContent = text;
+  statusLine.classList.toggle('show', !!show);
+}
+
+runBtn.addEventListener('click', run);
+
+async function run() {
+  const lines = sentencesEl.value.split('\n').map(s => s.trim()).filter(Boolean);
+  if (lines.length < 2) { alert('Kam se kam 2 sentences daalein.'); return; }
+  if (lines.length > 20) { alert('Zyada se zyada 20 sentences (visualization saaf rakhne ke liye).'); return; }
+
+  runBtn.disabled = true;
+  results.classList.remove('show');
+  progressBar.classList.add('show');
+  progressFill.style.width = '5%';
+  setStatus('Model load ho raha hai (pehli baar ~25MB download hoga)...', true);
+
+  try {
+    if (!embedder) {
+      embedder = await pipeline('feature-extraction', 'Xenova/all-MiniLM-L6-v2', {
+        progress_callback: (p) => {
+          if (p.status === 'progress' && p.total) {
+            const pct = 5 + Math.round((p.loaded / p.total) * 55);
+            progressFill.style.width = pct + '%';
+            setStatus('Model download ho raha hai... ' + Math.round((p.loaded / p.total) * 100) + '%', true);
+          }
+        }
+      });
+    }
+    progressFill.style.width = '65%';
+    setStatus('Embeddings generate ho rahe hain...', true);
+
+    const embeddings = [];
+    for (let i = 0; i < lines.length; i++) {
+      const output = await embedder(lines[i], { pooling: 'mean', normalize: true });
+      embeddings.push(Array.from(output.data));
+      progressFill.style.width = (65 + Math.round(((i + 1) / lines.length) * 25)) + '%';
+    }
+
+    setStatus('Similarity matrix aur layout ban raha hai...', true);
+    progressFill.style.width = '95%';
+
+    const sim = computeSimMatrix(embeddings);
+    renderTable(lines, sim);
+    renderPairs(lines, sim);
+    const coords = classicalMDS(sim, lines.length);
+    renderScatter(lines, coords);
+
+    progressFill.style.width = '100%';
+    setStatus('Taiyaar — ' + lines.length + ' sentences, ' + embeddings[0].length + '-dimensional embeddings.', true);
+    results.classList.add('show');
+  } catch (err) {
+    setStatus('Error: ' + (err.message || String(err)), true);
+    console.error(err);
+  } finally {
+    runBtn.disabled = false;
+    setTimeout(() => progressBar.classList.remove('show'), 600);
+  }
+}
+
+function cosine(a, b) {
+  let dot = 0;
+  for (let i = 0; i < a.length; i++) dot += a[i] * b[i];
+  return dot;
+}
+
+function computeSimMatrix(embeddings) {
+  const n = embeddings.length;
+  const sim = Array.from({ length: n }, () => new Array(n).fill(0));
+  for (let i = 0; i < n; i++) {
+    for (let j = 0; j < n; j++) {
+      sim[i][j] = i === j ? 1 : cosine(embeddings[i], embeddings[j]);
+    }
+  }
+  return sim;
+}
+
+function colorFor(v) {
+  const stops = [
+    [30, 33, 48], [74, 56, 120], [180, 138, 245], [243, 233, 255]
+  ];
+  const t = Math.max(0, Math.min(1, v));
+  const seg = t * (stops.length - 1);
+  const i = Math.min(stops.length - 2, Math.floor(seg));
+  const f = seg - i;
+  const c0 = stops[i], c1 = stops[i + 1];
+  const r = Math.round(c0[0] + (c1[0] - c0[0]) * f);
+  const g = Math.round(c0[1] + (c1[1] - c0[1]) * f);
+  const b = Math.round(c0[2] + (c1[2] - c0[2]) * f);
+  return 'rgb(' + r + ',' + g + ',' + b + ')';
+}
+
+function textColorFor(v) {
+  return v > 0.55 ? '#241a3a' : '#e8e7ee';
+}
+
+function shortLabel(s, n) {
+  return s.length > n ? s.slice(0, n - 1) + '\u2026' : s;
+}
+
+function renderTable(lines, sim) {
+  const n = lines.length;
+  let html = '<tr><th></th>';
+  for (let j = 0; j < n; j++) html += '<th>S' + (j + 1) + '</th>';
+  html += '</tr>';
+  for (let i = 0; i < n; i++) {
+    html += '<tr><th class="rowhead">S' + (i + 1) + '</th>';
+    for (let j = 0; j < n; j++) {
+      const v = sim[i][j];
+      html += '<td class="cell" style="background:' + colorFor(v) + '; color:' + textColorFor(v) + '"><span>' + v.toFixed(2) + '</span></td>';
+    }
+    html += '</tr>';
+  }
+  simTable.innerHTML = html;
+
+  sentLegend.innerHTML = lines.map((s, i) => '<div><b>S' + (i + 1) + '</b> — ' + escapeHtml(s) + '</div>').join('');
+}
+
+function escapeHtml(s) {
+  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+function renderPairs(lines, sim) {
+  const n = lines.length;
+  const pairs = [];
+  for (let i = 0; i < n; i++) {
+    for (let j = i + 1; j < n; j++) {
+      pairs.push({ i, j, score: sim[i][j] });
+    }
+  }
+  pairs.sort((a, b) => b.score - a.score);
+  const top = pairs.slice(0, Math.min(3, pairs.length));
+  const bottom = pairs.slice(-Math.min(3, pairs.length)).reverse();
+
+  topPairs.innerHTML = top.map(p => pairHtml(lines, p)).join('');
+  bottomPairs.innerHTML = bottom.map(p => pairHtml(lines, p)).join('');
+}
+
+function pairHtml(lines, p) {
+  return '<div class="pair-item"><span class="score">' + p.score.toFixed(3) + '</span>' +
+    '<div class="a">S' + (p.i + 1) + ': ' + escapeHtml(shortLabel(lines[p.i], 60)) + '</div>' +
+    '<div class="b">S' + (p.j + 1) + ': ' + escapeHtml(shortLabel(lines[p.j], 60)) + '</div></div>';
+}
+
+function jacobiEigen(A, n, maxIter) {
+  const a = A.map(row => row.slice());
+  const v = Array.from({ length: n }, (_, i) => Array.from({ length: n }, (_, j) => (i === j ? 1 : 0)));
+  for (let iter = 0; iter < maxIter; iter++) {
+    let off = 0, p = 0, q = 1, maxVal = 0;
+    for (let i = 0; i < n; i++) {
+      for (let j = i + 1; j < n; j++) {
+        off += a[i][j] * a[i][j];
+        if (Math.abs(a[i][j]) > maxVal) { maxVal = Math.abs(a[i][j]); p = i; q = j; }
+      }
+    }
+    if (maxVal < 1e-9) break;
+    const app = a[p][p], aqq = a[q][q], apq = a[p][q];
+    const phi = 0.5 * Math.atan2(2 * apq, aqq - app);
+    const c = Math.cos(phi), s = Math.sin(phi);
+    for (let k = 0; k < n; k++) {
+      const akp = a[k][p], akq = a[k][q];
+      a[k][p] = c * akp - s * akq;
+      a[k][q] = s * akp + c * akq;
+    }
+    for (let k = 0; k < n; k++) {
+      const apk = a[p][k], aqk = a[q][k];
+      a[p][k] = c * apk - s * aqk;
+      a[q][k] = s * apk + c * aqk;
+    }
+    for (let k = 0; k < n; k++) {
+      const vkp = v[k][p], vkq = v[k][q];
+      v[k][p] = c * vkp - s * vkq;
+      v[k][q] = s * vkp + c * vkq;
+    }
+  }
+  const eigenvalues = a.map((row, i) => row[i]);
+  return { eigenvalues, eigenvectors: v };
+}
+
+function classicalMDS(sim, n) {
+  const D2 = Array.from({ length: n }, (_, i) => Array.from({ length: n }, (_, j) => {
+    const d = Math.sqrt(Math.max(0, 2 - 2 * sim[i][j]));
+    return d * d;
+  }));
+  const rowMean = D2.map(row => row.reduce((s, v) => s + v, 0) / n);
+  const grandMean = rowMean.reduce((s, v) => s + v, 0) / n;
+  const B = Array.from({ length: n }, (_, i) => Array.from({ length: n }, (_, j) =>
+    -0.5 * (D2[i][j] - rowMean[i] - rowMean[j] + grandMean)
+  ));
+
+  const { eigenvalues, eigenvectors } = jacobiEigen(B, n, 100);
+  const idx = eigenvalues.map((v, i) => i).sort((a, b) => eigenvalues[b] - eigenvalues[a]);
+  const l1 = Math.max(eigenvalues[idx[0]], 0);
+  const l2 = Math.max(eigenvalues[idx[1]] || 0, 0);
+  const s1 = Math.sqrt(l1), s2 = Math.sqrt(l2);
+
+  return Array.from({ length: n }, (_, i) => [
+    eigenvectors[i][idx[0]] * s1,
+    eigenvectors[i][idx[1]] * s2
+  ]);
+}
+
+function renderScatter(lines, coords) {
+  const n = coords.length;
+  const xs = coords.map(c => c[0]);
+  const ys = coords.map(c => c[1]);
+  const minX = Math.min(...xs), maxX = Math.max(...xs);
+  const minY = Math.min(...ys), maxY = Math.max(...ys);
+  const pad = 60;
+  const W = 640, H = 420;
+  const spanX = (maxX - minX) || 1;
+  const spanY = (maxY - minY) || 1;
+
+  const px = x => pad + ((x - minX) / spanX) * (W - 2 * pad);
+  const py = y => H - pad - ((y - minY) / spanY) * (H - 2 * pad);
+
+  let svg = '';
+  for (let i = 0; i < n; i++) {
+    const x1 = px(coords[i][0]), y1 = py(coords[i][1]);
+    svg += '<circle cx="' + x1.toFixed(1) + '" cy="' + y1.toFixed(1) + '" r="7" fill="#b48af5" fill-opacity="0.85" stroke="#0d0e13" stroke-width="1.5"></circle>';
+    svg += '<text x="' + (x1 + 10).toFixed(1) + '" y="' + (y1 + 4).toFixed(1) + '" font-size="11" fill="#e8e7ee">S' + (i + 1) + '</text>';
+  }
+  scatterSvg.innerHTML = svg;
+}
+</script>
+</body>
+</html>
