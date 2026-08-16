@@ -1,0 +1,4 @@
+Title: Basics of Container Deployment
+Category: Cloud & Infrastructure
+---
+Packaging an application into a container bundles its code and dependencies into a single portable unit that runs consistently across development, staging, and production environments.

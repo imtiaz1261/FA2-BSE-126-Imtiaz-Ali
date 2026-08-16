@@ -1,0 +1,4 @@
+Title: Effective Meeting Notes
+Category: Productivity & Tools
+---
+Useful meeting notes capture decisions made, owners for each action item, and deadlines, rather than a full transcript. Share them within 24 hours while context is still fresh for attendees.

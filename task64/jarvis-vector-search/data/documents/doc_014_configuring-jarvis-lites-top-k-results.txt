@@ -1,0 +1,4 @@
+Title: Configuring Jarvis-Lite's Top-K Results
+Category: Product Documentation
+---
+The number of results Jarvis-Lite returns is controlled by the TOP_K environment variable, defaulting to 5. Increasing it surfaces more candidate passages at the cost of a longer context for the downstream language model.

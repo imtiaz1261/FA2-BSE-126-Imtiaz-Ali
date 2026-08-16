@@ -1,0 +1,18 @@
+# Core (required)
+numpy>=1.24
+scikit-learn>=1.3        # powers the local_tfidf offline fallback provider
+python-dotenv>=1.0
+
+# Vector database — primary backend (default: VECTOR_DB_PROVIDER=chroma)
+chromadb>=0.5
+
+# Embeddings — default backend (EMBEDDING_PROVIDER=sentence_transformers)
+sentence-transformers>=2.2
+
+# --- Optional extras, uncomment what you need ---
+
+# Pinecone vector database (VECTOR_DB_PROVIDER=pinecone)
+# pinecone-client>=3.0
+
+# OpenAI embeddings (EMBEDDING_PROVIDER=openai)
+# openai>=1.0

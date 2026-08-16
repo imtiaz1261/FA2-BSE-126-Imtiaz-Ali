@@ -1,0 +1,4 @@
+Title: Best Practices for Writing Documentation
+Category: Productivity & Tools
+---
+Good internal documentation states the purpose up front, uses short paragraphs and headers, and is updated whenever the underlying process changes so it doesn't go stale and mislead readers.

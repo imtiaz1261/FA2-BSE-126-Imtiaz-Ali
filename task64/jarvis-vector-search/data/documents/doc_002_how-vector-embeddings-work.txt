@@ -1,0 +1,4 @@
+Title: How Vector Embeddings Work
+Category: AI & Machine Learning
+---
+An embedding model converts text into a list of numbers (a vector) that captures its meaning. Texts with similar meaning end up close together in this vector space, which is what makes semantic search possible even when the exact words differ.

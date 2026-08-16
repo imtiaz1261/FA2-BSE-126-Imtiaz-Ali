@@ -1,0 +1,4 @@
+Title: Cosine Similarity Explained
+Category: AI & Machine Learning
+---
+Cosine similarity measures the angle between two vectors rather than their magnitude, producing a score between -1 and 1 (or 0 and 1 for normalized embeddings). It's the standard metric for comparing embeddings in semantic search.

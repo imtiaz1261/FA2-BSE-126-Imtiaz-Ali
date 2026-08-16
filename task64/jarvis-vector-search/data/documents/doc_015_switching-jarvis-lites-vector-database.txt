@@ -1,0 +1,4 @@
+Title: Switching Jarvis-Lite's Vector Database
+Category: Product Documentation
+---
+Jarvis-Lite ships with ChromaDB as the default, persistent, local vector store. Setting VECTOR_DB_PROVIDER=pinecone switches to a managed Pinecone index for teams that need cloud-hosted, multi-region search.

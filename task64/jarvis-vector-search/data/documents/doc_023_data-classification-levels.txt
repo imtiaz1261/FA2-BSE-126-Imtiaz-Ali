@@ -1,0 +1,4 @@
+Title: Data Classification Levels
+Category: IT & Security
+---
+Company data is classified as Public, Internal, Confidential, or Restricted. Confidential and Restricted data must be encrypted at rest and never shared outside approved, access-controlled systems.

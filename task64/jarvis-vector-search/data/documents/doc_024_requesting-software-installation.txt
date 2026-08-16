@@ -1,0 +1,4 @@
+Title: Requesting Software Installation
+Category: IT & Security
+---
+New software requests go through the IT service portal, where they're reviewed for licensing and security compliance before approval. Most standard business tools are approved within one business day.

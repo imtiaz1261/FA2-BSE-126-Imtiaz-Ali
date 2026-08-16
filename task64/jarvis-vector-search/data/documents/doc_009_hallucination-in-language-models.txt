@@ -1,0 +1,4 @@
+Title: Hallucination in Language Models
+Category: AI & Machine Learning
+---
+Hallucination happens when a language model generates confident-sounding text that is factually incorrect or unsupported by any source. Retrieval-augmented generation reduces this by grounding answers in retrieved documents.

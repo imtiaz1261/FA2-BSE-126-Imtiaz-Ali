@@ -1,0 +1,4 @@
+Title: Common Login Issues and Fixes
+Category: Customer Support
+---
+Most login problems are resolved by clearing browser cookies, confirming caps lock is off, or requesting a password reset. Persistent issues after these steps should be escalated to IT support.

@@ -1,0 +1,4 @@
+Title: Writing Clear Slack Messages
+Category: Productivity & Tools
+---
+Clear async messages state the ask and the deadline in the first line, avoid vague phrases like 'quick question', and use threads to keep related discussion together instead of scattering it across the channel.

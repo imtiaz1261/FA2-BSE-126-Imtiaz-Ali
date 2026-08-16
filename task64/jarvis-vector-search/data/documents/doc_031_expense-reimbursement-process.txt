@@ -1,0 +1,4 @@
+Title: Expense Reimbursement Process
+Category: HR & Onboarding
+---
+Business expenses are submitted through the finance portal with an itemized receipt attached. Approved reimbursements are processed within the next two payroll cycles.

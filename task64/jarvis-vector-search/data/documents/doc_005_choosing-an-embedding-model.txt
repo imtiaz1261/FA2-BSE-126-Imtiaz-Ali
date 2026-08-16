@@ -1,0 +1,4 @@
+Title: Choosing an Embedding Model
+Category: AI & Machine Learning
+---
+Smaller embedding models like all-MiniLM-L6-v2 are fast and cheap but slightly less accurate, while larger models capture nuance better at higher compute cost. The right choice depends on your latency budget, dataset size, and accuracy requirements.

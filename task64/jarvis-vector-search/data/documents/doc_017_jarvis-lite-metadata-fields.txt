@@ -1,0 +1,4 @@
+Title: Jarvis-Lite Metadata Fields
+Category: Product Documentation
+---
+Each indexed chunk in Jarvis-Lite carries metadata including doc_id, filename, source path, title, category, and chunk_index, all of which are returned alongside search results for traceability.

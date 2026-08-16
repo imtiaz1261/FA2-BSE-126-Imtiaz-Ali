@@ -1,0 +1,4 @@
+Title: Company VPN Access Policy
+Category: IT & Security
+---
+Employees connecting from outside the office network must use the company VPN to access internal systems. VPN credentials are separate from your email login and are issued by the IT helpdesk on your first day.

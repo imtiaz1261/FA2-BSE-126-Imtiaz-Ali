@@ -1,0 +1,4 @@
+Title: What is Chunking in RAG Pipelines
+Category: AI & Machine Learning
+---
+Chunking splits long documents into smaller passages before embedding them, so retrieval returns focused, relevant snippets instead of entire files. Overlapping chunks help preserve context that would otherwise be cut at a boundary.

@@ -1,0 +1,4 @@
+Title: What is an API
+Category: General Knowledge
+---
+An API (Application Programming Interface) is a defined way for different software systems to communicate, letting one program request data or actions from another without needing to know its internal implementation.

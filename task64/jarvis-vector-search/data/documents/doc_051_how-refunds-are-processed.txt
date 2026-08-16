@@ -1,0 +1,4 @@
+Title: How Refunds Are Processed
+Category: Customer Support
+---
+Approved refunds are issued to the original payment method and typically appear within 5-10 business days, depending on the customer's bank or card issuer processing times.

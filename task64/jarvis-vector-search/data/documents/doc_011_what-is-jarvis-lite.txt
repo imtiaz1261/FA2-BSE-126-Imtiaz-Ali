@@ -1,0 +1,4 @@
+Title: What is Jarvis-Lite
+Category: Product Documentation
+---
+Jarvis-Lite is an AI knowledge assistant that lets teams ask natural-language questions and get answers grounded in their own internal documents, using semantic search over a vector database instead of manual keyword lookup.

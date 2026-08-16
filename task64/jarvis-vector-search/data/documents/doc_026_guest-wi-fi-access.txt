@@ -1,0 +1,4 @@
+Title: Guest Wi-Fi Access
+Category: IT & Security
+---
+Visitors can connect to the Guest Wi-Fi network using a temporary code issued at reception, valid for the day. The guest network is isolated from internal systems and cannot access company file shares.

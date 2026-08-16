@@ -1,0 +1,4 @@
+Title: What is Fine-Tuning
+Category: AI & Machine Learning
+---
+Fine-tuning adjusts a pretrained model's weights using a smaller, task-specific dataset, letting it specialize in a domain like legal text or customer support without training a model from scratch.

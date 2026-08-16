@@ -1,0 +1,4 @@
+Title: Re-indexing Documents in Jarvis-Lite
+Category: Product Documentation
+---
+When source documents change, Jarvis-Lite needs to be re-indexed to pick up the updates. Calling reset_index() clears the existing collection before a fresh index_documents() run to avoid stale duplicate entries.

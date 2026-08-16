@@ -1,0 +1,4 @@
+Title: Managing Email Overload
+Category: Productivity & Tools
+---
+Batching email checks to two or three set times a day, unsubscribing from low-value lists, and using filters for recurring notifications can meaningfully cut down on inbox interruptions.

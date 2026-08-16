@@ -1,0 +1,4 @@
+Title: Laptop Encryption Requirements
+Category: IT & Security
+---
+All company-issued laptops must have full-disk encryption enabled (BitLocker on Windows, FileVault on Mac) before they're allowed to connect to internal systems, protecting data if a device is lost or stolen.

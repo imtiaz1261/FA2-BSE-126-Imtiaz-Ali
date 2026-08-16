@@ -1,0 +1,4 @@
+Title: What is Logging and Why It Matters
+Category: Cloud & Infrastructure
+---
+Structured application logs record what a system did and when, making it possible to diagnose failures after the fact. Logging at appropriate levels (INFO, WARNING, ERROR) avoids both silence and noise.

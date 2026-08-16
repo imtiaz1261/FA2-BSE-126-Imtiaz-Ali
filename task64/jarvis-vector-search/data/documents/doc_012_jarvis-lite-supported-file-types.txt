@@ -1,0 +1,4 @@
+Title: Jarvis-Lite Supported File Types
+Category: Product Documentation
+---
+Jarvis-Lite can index plain text and Markdown files out of the box, with PDF and Word document support available through the optional document-conversion module.

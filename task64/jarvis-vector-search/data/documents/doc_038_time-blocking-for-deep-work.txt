@@ -1,0 +1,4 @@
+Title: Time Blocking for Deep Work
+Category: Productivity & Tools
+---
+Time blocking reserves dedicated calendar slots for focused work on a single task, reducing context-switching. Many people find 90-minute blocks, followed by a short break, work well for sustained concentration.

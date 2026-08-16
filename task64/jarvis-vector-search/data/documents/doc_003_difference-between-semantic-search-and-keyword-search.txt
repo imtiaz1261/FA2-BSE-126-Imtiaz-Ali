@@ -1,0 +1,4 @@
+Title: Difference Between Semantic Search and Keyword Search
+Category: AI & Machine Learning
+---
+Keyword search matches literal words and phrases, so it misses synonyms and paraphrases. Semantic search compares meaning using embeddings, so a query like 'reset my access' can still match a document about 'forgot password' even without shared words.

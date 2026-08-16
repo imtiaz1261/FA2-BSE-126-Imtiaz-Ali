@@ -1,0 +1,4 @@
+Title: Environment Variables Best Practices
+Category: Cloud & Infrastructure
+---
+Secrets and environment-specific settings like API keys and database URLs should live in environment variables or a secrets manager, never hardcoded in source code or committed to version control.

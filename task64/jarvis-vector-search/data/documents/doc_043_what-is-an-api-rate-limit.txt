@@ -1,0 +1,4 @@
+Title: What is an API Rate Limit
+Category: Cloud & Infrastructure
+---
+A rate limit caps how many requests a client can make to an API within a given time window, protecting the service from overload. Exceeding it typically returns an HTTP 429 error until the window resets.

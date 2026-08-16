@@ -1,0 +1,4 @@
+Title: On-Premise vs Managed Vector Databases
+Category: Cloud & Infrastructure
+---
+Self-hosted vector databases like a local ChromaDB instance give full control over data residency at the cost of managing infrastructure yourself, while managed options like Pinecone handle scaling and uptime for a subscription fee.

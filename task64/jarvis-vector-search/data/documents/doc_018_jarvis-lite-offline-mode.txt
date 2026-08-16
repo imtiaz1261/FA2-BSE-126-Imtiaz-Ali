@@ -1,0 +1,4 @@
+Title: Jarvis-Lite Offline Mode
+Category: Product Documentation
+---
+For environments without internet access, Jarvis-Lite can run with a local TF-IDF based embedding provider and an in-memory vector store, trading some semantic accuracy for zero external dependencies.

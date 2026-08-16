@@ -1,0 +1,4 @@
+Title: What is Cloud Computing
+Category: General Knowledge
+---
+Cloud computing delivers computing resources like servers, storage, and databases over the internet on demand, letting organizations scale capacity up or down without owning physical hardware.

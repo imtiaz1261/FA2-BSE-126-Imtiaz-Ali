@@ -1,0 +1,4 @@
+Title: Prompt Engineering Basics
+Category: AI & Machine Learning
+---
+Prompt engineering is the practice of crafting inputs to a language model to get more reliable, accurate outputs. Techniques include giving clear instructions, providing examples, and specifying the desired output format.

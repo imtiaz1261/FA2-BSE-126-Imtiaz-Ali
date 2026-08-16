@@ -1,0 +1,4 @@
+Title: What is a Vector Database
+Category: AI & Machine Learning
+---
+A vector database stores embeddings alongside metadata and is optimized for fast nearest-neighbor search across millions of vectors. Popular options include ChromaDB, Pinecone, Weaviate, and Milvus, each with different trade-offs around hosting and scale.

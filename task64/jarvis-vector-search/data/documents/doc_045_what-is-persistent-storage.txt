@@ -1,0 +1,4 @@
+Title: What is Persistent Storage
+Category: Cloud & Infrastructure
+---
+Persistent storage retains data across process restarts and redeployments, unlike in-memory storage which is wiped when a process stops. Vector databases used in production need persistent storage to avoid re-indexing from scratch.

@@ -1,0 +1,4 @@
+Title: Understanding Service Level Agreements
+Category: Customer Support
+---
+An SLA defines the guaranteed response and resolution times a support team commits to, usually tiered by issue severity, with critical issues receiving the fastest guaranteed response.

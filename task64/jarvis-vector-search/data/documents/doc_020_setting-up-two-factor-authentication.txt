@@ -1,0 +1,4 @@
+Title: Setting Up Two-Factor Authentication
+Category: IT & Security
+---
+Two-factor authentication adds a second verification step beyond your password, usually a code from an authenticator app. Enable it from Account Settings under the Security tab to significantly reduce the risk of unauthorized access.

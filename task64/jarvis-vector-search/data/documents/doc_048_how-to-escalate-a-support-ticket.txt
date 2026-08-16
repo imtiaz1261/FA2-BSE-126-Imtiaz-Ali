@@ -1,0 +1,4 @@
+Title: How to Escalate a Support Ticket
+Category: Customer Support
+---
+If a ticket hasn't been addressed within the SLA window, reply to the ticket requesting escalation or contact the support lead directly with the ticket number for a priority review.

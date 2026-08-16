@@ -1,0 +1,4 @@
+Title: What is a Vector Database Index
+Category: Cloud & Infrastructure
+---
+An index in a vector database is the data structure (often HNSW or IVF) used to speed up approximate nearest-neighbor search, trading a small amount of accuracy for dramatically faster query times at scale.

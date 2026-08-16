@@ -1,0 +1,4 @@
+Title: What is Retrieval-Augmented Generation (RAG)
+Category: AI & Machine Learning
+---
+RAG combines a language model with an external knowledge source. Instead of relying only on what the model memorized during training, the system retrieves relevant documents from a vector database and feeds them into the prompt, so answers can be grounded in up-to-date, specific information.

@@ -1,0 +1,4 @@
+Title: Reporting a Phishing Email
+Category: IT & Security
+---
+If you receive a suspicious email asking for credentials or urgent payment, do not click any links. Forward it to security@company.com and delete it; never reply to or forward it to colleagues directly.

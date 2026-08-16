@@ -1,0 +1,4 @@
+Title: How Jarvis-Lite Ranks Answers
+Category: Product Documentation
+---
+Every indexed passage gets a relevance score between 0 and 1 based on cosine similarity to your query's embedding. Jarvis-Lite returns the top-5 highest scoring passages by default, along with their source document and score.

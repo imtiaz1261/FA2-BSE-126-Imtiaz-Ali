@@ -1,0 +1,4 @@
+Title: Difference Between SQL and NoSQL Databases
+Category: General Knowledge
+---
+SQL databases store data in structured tables with fixed schemas and strong consistency guarantees, while NoSQL databases offer flexible schemas and are often chosen for scale, speed, or unstructured data.
