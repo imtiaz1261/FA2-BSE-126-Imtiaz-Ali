@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Semantic Search</title>
+<style>
+  :root {
+    --bg: #0f1210;
+    --panel: #161a17;
+    --line: #2a2f2b;
+    --ink: #eef1ec;
+    --ink-dim: #9aa39c;
+    --accent: #8fd9a8;
+    --accent-dim: #4f7a5f;
+    --mono: 'JetBrains Mono', 'Fira Code', ui-monospace, SFMono-Regular, Menlo, monospace;
+    --sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    min-height: 100vh;
+  }
+  .wrap {
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 56px 24px 80px;
+  }
+  header {
+    margin-bottom: 36px;
+  }
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 10px;
+  }
+  h1 {
+    font-size: 32px;
+    margin: 0 0 8px;
+    letter-spacing: -0.01em;
+    font-weight: 650;
+  }
+  .sub {
+    color: var(--ink-dim);
+    font-size: 15px;
+    line-height: 1.5;
+    max-width: 60ch;
+  }
+  .search-box {
+    display: flex;
+    gap: 10px;
+    margin-top: 28px;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 6px;
+  }
+  .search-box input[type="text"] {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--ink);
+    font-size: 16px;
+    padding: 12px 14px;
+    font-family: var(--sans);
+  }
+  .search-box input::placeholder { color: var(--ink-dim); }
+  select {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    color: var(--ink-dim);
+    border-radius: 8px;
+    padding: 0 10px;
+    font-family: var(--mono);
+    font-size: 12px;
+  }
+  button {
+    background: var(--accent);
+    color: #0f1210;
+    border: none;
+    border-radius: 8px;
+    padding: 0 20px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: transform 0.1s ease, background 0.15s ease;
+  }
+  button:hover { background: #a5e6ba; }
+  button:active { transform: scale(0.98); }
+
+  .meta-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 18px;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--ink-dim);
+  }
+
+  .results { margin-top: 18px; display: flex; flex-direction: column; gap: 10px; }
+  .card {
+    border: 1px solid var(--line);
+    background: var(--panel);
+    border-radius: 10px;
+    padding: 16px 18px;
+    display: grid;
+    grid-template-columns: 56px 1fr;
+    gap: 16px;
+    align-items: start;
+  }
+  .score {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--accent);
+    background: rgba(143, 217, 168, 0.08);
+    border: 1px solid var(--accent-dim);
+    border-radius: 7px;
+    padding: 6px 0;
+    text-align: center;
+    height: fit-content;
+  }
+  .card-body .name-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .card-body .name { font-weight: 600; font-size: 15px; }
+  .card-body .cat {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--ink-dim);
+    border: 1px solid var(--line);
+    padding: 2px 8px;
+    border-radius: 100px;
+    white-space: nowrap;
+  }
+  .card-body .desc {
+    margin-top: 6px;
+    color: var(--ink-dim);
+    font-size: 13.5px;
+    line-height: 1.5;
+  }
+  .empty {
+    margin-top: 40px;
+    text-align: center;
+    color: var(--ink-dim);
+    font-family: var(--mono);
+    font-size: 13px;
+  }
+  .hint {
+    margin-top: 10px;
+    font-family: var(--mono);
+    font-size: 11.5px;
+    color: var(--ink-dim);
+  }
+  .hint button.chip {
+    background: transparent;
+    border: 1px solid var(--line);
+    color: var(--ink-dim);
+    padding: 4px 10px;
+    font-size: 11.5px;
+    border-radius: 100px;
+    margin: 4px 6px 0 0;
+  }
+  .hint button.chip:hover { color: var(--ink); border-color: var(--accent-dim); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">meaning-based · not keyword matching</div>
+    <h1>Semantic Search</h1>
+    <div class="sub">
+      Search {{ count }} product descriptions by what you mean, not the exact
+      words used. Try a phrase that doesn't literally appear in any listing.
+    </div>
+  </header>
+
+  <div class="search-box">
+    <input type="text" id="query" placeholder="e.g. something to keep me warm in winter" autofocus />
+    <select id="category"><option value="">All categories</option></select>
+    <button id="go">Search</button>
+  </div>
+  <div class="hint">
+    Try:
+    <button class="chip" data-q="shoes for jogging">shoes for jogging</button>
+    <button class="chip" data-q="healthy snack">healthy snack</button>
+    <button class="chip" data-q="gift for a toddler">gift for a toddler</button>
+    <button class="chip" data-q="device to charge my phone without a cable">device to charge my phone without a cable</button>
+  </div>
+
+  <div class="meta-row" id="meta" style="display:none;"></div>
+  <div class="results" id="results"></div>
+  <div class="empty" id="empty" style="display:none;">No results yet — try a search above.</div>
+</div>
+
+<script>
+const queryInput = document.getElementById('query');
+const categorySelect = document.getElementById('category');
+const goBtn = document.getElementById('go');
+const resultsEl = document.getElementById('results');
+const metaEl = document.getElementById('meta');
+const emptyEl = document.getElementById('empty');
+
+async function loadCategories() {
+  const res = await fetch('/api/categories');
+  const cats = await res.json();
+  for (const c of cats) {
+    const opt = document.createElement('option');
+    opt.value = c; opt.textContent = c;
+    categorySelect.appendChild(opt);
+  }
+}
+
+async function runSearch() {
+  const q = queryInput.value.trim();
+  if (!q) return;
+  const category = categorySelect.value;
+  const params = new URLSearchParams({ q, top_k: 8 });
+  if (category) params.set('category', category);
+
+  resultsEl.innerHTML = '<div class="empty">Searching…</div>';
+  emptyEl.style.display = 'none';
+  metaEl.style.display = 'none';
+
+  const res = await fetch('/api/search?' + params.toString());
+  const data = await res.json();
+
+  if (!data.results.length) {
+    resultsEl.innerHTML = '';
+    emptyEl.style.display = 'block';
+    emptyEl.textContent = 'No matches found.';
+    return;
+  }
+
+  metaEl.style.display = 'flex';
+  metaEl.innerHTML = `<span>${data.count} result${data.count === 1 ? '' : 's'} for "${data.query}"</span><span>ranked by meaning</span>`;
+
+  resultsEl.innerHTML = data.results.map(r => `
+    <div class="card">
+      <div class="score">${(r.score * 100).toFixed(0)}%</div>
+      <div class="card-body">
+        <div class="name-row">
+          <div class="name">${escapeHtml(r.name)}</div>
+          <div class="cat">${escapeHtml(r.category)}</div>
+        </div>
+        <div class="desc">${escapeHtml(r.description)}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+goBtn.addEventListener('click', runSearch);
+queryInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') runSearch(); });
+document.querySelectorAll('.chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    queryInput.value = chip.dataset.q;
+    runSearch();
+  });
+});
+
+loadCategories();
+</script>
+</body>
+</html>
