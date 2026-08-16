@@ -1,0 +1,121 @@
+interaction_id,created_at,user_prompt,variant,response,response_words,feedback,task_completed,quality_score
+954c557d-d100-4c36-9313-5a45917d8577,2026-08-07T17:18:28.796615+00:00,Suggest debugging steps for a Python import error.,B,Synthetic demo response for Variant B.,121,up,1,0.939
+105b13dd-7cc3-424f-adbf-5238d2cf0b6a,2026-08-07T17:31:28.796615+00:00,Give three interview tips for a software engineering student.,B,Synthetic demo response for Variant B.,124,up,1,0.817
+68e4f209-5fc3-4e53-b076-215db82ccbbc,2026-08-07T17:44:28.796615+00:00,Give three interview tips for a software engineering student.,B,Synthetic demo response for Variant B.,98,up,1,0.729
+0d560e41-2714-4d27-975a-b12db52dbd93,2026-08-07T17:57:28.796615+00:00,Create a short study plan for learning FastAPI.,A,Synthetic demo response for Variant A.,105,down,1,0.683
+27da2627-4702-4a7c-a1bb-4ca8c7cf209d,2026-08-07T18:10:28.796615+00:00,Explain recursion in Python with a simple example.,A,Synthetic demo response for Variant A.,99,down,1,0.76
+af60ed40-d109-4337-a090-934861346a77,2026-08-07T18:23:28.796615+00:00,Explain recursion in Python with a simple example.,A,Synthetic demo response for Variant A.,128,up,1,0.754
+2833f664-bbb0-45c7-9589-2d5ad08ed155,2026-08-07T18:36:28.796615+00:00,Summarize the difference between SQL and NoSQL.,B,Synthetic demo response for Variant B.,129,up,1,0.712
+5060d0f6-3b1b-4cfc-b684-b470e173065a,2026-08-07T18:49:28.796615+00:00,Explain recursion in Python with a simple example.,B,Synthetic demo response for Variant B.,117,up,1,0.875
+579a825e-e6a9-4310-8c9c-6f1dce9eb19b,2026-08-07T19:02:28.796615+00:00,Give three interview tips for a software engineering student.,B,Synthetic demo response for Variant B.,75,up,0,0.854
+64177af4-4fb9-4dc4-afab-1f7ad7b33075,2026-08-07T19:15:28.796615+00:00,Explain what an API is in simple terms.,A,Synthetic demo response for Variant A.,134,up,1,0.685
+e7c18634-8dff-4a2d-b2c7-e02f73b7dfb2,2026-08-07T19:28:28.796615+00:00,Suggest debugging steps for a Python import error.,B,Synthetic demo response for Variant B.,98,up,1,0.825
+0338b731-7015-4034-9c1e-5746384faaa5,2026-08-07T19:41:28.796615+00:00,Explain recursion in Python with a simple example.,B,Synthetic demo response for Variant B.,115,up,1,0.783
+4b63c348-219c-438a-9e63-2ae1b98b6648,2026-08-07T19:54:28.796615+00:00,Suggest debugging steps for a Python import error.,B,Synthetic demo response for Variant B.,139,up,1,0.756
+8bcf753f-7120-4f51-9800-4171e33ef248,2026-08-07T20:07:28.796615+00:00,Summarize the difference between SQL and NoSQL.,A,Synthetic demo response for Variant A.,125,up,0,0.685
+0f74344c-e0df-49be-894b-66ff84974c09,2026-08-07T20:20:28.796615+00:00,Explain what an API is in simple terms.,A,Synthetic demo response for Variant A.,104,up,0,0.645
+95429096-347e-4384-8e70-60570a773bdf,2026-08-07T20:33:28.796615+00:00,Explain recursion in Python with a simple example.,A,Synthetic demo response for Variant A.,95,down,1,0.728
+a19840cd-c26c-44f2-ad2b-8ce5d905a4e3,2026-08-07T20:46:28.796615+00:00,Create a short study plan for learning FastAPI.,B,Synthetic demo response for Variant B.,102,up,1,0.712
+ca7cd94f-0c4b-4f89-8363-2ca2c251e536,2026-08-07T20:59:28.796615+00:00,Explain recursion in Python with a simple example.,A,Synthetic demo response for Variant A.,147,up,0,0.701
+e30ee6cb-59d4-4280-bda8-97009e267ad8,2026-08-07T21:12:28.796615+00:00,Summarize the difference between SQL and NoSQL.,B,Synthetic demo response for Variant B.,115,down,1,0.673
+8e8d6c7f-0f39-4b48-bfb7-3944611945b0,2026-08-07T21:25:28.796615+00:00,Summarize the difference between SQL and NoSQL.,A,Synthetic demo response for Variant A.,148,up,1,0.683
+9e0b9fa5-89db-456b-875e-e67444b39361,2026-08-07T21:38:28.796615+00:00,Suggest debugging steps for a Python import error.,B,Synthetic demo response for Variant B.,139,up,0,0.879
+2d1f19fe-250d-4668-b9cb-6c173a0e926a,2026-08-07T21:51:28.796615+00:00,Explain what an API is in simple terms.,B,Synthetic demo response for Variant B.,143,up,1,0.978
+a2347d81-6826-44c9-ba97-b1c3c8deeb21,2026-08-07T22:04:28.796615+00:00,Summarize the difference between SQL and NoSQL.,B,Synthetic demo response for Variant B.,130,up,1,0.859
+22d2e8aa-df55-416d-ba7e-9827de0626a4,2026-08-07T22:17:28.796615+00:00,Explain recursion in Python with a simple example.,A,Synthetic demo response for Variant A.,136,up,1,0.792
+0f2531d2-5a0c-45dc-826d-f9344f96cf4e,2026-08-07T22:30:28.796615+00:00,Give three interview tips for a software engineering student.,B,Synthetic demo response for Variant B.,86,up,1,0.647
+342db3b3-14b5-4d1b-9aff-4d9b96114403,2026-08-07T22:43:28.796615+00:00,Suggest debugging steps for a Python import error.,A,Synthetic demo response for Variant A.,111,up,0,0.827
+2a270fb9-078f-445e-b31d-e3b7b9914a81,2026-08-07T22:56:28.796615+00:00,Explain what an API is in simple terms.,B,Synthetic demo response for Variant B.,104,up,1,0.742
+1d2665ee-50e4-4eb8-8e4e-f5eeb823e050,2026-08-07T23:09:28.796615+00:00,Explain what an API is in simple terms.,A,Synthetic demo response for Variant A.,132,up,1,0.743
+efcd9d7d-f83c-4216-a171-52f91c8c1d79,2026-08-07T23:22:28.796615+00:00,Summarize the difference between SQL and NoSQL.,A,Synthetic demo response for Variant A.,111,up,1,0.902
+e773cab3-8129-40e7-bb1b-21d28aa43467,2026-08-07T23:35:28.796615+00:00,Explain what an API is in simple terms.,A,Synthetic demo response for Variant A.,107,up,1,0.772
+9eab9bc7-d6df-4ad9-b943-249f2825c259,2026-08-07T23:48:28.796615+00:00,Suggest debugging steps for a Python import error.,B,Synthetic demo response for Variant B.,106,up,1,0.83
+ccd4a9f4-51fb-445b-bfe7-2ea106830e31,2026-08-08T00:01:28.796615+00:00,Suggest debugging steps for a Python import error.,A,Synthetic demo response for Variant A.,100,up,1,0.611
+0d3d57bc-ceb1-4f93-abe1-7def20b976d5,2026-08-08T00:14:28.796615+00:00,Give three interview tips for a software engineering student.,A,Synthetic demo response for Variant A.,115,up,1,0.684
+db1dcd91-6221-485b-abac-d385e3855ea5,2026-08-08T00:27:28.796615+00:00,Explain recursion in Python with a simple example.,B,Synthetic demo response for Variant B.,71,up,1,0.848
+9a98075f-ee45-432a-8183-ae80788ca451,2026-08-08T00:40:28.796615+00:00,Explain recursion in Python with a simple example.,A,Synthetic demo response for Variant A.,184,up,0,0.825
+899b94df-1394-4141-8f8b-1ea665befe79,2026-08-08T00:53:28.796615+00:00,Give three interview tips for a software engineering student.,B,Synthetic demo response for Variant B.,127,down,0,0.89
+6cbfd727-98ce-4f2d-a914-a179489a8727,2026-08-08T01:06:28.796615+00:00,Create a short study plan for learning FastAPI.,B,Synthetic demo response for Variant B.,136,up,0,0.811
+ea191f04-627c-4831-b629-6175eeefc4db,2026-08-08T01:19:28.796615+00:00,Create a short study plan for learning FastAPI.,A,Synthetic demo response for Variant A.,111,down,0,0.615
+e947fb68-d432-486b-98db-941ad418b1b1,2026-08-08T01:32:28.796615+00:00,Suggest debugging steps for a Python import error.,A,Synthetic demo response for Variant A.,80,down,1,0.682
+cfad928e-fe62-4e41-8b6c-068f610ef051,2026-08-08T01:45:28.796615+00:00,Explain recursion in Python with a simple example.,A,Synthetic demo response for Variant A.,128,up,1,0.682
+135d036c-1a48-493d-ab0b-1df6f89fcfc3,2026-08-08T01:58:28.796615+00:00,Give three interview tips for a software engineering student.,B,Synthetic demo response for Variant B.,87,up,1,0.743
+f54465a2-f82a-4f29-8160-f4fb45757e2f,2026-08-08T02:11:28.796615+00:00,Explain recursion in Python with a simple example.,A,Synthetic demo response for Variant A.,99,up,0,0.719
+19b29020-60f0-4228-863a-025a557fcdc5,2026-08-08T02:24:28.796615+00:00,Suggest debugging steps for a Python import error.,A,Synthetic demo response for Variant A.,118,up,1,0.708
+7eb61c9c-0695-4b79-b50b-a53c9156c66e,2026-08-08T02:37:28.796615+00:00,Explain recursion in Python with a simple example.,A,Synthetic demo response for Variant A.,90,up,1,0.66
+55e3de73-b763-4a22-84a4-7a2cfd1944ff,2026-08-08T02:50:28.796615+00:00,Explain what an API is in simple terms.,A,Synthetic demo response for Variant A.,127,up,1,0.788
+308b4fbc-5795-4e31-a3c8-572005af0563,2026-08-08T03:03:28.796615+00:00,Give three interview tips for a software engineering student.,A,Synthetic demo response for Variant A.,120,down,0,0.677
+2936b474-740d-487d-87ff-8e0a4e723801,2026-08-08T03:16:28.796615+00:00,Explain what an API is in simple terms.,A,Synthetic demo response for Variant A.,144,up,1,0.715
+0db139fe-149a-41c2-9c25-db9b67a69a4b,2026-08-08T03:29:28.796615+00:00,Give three interview tips for a software engineering student.,A,Synthetic demo response for Variant A.,78,up,0,0.568
+f17646f5-6328-4768-a8ff-5b2be81ed2b3,2026-08-08T03:42:28.796615+00:00,Give three interview tips for a software engineering student.,A,Synthetic demo response for Variant A.,115,down,0,0.784
+f85fc3bd-3432-4a1f-9ae5-0c9a16c7f8a3,2026-08-08T03:55:28.796615+00:00,Explain recursion in Python with a simple example.,B,Synthetic demo response for Variant B.,112,up,1,0.902
+59df1d5b-0a65-4ed1-a420-a7fb237e6f3e,2026-08-08T04:08:28.796615+00:00,Suggest debugging steps for a Python import error.,A,Synthetic demo response for Variant A.,142,up,1,0.733
+fc56567a-ec58-4637-9fd5-918eebf534c0,2026-08-08T04:21:28.796615+00:00,Explain recursion in Python with a simple example.,B,Synthetic demo response for Variant B.,107,up,1,0.711
+203d40d3-982e-465b-b56f-eef3716c20a2,2026-08-08T04:34:28.796615+00:00,Explain what an API is in simple terms.,A,Synthetic demo response for Variant A.,64,down,0,0.687
+7c600c77-810f-46f2-b776-51f66e71321e,2026-08-08T04:47:28.796615+00:00,Explain recursion in Python with a simple example.,B,Synthetic demo response for Variant B.,81,up,1,0.95
+fe22ad49-5d05-49b1-9868-c161e2a6ebb6,2026-08-08T05:00:28.796615+00:00,Create a short study plan for learning FastAPI.,B,Synthetic demo response for Variant B.,145,up,1,0.894
+a10dc104-9b02-42b5-82be-75263d0b8e40,2026-08-08T05:13:28.796615+00:00,Give three interview tips for a software engineering student.,B,Synthetic demo response for Variant B.,116,down,1,0.857
+b16ac656-2070-406c-9459-ac7912cd0087,2026-08-08T05:26:28.796615+00:00,Suggest debugging steps for a Python import error.,B,Synthetic demo response for Variant B.,89,up,1,0.971
+067920e2-f031-4efe-b4ed-61500f0f8eca,2026-08-08T05:39:28.796615+00:00,Explain recursion in Python with a simple example.,B,Synthetic demo response for Variant B.,117,up,0,0.773
+a193d1b7-bbae-4a6b-b7ab-0a044fe3c368,2026-08-08T05:52:28.796615+00:00,Give three interview tips for a software engineering student.,B,Synthetic demo response for Variant B.,96,down,1,0.827
+b25c2a07-3edf-410c-9173-e9baf40d03cb,2026-08-08T06:05:28.796615+00:00,Summarize the difference between SQL and NoSQL.,A,Synthetic demo response for Variant A.,103,up,0,0.76
+02a7b6de-26cc-4e13-9c85-274b5976486d,2026-08-08T06:18:28.796615+00:00,Explain recursion in Python with a simple example.,A,Synthetic demo response for Variant A.,115,up,1,0.67
+2f8e0eb9-5b8c-45f5-942c-e7d6621dbb7c,2026-08-08T06:31:28.796615+00:00,Explain recursion in Python with a simple example.,A,Synthetic demo response for Variant A.,121,up,0,0.715
+f1465275-2408-407c-a3ec-219b840eb684,2026-08-08T06:44:28.796615+00:00,Explain recursion in Python with a simple example.,B,Synthetic demo response for Variant B.,56,up,1,0.9
+0ec91478-6229-4cb9-8f3d-4018861e5200,2026-08-08T06:57:28.796615+00:00,Explain what an API is in simple terms.,A,Synthetic demo response for Variant A.,104,up,1,0.726
+d4053455-a968-40e0-9a79-aa5536bfe153,2026-08-08T07:10:28.796615+00:00,Suggest debugging steps for a Python import error.,B,Synthetic demo response for Variant B.,122,up,0,0.89
+b342858e-4329-4998-af29-419b34146747,2026-08-08T07:23:28.796615+00:00,Explain what an API is in simple terms.,B,Synthetic demo response for Variant B.,148,up,1,0.931
+f1ec695c-f958-4651-9a35-2843e2c33145,2026-08-08T07:36:28.796615+00:00,Create a short study plan for learning FastAPI.,A,Synthetic demo response for Variant A.,101,up,1,0.77
+0084398b-a3aa-44c6-a6c3-5b92d3848a1b,2026-08-08T07:49:28.796615+00:00,Create a short study plan for learning FastAPI.,B,Synthetic demo response for Variant B.,128,up,1,0.902
+22294980-65e8-4ad1-babb-4dbb12b2ad93,2026-08-08T08:02:28.796615+00:00,Suggest debugging steps for a Python import error.,B,Synthetic demo response for Variant B.,88,up,1,0.855
+e81f753f-4dcc-466b-8922-37fcd6de1e98,2026-08-08T08:15:28.796615+00:00,Suggest debugging steps for a Python import error.,A,Synthetic demo response for Variant A.,66,up,1,0.72
+3613440f-08bb-46ff-891d-a6ad6f8c02b3,2026-08-08T08:28:28.796615+00:00,Give three interview tips for a software engineering student.,A,Synthetic demo response for Variant A.,91,up,1,0.676
+9faf4b4a-75ce-42a4-9136-c89eecac1cee,2026-08-08T08:41:28.796615+00:00,Create a short study plan for learning FastAPI.,B,Synthetic demo response for Variant B.,131,up,1,0.819
+b4e135bb-7a60-449c-9fe0-24d6f62ec051,2026-08-08T08:54:28.796615+00:00,Suggest debugging steps for a Python import error.,B,Synthetic demo response for Variant B.,136,up,0,0.741
+1b3ed219-d89b-4e89-a5e2-a78b65e78345,2026-08-08T09:07:28.796615+00:00,Explain recursion in Python with a simple example.,B,Synthetic demo response for Variant B.,113,up,1,0.803
+f33a5743-b265-493c-984a-765a35705c4a,2026-08-08T09:20:28.796615+00:00,Explain what an API is in simple terms.,B,Synthetic demo response for Variant B.,106,down,1,0.726
+99259d81-a67b-4ff6-8b56-5a67ac2c81de,2026-08-08T09:33:28.796615+00:00,Explain what an API is in simple terms.,A,Synthetic demo response for Variant A.,115,up,0,0.617
+01b9bfa3-c8b4-4fff-83d8-b44d0019e2e6,2026-08-08T09:46:28.796615+00:00,Explain what an API is in simple terms.,B,Synthetic demo response for Variant B.,88,down,0,0.727
+ab81298f-ee85-4cec-bd9d-13ffa1300a82,2026-08-08T09:59:28.796615+00:00,Create a short study plan for learning FastAPI.,A,Synthetic demo response for Variant A.,128,up,0,0.864
+cd66b54a-b59d-44e0-a808-3a5f7524da45,2026-08-08T10:12:28.796615+00:00,Suggest debugging steps for a Python import error.,A,Synthetic demo response for Variant A.,107,up,1,0.633
+768efee4-357f-4549-9065-ec3d889f4c77,2026-08-08T10:25:28.796615+00:00,Explain what an API is in simple terms.,A,Synthetic demo response for Variant A.,106,down,1,0.802
+64555589-4749-4f67-8020-e1e3d9b8a992,2026-08-08T10:38:28.796615+00:00,Create a short study plan for learning FastAPI.,A,Synthetic demo response for Variant A.,113,up,1,0.775
+5d7ed927-e85f-4ee3-b296-ae7352181469,2026-08-08T10:51:28.796615+00:00,Explain what an API is in simple terms.,A,Synthetic demo response for Variant A.,111,up,1,0.81
+3cb2d7ef-9d31-4e7c-bd01-b1290c9fef2f,2026-08-08T11:04:28.796615+00:00,Summarize the difference between SQL and NoSQL.,B,Synthetic demo response for Variant B.,92,down,1,0.768
+a0345f7a-aef8-4b8d-bed4-0fee62e3378b,2026-08-08T11:17:28.796615+00:00,Suggest debugging steps for a Python import error.,A,Synthetic demo response for Variant A.,119,down,1,0.645
+3fefa4a6-cc8f-481a-89c3-237f01b43b57,2026-08-08T11:30:28.796615+00:00,Explain recursion in Python with a simple example.,B,Synthetic demo response for Variant B.,119,up,1,0.894
+900b9152-2b8a-4d60-8d06-e295fe324b12,2026-08-08T11:43:28.796615+00:00,Give three interview tips for a software engineering student.,A,Synthetic demo response for Variant A.,98,down,0,0.579
+1b418a4a-a19d-401b-9df8-ba6d533b4940,2026-08-08T11:56:28.796615+00:00,Explain recursion in Python with a simple example.,B,Synthetic demo response for Variant B.,87,down,1,0.746
+f5d959af-72d3-4cb8-8f97-022bafc15bfb,2026-08-08T12:09:28.796615+00:00,Give three interview tips for a software engineering student.,B,Synthetic demo response for Variant B.,135,up,1,0.834
+1088995b-d2a0-484e-bc0b-86de8e55c9a5,2026-08-08T12:22:28.796615+00:00,Create a short study plan for learning FastAPI.,A,Synthetic demo response for Variant A.,95,down,1,0.924
+e39ded22-085e-4ab4-98ee-782e1de7aadb,2026-08-08T12:35:28.796615+00:00,Summarize the difference between SQL and NoSQL.,A,Synthetic demo response for Variant A.,25,up,1,0.645
+6d3a2e04-5a3e-417c-bbb0-c4e10d54debe,2026-08-08T12:48:28.796615+00:00,Give three interview tips for a software engineering student.,A,Synthetic demo response for Variant A.,110,down,1,0.735
+8ba94408-8478-437b-8879-72a48dcb7cb4,2026-08-08T13:01:28.796615+00:00,Explain what an API is in simple terms.,A,Synthetic demo response for Variant A.,127,up,1,0.815
+4e640141-8b96-4ca7-9e3e-faa426cba0c8,2026-08-08T13:14:28.796615+00:00,Suggest debugging steps for a Python import error.,B,Synthetic demo response for Variant B.,94,up,1,0.89
+a9a8f66b-e2db-40d0-a5d8-6fe5c74b7f26,2026-08-08T13:27:28.796615+00:00,Summarize the difference between SQL and NoSQL.,B,Synthetic demo response for Variant B.,104,up,0,0.908
+671ee5ac-9b3e-4405-ab04-bf4c7d87d3a7,2026-08-08T13:40:28.796615+00:00,Explain what an API is in simple terms.,B,Synthetic demo response for Variant B.,128,up,0,0.791
+2d34062d-ca9b-4247-84c5-48fac322aa3a,2026-08-08T13:53:28.796615+00:00,Explain what an API is in simple terms.,B,Synthetic demo response for Variant B.,121,up,1,0.656
+608f42a7-6d45-48e2-b368-67881acdafec,2026-08-08T14:06:28.796615+00:00,Suggest debugging steps for a Python import error.,B,Synthetic demo response for Variant B.,141,up,0,0.835
+2eb0cde3-ebda-4bcf-bf22-126677b612ef,2026-08-08T14:19:28.796615+00:00,Explain recursion in Python with a simple example.,A,Synthetic demo response for Variant A.,128,up,1,0.609
+11bad16d-7fb7-4efd-bfac-d277743b0e85,2026-08-08T14:32:28.796615+00:00,Give three interview tips for a software engineering student.,A,Synthetic demo response for Variant A.,92,down,1,0.742
+f41e809a-304d-40d6-9840-7494ed9e4b2a,2026-08-08T14:45:28.796615+00:00,Create a short study plan for learning FastAPI.,B,Synthetic demo response for Variant B.,124,up,0,0.717
+d04119b4-51eb-4e3b-844f-3eb491b0c6ab,2026-08-08T14:58:28.796615+00:00,Explain recursion in Python with a simple example.,A,Synthetic demo response for Variant A.,97,up,0,0.784
+86d4a86a-51dd-4364-abca-5b521e8474b4,2026-08-08T15:11:28.796615+00:00,Summarize the difference between SQL and NoSQL.,A,Synthetic demo response for Variant A.,75,down,1,0.68
+774763ab-3d26-4619-8c51-32e87119418a,2026-08-08T15:24:28.796615+00:00,Summarize the difference between SQL and NoSQL.,A,Synthetic demo response for Variant A.,114,up,0,0.869
+9c80639d-c528-4682-bf88-217cc5b12293,2026-08-08T15:37:28.796615+00:00,Give three interview tips for a software engineering student.,A,Synthetic demo response for Variant A.,80,down,1,0.697
+58b38c4f-97ca-4cd2-b95e-88db93343360,2026-08-08T15:50:28.796615+00:00,Suggest debugging steps for a Python import error.,A,Synthetic demo response for Variant A.,106,up,0,0.608
+40347d21-5017-4bd4-a753-9e31b910a2a3,2026-08-08T16:03:28.796615+00:00,Give three interview tips for a software engineering student.,B,Synthetic demo response for Variant B.,108,up,1,0.888
+934b27ef-4f9a-4778-9047-e7d6394222b0,2026-08-08T16:16:28.796615+00:00,Suggest debugging steps for a Python import error.,A,Synthetic demo response for Variant A.,82,up,1,0.714
+66af1d59-9f8d-40a6-97ba-39dded295ef3,2026-08-08T16:29:28.796615+00:00,Suggest debugging steps for a Python import error.,B,Synthetic demo response for Variant B.,109,up,1,0.864
+523ef288-768a-479a-8f4d-6922b01041f6,2026-08-08T16:42:28.796615+00:00,Give three interview tips for a software engineering student.,A,Synthetic demo response for Variant A.,106,up,1,0.679
+0a8e80d0-82bd-4b88-b76a-6c183904a204,2026-08-08T16:55:28.796615+00:00,Explain recursion in Python with a simple example.,B,Synthetic demo response for Variant B.,116,up,1,0.702
+ca2eef94-705a-49d5-8d68-c2a5f1dc9c48,2026-08-08T17:08:28.796615+00:00,Give three interview tips for a software engineering student.,B,Synthetic demo response for Variant B.,103,up,1,0.929
+f94ad1f0-89e2-4297-b2e2-6312dc68aa76,2026-08-08T17:21:28.796615+00:00,Create a short study plan for learning FastAPI.,A,Synthetic demo response for Variant A.,101,up,0,0.691
+38f7ff78-67c4-4cf7-afaa-6d4fc8e6bf3e,2026-08-08T17:34:28.796615+00:00,Explain recursion in Python with a simple example.,A,Synthetic demo response for Variant A.,85,up,1,0.74
+d3834bc4-e562-4c2f-a93e-59601b443b9c,2026-08-08T17:47:28.796615+00:00,Explain what an API is in simple terms.,A,Synthetic demo response for Variant A.,128,up,0,0.767
+5d74cc51-bfa5-46bc-a2e6-ed005b5b8837,2026-08-08T18:00:28.796615+00:00,Give three interview tips for a software engineering student.,B,Synthetic demo response for Variant B.,97,up,1,0.784
+3b7ae6ab-65b8-4389-a186-f5749d41c618,2026-08-08T18:13:28.796615+00:00,Explain what an API is in simple terms.,A,Synthetic demo response for Variant A.,108,up,0,0.675
+737dfe81-7a05-4e01-8057-9586e0062767,2026-08-08T18:26:28.796615+00:00,Explain what an API is in simple terms.,A,Synthetic demo response for Variant A.,85,up,0,0.685
+c03e06e7-aa9b-4a26-a000-5b32f7fda648,2026-08-08T18:39:28.796615+00:00,Give three interview tips for a software engineering student.,B,Synthetic demo response for Variant B.,129,up,1,0.792
+fe626279-4277-4e66-87cf-4c2bc611bbbd,2026-08-08T18:52:28.796615+00:00,Create a short study plan for learning FastAPI.,A,Synthetic demo response for Variant A.,92,up,1,0.715
+ea84a76a-daec-45c6-8441-1a73cbedd4d1,2026-08-08T19:05:28.796615+00:00,Suggest debugging steps for a Python import error.,A,Synthetic demo response for Variant A.,109,up,1,0.854
