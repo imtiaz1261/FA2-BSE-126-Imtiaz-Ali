@@ -1,0 +1,7 @@
+# NOTE: pinned below 1.0 -- LangChain 1.0 moved AgentExecutor /
+# create_tool_calling_agent out of langchain.agents into a separate
+# langchain-classic package. This project uses the pre-1.0 API.
+langchain>=0.3.0,<1.0
+langchain-core>=0.3.0,<1.0
+langchain-groq>=0.2.0,<0.3
+python-dotenv>=1.0.1
