@@ -1,0 +1,41 @@
+# --- Core ---
+pydantic>=2.9.0
+pydantic-settings>=2.6.0
+python-dotenv>=1.0.1
+
+# --- Chunking (LangChain text splitter only — not the full framework) ---
+langchain-text-splitters>=0.3.2
+
+# --- Vector databases ---
+chromadb>=0.5.20          # primary backend
+faiss-cpu>=1.9.0           # optional backend
+numpy>=1.26.4
+
+# --- Embeddings + LLM generation ---
+openai>=1.54.0                  # OpenAI embeddings + chat completion
+sentence-transformers>=3.2.1    # local HuggingFace embeddings (default provider)
+
+# --- Document loaders ---
+pypdf>=5.1.0
+python-docx>=1.1.2
+
+# --- Testing ---
+pytest>=8.3.3
+pytest-mock>=3.14.0
+
+# --- Web Framework & Voice ---
+fastapi>=0.115.0
+uvicorn[standard]>=0.32.0
+python-multipart>=0.0.7
+
+# --- Voice I/O ---
+SpeechRecognition>=3.10.0
+pyttsx3>=2.90
+gtts>=2.5.1
+PyAudio>=0.2.14  # May need separate install on some systems
+
+# --- Auth & DB ---
+PyJWT>=2.10.0
+bcrypt>=4.2.0
+sqlalchemy>=2.0.36
+sqlite3  # Built-in

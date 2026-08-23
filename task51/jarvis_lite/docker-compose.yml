@@ -1,0 +1,64 @@
+version: '3.8'
+
+services:
+  # Streamlit Frontend
+  streamlit:
+    build: .
+    ports:
+      - "8501:8501"
+    environment:
+      - PYTHONUNBUFFERED=1
+      - LOG_LEVEL=INFO
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+    depends_on:
+      - chroma
+    command: streamlit run streamlit_app.py --server.port=8501 --server.address=0.0.0.0
+
+  # FastAPI Backend (optional, for future use)
+  api:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - PYTHONUNBUFFERED=1
+      - LOG_LEVEL=INFO
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+    depends_on:
+      - chroma
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    profiles: ["api"]  # Only run if explicitly requested
+
+  # Chroma Vector DB (optional, can use local)
+  chroma:
+    image: ghcr.io/chroma-core/chroma:latest
+    ports:
+      - "8000:8000"
+    environment:
+      - ALLOW_RESET=TRUE
+    volumes:
+      - ./data/vector_db:/chroma/data
+    profiles: ["vector-db"]  # Optional
+
+  # PostgreSQL for user data (optional, can use SQLite)
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_USER=jarvis
+      - POSTGRES_PASSWORD=jarvis_lite
+      - POSTGRES_DB=jarvis_lite
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    profiles: ["database"]  # Optional
+
+volumes:
+  postgres_data:
+
+networks:
+  default:
+    name: jarvis-lite-network

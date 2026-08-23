@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jarvis-Lite | 3D AI Voice Assistant</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- 3D Background Canvas -->
+    <canvas id="canvas3d"></canvas>
+    
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Header with Animated Gradient -->
+        <header class="header">
+            <div class="logo-container">
+                <div class="hologram-logo">
+                    <div class="ring ring-1"></div>
+                    <div class="ring ring-2"></div>
+                    <div class="ring ring-3"></div>
+                    <span class="logo-text">JARVIS</span>
+                </div>
+            </div>
+            <h1 class="title">Jarvis-Lite</h1>
+            <p class="subtitle">Next-Generation AI Voice Assistant</p>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Chat Display -->
+            <section class="chat-section">
+                <div class="chat-window">
+                    <div id="chatContainer" class="chat-messages">
+                        <div class="system-message">
+                            <div class="message-content">
+                                <p>🤖 Jarvis-Lite initialized successfully</p>
+                                <p><small>Ready to assist you. Try asking: "Calculate 2+2" or "Weather in London"</small></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Chat Input -->
+                    <div class="chat-input-area">
+                        <div class="input-wrapper">
+                            <input 
+                                type="text" 
+                                id="userInput" 
+                                class="chat-input" 
+                                placeholder="Type your question or click microphone to speak..."
+                                autocomplete="off"
+                            />
+                            <button id="sendBtn" class="send-button" title="Send message">
+                                <span class="send-icon">→</span>
+                            </button>
+                        </div>
+
+                        <!-- Voice Controls -->
+                        <div class="voice-controls">
+                            <button id="micBtn" class="mic-button" title="Start voice recording">
+                                <span class="mic-icon">🎤</span>
+                                <span class="mic-text">Record</span>
+                            </button>
+                            <button id="volumeBtn" class="volume-button" title="Toggle audio output">
+                                <span class="volume-icon">🔊</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chat Stats Panel -->
+                <aside class="stats-panel">
+                    <div class="stat-box">
+                        <h3>Session Stats</h3>
+                        <div class="stat-item">
+                            <span>Messages:</span>
+                            <strong id="messageCount">0</strong>
+                        </div>
+                        <div class="stat-item">
+                            <span>Tool Used:</span>
+                            <strong id="lastTool">-</strong>
+                        </div>
+                        <div class="stat-item">
+                            <span>Confidence:</span>
+                            <strong id="confidence">-</strong>
+                        </div>
+                    </div>
+
+                    <div class="stat-box">
+                        <h3>Tools Available</h3>
+                        <ul class="tools-list">
+                            <li><span class="tool-icon">🧮</span> Calculator</li>
+                            <li><span class="tool-icon">🌍</span> Weather</li>
+                            <li><span class="tool-icon">📚</span> Document Search</li>
+                            <li><span class="tool-icon">🤖</span> RAG/LLM</li>
+                        </ul>
+                    </div>
+                </aside>
+            </section>
+
+            <!-- Quick Actions -->
+            <section class="quick-actions">
+                <button class="quick-btn" onclick="sendMessage('Calculate 2+2')">
+                    <span class="quick-icon">🧮</span>
+                    <span>Calculate</span>
+                </button>
+                <button class="quick-btn" onclick="sendMessage('Weather in New York')">
+                    <span class="quick-icon">🌍</span>
+                    <span>Weather</span>
+                </button>
+                <button class="quick-btn" onclick="sendMessage('What is a refund?')">
+                    <span class="quick-icon">📚</span>
+                    <span>Search Docs</span>
+                </button>
+                <button class="quick-btn" onclick="sendMessage('Tell me about AI')">
+                    <span class="quick-icon">💡</span>
+                    <span>Ask AI</span>
+                </button>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>Jarvis-Lite v1.0 | Powered by LangChain, ChromaDB, and AI</p>
+            <div class="footer-links">
+                <a href="#settings">Settings</a> • 
+                <a href="#history">History</a> • 
+                <a href="#help">Help</a> • 
+                <a href="#about">About</a>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settingsModal" class="modal">
+        <div class="modal-content">
+            <button class="close-btn">&times;</button>
+            <h2>⚙️ Settings</h2>
+            
+            <div class="settings-group">
+                <label for="memoryType">Memory Type:</label>
+                <select id="memoryType">
+                    <option value="buffer">Buffer (Last N messages)</option>
+                    <option value="summary">Summary (Auto-summarize)</option>
+                </select>
+            </div>
+
+            <div class="settings-group">
+                <label for="voiceBackend">Voice Backend:</label>
+                <select id="voiceBackend">
+                    <option value="gtts">Google TTS (Online)</option>
+                    <option value="pyttsx3">pyttsx3 (Offline)</option>
+                </select>
+            </div>
+
+            <div class="settings-group">
+                <label for="language">Language:</label>
+                <select id="language">
+                    <option value="en">English</option>
+                    <option value="hi">Hindi</option>
+                    <option value="es">Spanish</option>
+                    <option value="fr">French</option>
+                </select>
+            </div>
+
+            <button class="action-btn">Save Settings</button>
+        </div>
+    </div>
+
+    <!-- Audio output element (hidden) -->
+    <audio id="audioOutput"></audio>
+
+    <!-- Three.js and custom script -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
