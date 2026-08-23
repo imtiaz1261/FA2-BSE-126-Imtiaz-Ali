@@ -1,0 +1,15 @@
+{"timestamp": 1786293485.2106967, "task_id": "testing-demo", "action": "run_command", "detail": "pytest -q --junitxml=.codealpha/test-report.xml", "allowed": true, "error": "", "duration_ms": 1604.6800000040093}
+{"timestamp": 1786293485.2618024, "task_id": "testing-demo", "action": "read_file", "detail": ".codealpha/test-report.xml", "allowed": true, "error": null, "duration_ms": null}
+{"timestamp": 1786293485.2653196, "task_id": "testing-demo", "action": "read_file", "detail": "calc.py", "allowed": true, "error": null, "duration_ms": null}
+{"timestamp": 1786293485.2668304, "task_id": "testing-demo", "action": "write_file", "detail": "calc.py (92 bytes)", "allowed": true, "error": null, "duration_ms": null}
+{"timestamp": 1786293486.352957, "task_id": "testing-demo", "action": "run_command", "detail": "pytest -q --junitxml=.codealpha/test-report.xml", "allowed": true, "error": null, "duration_ms": 1084.932600002503}
+{"timestamp": 1786293486.3643615, "task_id": "testing-demo", "action": "read_file", "detail": ".codealpha/test-report.xml", "allowed": true, "error": null, "duration_ms": null}
+{"timestamp": 1786293488.0290675, "task_id": "testing-demo", "action": "run_command", "detail": "coverage run -m pytest -q", "allowed": true, "error": null, "duration_ms": 1663.0548999964958}
+{"timestamp": 1786293488.611996, "task_id": "testing-demo", "action": "run_command", "detail": "coverage json -o .codealpha/coverage.json", "allowed": true, "error": null, "duration_ms": 582.3564000020269}
+{"timestamp": 1786293488.6279876, "task_id": "testing-demo", "action": "read_file", "detail": ".codealpha/coverage.json", "allowed": true, "error": null, "duration_ms": null}
+{"timestamp": 1786293488.6289287, "task_id": "testing-demo", "action": "read_file", "detail": "calc.py", "allowed": true, "error": null, "duration_ms": null}
+{"timestamp": 1786293488.6303053, "task_id": "testing-demo", "action": "write_file", "detail": "calc.py (130 bytes)", "allowed": true, "error": null, "duration_ms": null}
+{"timestamp": 1786293490.443458, "task_id": "testing-demo", "action": "run_command", "detail": "coverage run -m pytest -q", "allowed": true, "error": null, "duration_ms": 1812.4664000060875}
+{"timestamp": 1786293490.903811, "task_id": "testing-demo", "action": "run_command", "detail": "coverage json -o .codealpha/coverage.json", "allowed": true, "error": null, "duration_ms": 459.7572000056971}
+{"timestamp": 1786293490.9258475, "task_id": "testing-demo", "action": "read_file", "detail": ".codealpha/coverage.json", "allowed": true, "error": null, "duration_ms": null}
+{"timestamp": 1786293490.9318569, "task_id": "testing-demo", "action": "destroy", "detail": "testing-demo", "allowed": true, "error": null, "duration_ms": null}

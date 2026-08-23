@@ -1,0 +1,223 @@
+# GitLab CI/CD pipeline using Code Alpha
+
+stages:
+  - code-generation
+  - review
+  - merge
+
+variables:
+  PYTHON_VERSION: '3.10'
+  CODE_ALPHA_REPO: '.'
+  AUTO_APPROVE: 'false'
+
+# Code Generation Stage
+code-alpha-generate:
+  stage: code-generation
+  image: python:${PYTHON_VERSION}
+  
+  script:
+    # Install Code Alpha
+    - pip install -e .
+    - pip install typer rich pydantic fastapi uvicorn
+    
+    # Generate prompt from CI variables or use default
+    - |
+      if [ -z "$CODE_ALPHA_PROMPT" ]; then
+        PROMPT="Improve code quality, add tests, and optimize performance"
+      else
+        PROMPT="$CODE_ALPHA_PROMPT"
+      fi
+    
+    # Run Code Alpha
+    - |
+      codealpha run "$PROMPT" \
+        --repo $CODE_ALPHA_REPO \
+        --auto-approve-low-risk \
+        --max-retries 3 \
+        --json > result.json
+    
+    # Display results
+    - |
+      python << 'EOF'
+      import json
+      with open('result.json') as f:
+        result = json.load(f)
+      
+      print("\n=== Code Alpha Results ===")
+      print(f"Status: {result['status']}")
+      print(f"Files Changed: {result['metrics']['total_edits']}")
+      print(f"Tests: {result['metrics']['passing_tests']}/{result['metrics']['total_tests']}")
+      print(f"Duration: {result['duration_seconds']:.1f}s")
+      print(f"Lines Changed: {result['metrics']['total_lines_changed']}")
+      
+      if result.get('error'):
+        print(f"\nError: {result['error']}")
+      EOF
+  
+  artifacts:
+    reports:
+      junit: junit-results.xml
+      codequality: code-quality.json
+    paths:
+      - result.json
+      - edits.json
+    expire_in: 1 week
+  
+  allow_failure: true
+  
+  only:
+    - merge_requests
+    - main
+    - develop
+    - web  # Allow manual trigger
+
+# Test Results Processing
+process-results:
+  stage: review
+  image: python:${PYTHON_VERSION}
+  
+  script:
+    # Convert results to JUnit format
+    - |
+      python << 'EOF'
+      import json
+      from code_alpha.api.output_formatter import OutputFormatter
+      
+      with open('result.json') as f:
+        result = json.load(f)
+      
+      # Generate JUnit XML
+      formatter = OutputFormatter()
+      junit_xml = formatter.format_junit_xml(result)
+      
+      with open('junit-results.xml', 'w') as f:
+        f.write(junit_xml)
+      
+      print("✅ Generated JUnit report")
+      EOF
+  
+  dependencies:
+    - code-alpha-generate
+  
+  artifacts:
+    reports:
+      junit: junit-results.xml
+  
+  allow_failure: true
+
+# Create Merge Request
+create-mr:
+  stage: merge
+  image: python:${PYTHON_VERSION}
+  
+  before_script:
+    - apt-get update && apt-get install -y git
+    - git config --global user.email "ci@codealpha.local"
+    - git config --global user.name "Code Alpha CI"
+  
+  script:
+    - |
+      if [ -n "$(git status --short)" ]; then
+        git checkout -b code-alpha-improvements-$CI_PIPELINE_ID
+        git add -A
+        git commit -m "chore: Code Alpha improvements ($CI_PIPELINE_ID)"
+        git push -u origin code-alpha-improvements-$CI_PIPELINE_ID
+        
+        # Create MR using GitLab API
+        python << 'EOF'
+        import requests
+        import json
+        import os
+        
+        with open('result.json') as f:
+          result = json.load(f)
+        
+        mr_data = {
+          "title": f"[Code Alpha] Automated improvements",
+          "description": f"""
+        ## 🤖 Code Alpha Results
+        
+        - **Status:** {result['status']}
+        - **Files Changed:** {result['metrics']['total_edits']}
+        - **Tests:** {result['metrics']['passing_tests']}/{result['metrics']['total_tests']}
+        - **Duration:** {result['duration_seconds']:.1f}s
+        
+        This is an automated MR from Code Alpha CI/CD pipeline.
+        Please review carefully before merging.
+        """,
+          "source_branch": f"code-alpha-improvements-{os.environ['CI_PIPELINE_ID']}",
+          "target_branch": os.environ['CI_COMMIT_BRANCH'],
+          "remove_source_branch": True
+        }
+        
+        headers = {
+          "PRIVATE-TOKEN": os.environ['CI_JOB_TOKEN'],
+          "Content-Type": "application/json"
+        }
+        
+        url = f"{os.environ['CI_API_V4_URL']}/projects/{os.environ['CI_PROJECT_ID']}/merge_requests"
+        response = requests.post(url, json=mr_data, headers=headers)
+        
+        if response.status_code == 201:
+          mr = response.json()
+          print(f"✅ Created MR: {mr['web_url']}")
+        else:
+          print(f"Error creating MR: {response.text}")
+        EOF
+      else
+        echo "No changes detected"
+      fi
+  
+  dependencies:
+    - code-alpha-generate
+  
+  only:
+    - merge_requests
+
+# API Server Mode (optional advanced workflow)
+api-server:
+  stage: code-generation
+  image: python:${PYTHON_VERSION}
+  
+  script:
+    - pip install -e .
+    - |
+      # Start API server
+      codealpha api --start &
+      API_PID=$!
+      sleep 5
+      
+      # Submit task
+      TASK_ID=$(curl -X POST http://localhost:8000/tasks \
+        -H "Content-Type: application/json" \
+        -d '{
+          "prompt": "Generate comprehensive test coverage",
+          "repo_path": ".",
+          "auto_approve_low_risk": true
+        }' | python -m json.tool | grep task_id | cut -d'"' -f4)
+      
+      echo "Submitted task: $TASK_ID"
+      
+      # Monitor task
+      while true; do
+        STATUS=$(curl -s http://localhost:8000/tasks/$TASK_ID | python -c "import sys, json; print(json.load(sys.stdin)['status'])")
+        PROGRESS=$(curl -s http://localhost:8000/tasks/$TASK_ID | python -c "import sys, json; print(json.load(sys.stdin)['progress'])")
+        
+        echo "Status: $STATUS, Progress: $PROGRESS%"
+        
+        if [ "$STATUS" = "completed" ] || [ "$STATUS" = "failed" ]; then
+          break
+        fi
+        
+        sleep 5
+      done
+      
+      # Get results
+      curl -s http://localhost:8000/tasks/$TASK_ID > result.json
+      
+      # Clean up
+      kill $API_PID
+  
+  when: manual
+  only:
+    - web

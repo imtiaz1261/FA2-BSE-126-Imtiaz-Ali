@@ -1,0 +1,17 @@
+{
+  "requirements": {
+    "version": 2,
+    "hash": "a391bb771756",
+    "generated_from_hash": null
+  },
+  "design": {
+    "version": 2,
+    "hash": "f58ed8778767",
+    "generated_from_hash": "a391bb771756"
+  },
+  "tasks": {
+    "version": 2,
+    "hash": "67ecd2ea20b6",
+    "generated_from_hash": "f58ed8778767"
+  }
+}

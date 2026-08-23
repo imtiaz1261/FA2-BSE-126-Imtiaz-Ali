@@ -1,0 +1,3 @@
+{"timestamp": 1786293522.9814415, "task_id": "refactor-gate-demo", "action": "run_command", "detail": "pytest -q --junitxml=.codealpha/test-report.xml", "allowed": true, "error": "", "duration_ms": 1044.3175999971572}
+{"timestamp": 1786293522.996576, "task_id": "refactor-gate-demo", "action": "read_file", "detail": ".codealpha/test-report.xml", "allowed": true, "error": null, "duration_ms": null}
+{"timestamp": 1786293523.0026736, "task_id": "refactor-gate-demo", "action": "destroy", "detail": "refactor-gate-demo", "allowed": true, "error": null, "duration_ms": null}

@@ -1,0 +1,82 @@
+# Docker Compose for Code Alpha
+
+version: '3.8'
+
+services:
+  # Code Alpha API Server
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: codealpha-api
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./:/workspace
+      - tasks_storage:/app/.codealpha/tasks
+    environment:
+      - PYTHONUNBUFFERED=1
+      - CODEALPHA_REPO=/workspace
+      - CODEALPHA_STORAGE=/app/.codealpha
+    command: codealpha api --start
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    restart: unless-stopped
+    networks:
+      - codealpha-net
+
+  # Optional: Redis for caching/queuing
+  redis:
+    image: redis:7-alpine
+    container_name: codealpha-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - codealpha-net
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  # Optional: PostgreSQL for persistent storage
+  postgres:
+    image: postgres:15-alpine
+    container_name: codealpha-postgres
+    environment:
+      POSTGRES_DB: codealpha
+      POSTGRES_USER: codealpha
+      POSTGRES_PASSWORD: changeme
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - codealpha-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U codealpha"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  tasks_storage:
+  redis_data:
+  postgres_data:
+
+networks:
+  codealpha-net:
+    driver: bridge
+
+# Usage:
+#   docker-compose up              # Start all services
+#   docker-compose up -d           # Start in background
+#   docker-compose logs -f api     # View logs
+#   docker-compose down            # Stop and remove containers
+#   docker-compose down -v         # Stop and remove volumes
