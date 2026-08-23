@@ -1,0 +1,129 @@
+# Kubernetes Deployment for RAG/Worker Process
+# Independently scalable from API backend
+# Handles document ingestion, embedding generation, and agent jobs
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: chatline-worker
+  namespace: chatline
+  labels:
+    app: chatline
+    component: worker
+    version: v1
+spec:
+  replicas: 2  # Start with 2, HPA will scale based on queue depth
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: chatline
+      component: worker
+  template:
+    metadata:
+      labels:
+        app: chatline
+        component: worker
+        version: v1
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8001"
+        prometheus.io/path: "/metrics"
+    spec:
+      # Pod disruption budget
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: component
+                      operator: In
+                      values:
+                        - worker
+                topologyKey: kubernetes.io/hostname
+
+      # Service account
+      serviceAccountName: chatline-worker
+
+      # Containers
+      containers:
+        - name: worker
+          image: chatline/worker:latest  # Replace with your registry
+          imagePullPolicy: IfNotPresent
+
+          # Ports (metrics only, no health checks for workers)
+          ports:
+            - name: metrics
+              containerPort: 8001
+              protocol: TCP
+
+          # Environment Variables
+          envFrom:
+            - configMapRef:
+                name: chatline-config
+            - secretRef:
+                name: chatline-secrets
+
+          # Resource Limits - Workers may use more memory for processing
+          resources:
+            requests:
+              cpu: 500m
+              memory: 1Gi
+            limits:
+              cpu: 2000m
+              memory: 2Gi
+
+          # Security Context
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            readOnlyRootFilesystem: false
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+
+          # Volume Mounts
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+            - name: cache
+              mountPath: /app/cache
+
+      # Volumes
+      volumes:
+        - name: tmp
+          emptyDir: {}
+        - name: cache
+          emptyDir: {}
+
+      # Pod Security
+      securityContext:
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
+
+      # Restart Policy
+      restartPolicy: Always
+
+      # Termination Grace Period (time to finish processing)
+      terminationGracePeriodSeconds: 60
+
+      # DNS Policy
+      dnsPolicy: ClusterFirst
+
+---
+# ServiceAccount for Worker
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: chatline-worker
+  namespace: chatline
+  labels:
+    app: chatline
+    component: worker

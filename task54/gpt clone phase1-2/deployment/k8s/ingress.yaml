@@ -1,0 +1,161 @@
+# Kubernetes Ingress for routing external traffic
+# Requires ingress controller (nginx-ingress, Traefik, etc.)
+# Uses Cloudflare for additional CDN and DDoS protection
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: chatline-ingress
+  namespace: chatline
+  labels:
+    app: chatline
+    component: ingress
+  annotations:
+    # Ingress class (nginx, traefik, etc. - adjust to your setup)
+    kubernetes.io/ingress.class: nginx
+
+    # HTTPS redirect
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+
+    # Security headers
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      more_set_headers "Strict-Transport-Security: max-age=31536000; includeSubDomains; preload";
+      more_set_headers "X-Content-Type-Options: nosniff";
+      more_set_headers "X-Frame-Options: SAMEORIGIN";
+      more_set_headers "X-XSS-Protection: 1; mode=block";
+      more_set_headers "Referrer-Policy: strict-origin-when-cross-origin";
+
+    # Gzip compression
+    nginx.ingress.kubernetes.io/enable-compression: "true"
+    nginx.ingress.kubernetes.io/compression-types: "text/plain,text/css,text/xml,text/javascript,application/x-javascript,application/xml+rss,application/atom+xml,image/svg+xml"
+
+    # Rate limiting (per IP)
+    nginx.ingress.kubernetes.io/limit-rps: "100"
+    nginx.ingress.kubernetes.io/limit-connections: "10"
+
+    # Timeouts for long-running requests (chat streaming)
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: "600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "600"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
+
+    # Body size for file uploads
+    nginx.ingress.kubernetes.io/proxy-body-size: "50m"
+
+    # CORS (optional - configure as needed)
+    # nginx.ingress.kubernetes.io/enable-cors: "true"
+    # nginx.ingress.kubernetes.io/cors-allow-origin: "https://chatline.example.com"
+
+    # Cloudflare annotations (if using Cloudflare Ingress Controller)
+    # cloudflare.com/email: "your-email@example.com"
+    # cloudflare.com/api-key: "your-cloudflare-api-key"
+    # cloudflare.com/zone-id: "your-zone-id"
+
+spec:
+  tls:
+    - hosts:
+        - chatline.example.com
+        - api.chatline.example.com
+      secretName: chatline-tls
+
+  rules:
+    # Frontend
+    - host: chatline.example.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: chatline-frontend
+                port:
+                  number: 80
+
+    # API Backend
+    - host: api.chatline.example.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: chatline-backend
+                port:
+                  number: 8000
+
+    # Alternative: API routes through main domain
+    - host: chatline.example.com
+      http:
+        paths:
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: chatline-backend
+                port:
+                  number: 8000
+
+---
+# Certificate for HTTPS (using cert-manager with Let's Encrypt)
+# Prerequisites: cert-manager and ClusterIssuer must be installed
+
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: chatline-cert
+  namespace: chatline
+spec:
+  secretName: chatline-tls
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  dnsNames:
+    - chatline.example.com
+    - api.chatline.example.com
+    - "*.chatline.example.com"
+
+---
+# Network Policy for security isolation
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: chatline-network-policy
+  namespace: chatline
+spec:
+  podSelector: {}
+  policyTypes:
+    - Ingress
+    - Egress
+
+  # Allow ingress from ingress controller
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              name: ingress-nginx
+      ports:
+        - protocol: TCP
+          port: 80
+        - protocol: TCP
+          port: 8000
+        - protocol: TCP
+          port: 8001
+
+  # Allow DNS egress
+  egress:
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              name: kube-system
+      ports:
+        - protocol: UDP
+          port: 53
+    # Allow all egress within namespace
+    - to:
+        - podSelector: {}
+    # Allow external HTTPS (for API calls, etc.)
+    - to:
+        - namespaceSelector: {}
+      ports:
+        - protocol: TCP
+          port: 443

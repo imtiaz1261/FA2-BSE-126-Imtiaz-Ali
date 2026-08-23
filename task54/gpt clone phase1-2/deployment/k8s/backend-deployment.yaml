@@ -1,0 +1,192 @@
+# Kubernetes Deployment for FastAPI Backend
+# Manages API server replicas with automatic scaling
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: chatline-backend
+  namespace: chatline
+  labels:
+    app: chatline
+    component: backend
+    version: v1
+spec:
+  replicas: 3  # Start with 3, HPA will scale based on metrics
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0  # Zero downtime deployments
+  selector:
+    matchLabels:
+      app: chatline
+      component: backend
+  template:
+    metadata:
+      labels:
+        app: chatline
+        component: backend
+        version: v1
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8000"
+        prometheus.io/path: "/metrics"
+    spec:
+      # Pod disruption budget for high availability
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: component
+                      operator: In
+                      values:
+                        - backend
+                topologyKey: kubernetes.io/hostname
+
+      # Service account
+      serviceAccountName: chatline-backend
+
+      # Containers
+      containers:
+        - name: backend
+          image: chatline/backend:latest  # Replace with your registry
+          imagePullPolicy: IfNotPresent
+
+          # Ports
+          ports:
+            - name: http
+              containerPort: 8000
+              protocol: TCP
+            - name: metrics
+              containerPort: 8001
+              protocol: TCP
+
+          # Environment Variables
+          envFrom:
+            - configMapRef:
+                name: chatline-config
+            - secretRef:
+                name: chatline-secrets
+
+          # Liveness Probe - Kill pod if unhealthy
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+
+          # Readiness Probe - Remove from load balancer if not ready
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 2
+
+          # Startup Probe - Give app time to start
+          startupProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 0
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 30
+
+          # Resource Limits & Requests
+          resources:
+            requests:
+              cpu: 250m
+              memory: 512Mi
+            limits:
+              cpu: 1000m
+              memory: 1Gi
+
+          # Security Context
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            readOnlyRootFilesystem: false
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+
+          # Volume Mounts
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+            - name: cache
+              mountPath: /app/cache
+
+          # Logging
+          env:
+            - name: LOG_LEVEL
+              value: "INFO"
+
+      # Volumes
+      volumes:
+        - name: tmp
+          emptyDir: {}
+        - name: cache
+          emptyDir: {}
+
+      # Pod Security
+      securityContext:
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
+
+      # Restart Policy
+      restartPolicy: Always
+
+      # Termination Grace Period (time to shutdown gracefully)
+      terminationGracePeriodSeconds: 30
+
+      # DNS Policy
+      dnsPolicy: ClusterFirst
+
+---
+# Service for Backend
+apiVersion: v1
+kind: Service
+metadata:
+  name: chatline-backend
+  namespace: chatline
+  labels:
+    app: chatline
+    component: backend
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 8000
+      targetPort: http
+      protocol: TCP
+    - name: metrics
+      port: 8001
+      targetPort: metrics
+      protocol: TCP
+  selector:
+    app: chatline
+    component: backend
+  sessionAffinity: None
+
+---
+# ServiceAccount for Backend
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: chatline-backend
+  namespace: chatline
+  labels:
+    app: chatline
+    component: backend

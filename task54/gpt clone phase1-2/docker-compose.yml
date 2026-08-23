@@ -1,0 +1,229 @@
+# Docker Compose - Complete local development stack
+# Start with: docker compose up --build
+
+services:
+  # PostgreSQL Database with pgvector
+  postgres:
+    image: pgvector/pgvector:pg15-latest
+    container_name: chatline_postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: chatline
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./deployment/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - chatline
+
+  # Redis Cache & Queue
+  redis:
+    image: redis:7-alpine
+    container_name: chatline_redis
+    command: redis-server --appendonly yes --requirepass redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - chatline
+
+  # MinIO - S3-compatible Object Storage
+  minio:
+    image: minio/minio:latest
+    container_name: chatline_minio
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio_data:/minio_data
+    command: minio server /minio_data --console-address ":9001"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - chatline
+
+  # FastAPI Backend
+  backend:
+    build:
+      context: .
+      dockerfile: deployment/docker/backend.Dockerfile
+    container_name: chatline_backend
+    environment:
+      # App Configuration
+      APP_NAME: "Chatline"
+      ENVIRONMENT: development
+      FRONTEND_URL: "http://localhost:5173"
+      
+      # Database
+      DATABASE_URL: "postgresql+asyncpg://postgres:postgres@postgres:5432/chatline"
+      DATABASE_URL_SYNC: "postgresql+psycopg2://postgres:postgres@postgres:5432/chatline"
+      
+      # Redis
+      REDIS_URL: "redis://:redis@redis:6379/0"
+      
+      # JWT
+      JWT_SECRET_KEY: "dev-secret-key-change-in-production"
+      JWT_ALGORITHM: "HS256"
+      ACCESS_TOKEN_EXPIRE_MINUTES: 15
+      REFRESH_TOKEN_EXPIRE_DAYS: 7
+      
+      # Cookies
+      COOKIE_SECURE: "false"
+      COOKIE_DOMAIN: "localhost"
+      
+      # OAuth (configure with your providers)
+      GOOGLE_CLIENT_ID: ""
+      GOOGLE_CLIENT_SECRET: ""
+      GITHUB_CLIENT_ID: ""
+      GITHUB_CLIENT_SECRET: ""
+      
+      # S3/MinIO
+      S3_ENDPOINT: "http://minio:9000"
+      S3_ACCESS_KEY: "minioadmin"
+      S3_SECRET_KEY: "minioadmin"
+      S3_BUCKET: "chatline"
+      S3_REGION: "us-east-1"
+      
+      # Stripe (leave empty for development)
+      STRIPE_SECRET_KEY: ""
+      STRIPE_PUBLISHABLE_KEY: ""
+      STRIPE_WEBHOOK_SECRET: ""
+      STRIPE_PLUS_PRICE_ID: ""
+      STRIPE_PRO_PRICE_ID: ""
+      
+      # Plan Limits
+      FREE_DAILY_MESSAGES: 20
+      PLUS_DAILY_MESSAGES: 300
+      PRO_DAILY_MESSAGES: 1000
+      
+      # Memory & Personalization
+      MEMORY_ENABLED: "true"
+      MEMORY_EXTRACTION_MODEL: "gpt-4"
+      MEMORY_EXTRACTION_TEMPERATURE: "0.3"
+      MEMORY_RETENTION_DAYS: 365
+      MEMORY_MAX_ITEMS: 1000
+      MEMORY_CONTEXT_INJECTION_COUNT: 5
+      MEMORY_RETRIEVAL_THRESHOLD: 0.5
+      
+      # Embeddings
+      EMBEDDINGS_MODEL: "text-embedding-3-small"
+      
+      # Logging
+      LOG_LEVEL: DEBUG
+      SENTRY_DSN: ""
+      SENTRY_ENVIRONMENT: development
+      
+      # Rate Limiting
+      LOGIN_RATE_LIMIT: "5/minute"
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    volumes:
+      - ./backend:/app:cached
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - chatline
+
+  # RAG/Worker Process
+  worker:
+    build:
+      context: .
+      dockerfile: deployment/docker/worker.Dockerfile
+    container_name: chatline_worker
+    environment:
+      # Same as backend
+      ENVIRONMENT: development
+      DATABASE_URL: "postgresql+asyncpg://postgres:postgres@postgres:5432/chatline"
+      REDIS_URL: "redis://:redis@redis:6379/0"
+      S3_ENDPOINT: "http://minio:9000"
+      S3_ACCESS_KEY: "minioadmin"
+      S3_SECRET_KEY: "minioadmin"
+      S3_BUCKET: "chatline"
+      LOG_LEVEL: DEBUG
+      SENTRY_DSN: ""
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    volumes:
+      - ./backend:/app:cached
+    command: python -m app.worker.main
+    networks:
+      - chatline
+
+  # React Frontend
+  frontend:
+    build:
+      context: .
+      dockerfile: deployment/docker/frontend.Dockerfile
+      target: builder
+    container_name: chatline_frontend
+    environment:
+      VITE_API_BASE_URL: "http://localhost:8000"
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app:cached
+      - /app/node_modules
+    command: npm run dev -- --host
+    networks:
+      - chatline
+
+  # Nginx Reverse Proxy (optional - for production-like setup)
+  # Uncomment to test the production stack locally
+  # nginx:
+  #   build:
+  #     context: .
+  #     dockerfile: deployment/docker/frontend.Dockerfile
+  #   container_name: chatline_nginx
+  #   ports:
+  #     - "80:80"
+  #   depends_on:
+  #     - backend
+  #     - frontend
+  #   volumes:
+  #     - ./deployment/nginx:/etc/nginx:ro
+  #   networks:
+  #     - chatline
+
+volumes:
+  postgres_data:
+  redis_data:
+  minio_data:
+
+networks:
+  chatline:
+    driver: bridge

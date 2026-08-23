@@ -1,0 +1,12 @@
+# Kubernetes namespace for the application
+# This isolates all resources for the Chatline application
+
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: chatline
+  labels:
+    name: chatline
+    environment: production
+  annotations:
+    description: "Production namespace for Chatline AI Chat SaaS"

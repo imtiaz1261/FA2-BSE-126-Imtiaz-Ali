@@ -1,0 +1,67 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* -------------------------------------------------------------------------
+   Theme variables. `.dark` on <html> or any ancestor flips the palette.
+   These mirror tailwind.config.ts so raw CSS (e.g. box-shadow hairline)
+   can reference the live theme value.
+------------------------------------------------------------------------- */
+:root {
+  --canvas: #ffffff;
+  --canvas-panel: #f7f7f8;
+  --ink: #202123;
+  --border: #d9d9e3;
+  --accent: #0e8a6d;
+  --accent-text: #0b7a5e; /* AA-safe accent for small text/links on light */
+}
+
+.dark {
+  --canvas: #202123;
+  --canvas-panel: #343541;
+  --canvas-alt: #444654;
+  --ink: #ececf1;
+  --border: #4d4d4f;
+  --accent: #0e8a6d;
+  --accent-text: #16a382; /* AA-safe accent for small text/links on dark */
+}
+
+html,
+body {
+  background-color: var(--canvas);
+  color: var(--ink);
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+* {
+  border-color: var(--border);
+}
+
+/* Visible keyboard focus everywhere, respecting the accent color */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Chat code block baseline (used by markdown renderer in the chat module) */
+pre code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 13px;
+  line-height: 1.5;
+}
