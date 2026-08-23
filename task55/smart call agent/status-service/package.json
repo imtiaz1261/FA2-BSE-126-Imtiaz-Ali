@@ -1,0 +1,16 @@
+{
+  "name": "status-service",
+  "version": "1.0.0",
+  "description": "Application Status Tracking — post-booking status lifecycle, voice/SMS status-check flows, milestone notifications (Module 9)",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "pg": "^8.12.0",
+    "twilio": "^5.1.1",
+    "dotenv": "^16.4.5"
+  }
+}

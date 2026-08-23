@@ -1,0 +1,17 @@
+{
+  "name": "telephony-gateway",
+  "version": "1.0.0",
+  "description": "Call routing layer for the Smart Appointment Call Agent (Module 2)",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "twilio": "^5.1.1",
+    "ws": "^8.17.0",
+    "redis": "^4.6.14",
+    "dotenv": "^16.4.5"
+  }
+}

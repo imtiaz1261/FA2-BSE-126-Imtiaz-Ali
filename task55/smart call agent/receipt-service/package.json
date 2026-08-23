@@ -1,0 +1,19 @@
+{
+  "name": "receipt-service",
+  "version": "1.0.0",
+  "description": "Digital Receipt Generation — branded PDF receipts with QR check-in and signed download URLs (Module 8)",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "pg": "^8.12.0",
+    "pdfkit": "^0.15.0",
+    "qrcode": "^1.5.4",
+    "@aws-sdk/client-s3": "^3.620.0",
+    "@aws-sdk/s3-request-presigner": "^3.620.0",
+    "dotenv": "^16.4.5"
+  }
+}

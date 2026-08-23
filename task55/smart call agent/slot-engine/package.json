@@ -1,0 +1,17 @@
+{
+  "name": "slot-engine",
+  "version": "1.0.0",
+  "description": "Slot Availability Engine — capacity calendar, availability queries, and hold/confirm reservation (Module 5)",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
+    "generate-slots": "node src/scripts/generateSlots.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "pg": "^8.12.0",
+    "redis": "^4.6.14",
+    "dotenv": "^16.4.5"
+  }
+}
