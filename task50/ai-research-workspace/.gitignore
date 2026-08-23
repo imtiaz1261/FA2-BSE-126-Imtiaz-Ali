@@ -1,0 +1,35 @@
+# Environments
+.env
+*.env
+!.env.example
+venv/
+.venv/
+env/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Streamlit
+.streamlit/secrets.toml
+
+# Data / logs
+*.log
+logs/
+data/
+*.db
+*.sqlite3
+backend/storage/documents/*
+!backend/storage/documents/.gitkeep
+
+# OS / editor
+.DS_Store
+.vscode/
+.idea/
+
+# Docker
+docker-compose.override.yml
