@@ -1,0 +1,226 @@
+{
+  "name": "code-alpha-agent",
+  "displayName": "Code Alpha Agent",
+  "description": "VS Code extension interface for autonomous Code Alpha spec-driven coding agent",
+  "version": "0.1.0",
+  "publisher": "codealpha",
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Debuggers",
+    "Other"
+  ],
+  "activationEvents": [
+    "onStartupFinished",
+    "onCommand:codeAlphaAgent.activate",
+    "onView:codeAlphaTaskPanel"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "codeAlphaAgent.activate",
+        "title": "Code Alpha: Activate Agent",
+        "category": "Code Alpha"
+      },
+      {
+        "command": "codeAlphaAgent.pause",
+        "title": "Code Alpha: Pause Current Task",
+        "category": "Code Alpha",
+        "icon": "$(debug-pause)"
+      },
+      {
+        "command": "codeAlphaAgent.resume",
+        "title": "Code Alpha: Resume Task",
+        "category": "Code Alpha",
+        "icon": "$(debug-continue)"
+      },
+      {
+        "command": "codeAlphaAgent.stop",
+        "title": "Code Alpha: Stop Task",
+        "category": "Code Alpha",
+        "icon": "$(debug-stop)"
+      },
+      {
+        "command": "codeAlphaAgent.approveChanges",
+        "title": "Code Alpha: Approve Changes",
+        "category": "Code Alpha",
+        "icon": "$(check)"
+      },
+      {
+        "command": "codeAlphaAgent.rejectChanges",
+        "title": "Code Alpha: Reject Changes",
+        "category": "Code Alpha",
+        "icon": "$(close)"
+      },
+      {
+        "command": "codeAlphaAgent.requestChanges",
+        "title": "Code Alpha: Request Changes",
+        "category": "Code Alpha",
+        "icon": "$(comment)"
+      },
+      {
+        "command": "codeAlphaAgent.regenerateSpecs",
+        "title": "Code Alpha: Regenerate Specs",
+        "category": "Code Alpha"
+      },
+      {
+        "command": "codeAlphaAgent.editRequirements",
+        "title": "Code Alpha: Edit Requirements",
+        "category": "Code Alpha"
+      },
+      {
+        "command": "codeAlphaAgent.viewSpecHistory",
+        "title": "Code Alpha: View Spec History",
+        "category": "Code Alpha"
+      },
+      {
+        "command": "codeAlphaAgent.focusActivityLog",
+        "title": "Code Alpha: Focus Activity Log",
+        "category": "Code Alpha"
+      }
+    ],
+    "views": {
+      "codeAlphaActivityBar": [
+        {
+          "id": "codeAlphaTaskPanel",
+          "name": "Agent Tasks",
+          "when": "codeAlphaAgent.activated",
+          "contextualTitle": "Active tasks and status"
+        },
+        {
+          "id": "codeAlphaSpecsPanel",
+          "name": "Specs",
+          "when": "codeAlphaAgent.activated"
+        },
+        {
+          "id": "codeAlphaDiffPanel",
+          "name": "Changes",
+          "when": "codeAlphaAgent.activated && codeAlphaAgent.hasChanges"
+        },
+        {
+          "id": "codeAlphaActivityLog",
+          "name": "Activity",
+          "when": "codeAlphaAgent.activated"
+        }
+      ]
+    },
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "codeAlphaActivityBar",
+          "title": "Code Alpha Agent",
+          "icon": "media/icons/agent.svg"
+        }
+      ]
+    },
+    "menus": {
+      "view/title": [
+        {
+          "command": "codeAlphaAgent.pause",
+          "group": "navigation",
+          "when": "view == codeAlphaTaskPanel && codeAlphaAgent.isRunning"
+        },
+        {
+          "command": "codeAlphaAgent.resume",
+          "group": "navigation",
+          "when": "view == codeAlphaTaskPanel && codeAlphaAgent.isPaused"
+        },
+        {
+          "command": "codeAlphaAgent.stop",
+          "group": "navigation",
+          "when": "view == codeAlphaTaskPanel"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "codeAlphaAgent.pause",
+          "when": "codeAlphaAgent.isRunning"
+        },
+        {
+          "command": "codeAlphaAgent.resume",
+          "when": "codeAlphaAgent.isPaused"
+        },
+        {
+          "command": "codeAlphaAgent.approveChanges",
+          "when": "codeAlphaAgent.hasChanges"
+        },
+        {
+          "command": "codeAlphaAgent.rejectChanges",
+          "when": "codeAlphaAgent.hasChanges"
+        },
+        {
+          "command": "codeAlphaAgent.regenerateSpecs",
+          "when": "codeAlphaAgent.activated"
+        },
+        {
+          "command": "codeAlphaAgent.editRequirements",
+          "when": "codeAlphaAgent.activated"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Code Alpha Agent",
+      "properties": {
+        "codeAlphaAgent.serverUrl": {
+          "type": "string",
+          "default": "ws://localhost:8765",
+          "description": "WebSocket server URL for Code Alpha orchestrator"
+        },
+        "codeAlphaAgent.autoApprove": {
+          "type": "boolean",
+          "default": false,
+          "description": "Automatically approve changes without human review"
+        },
+        "codeAlphaAgent.showInlineEdits": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show inline decorations while agent is editing"
+        },
+        "codeAlphaAgent.diffViewSideBySide": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show diff view in side-by-side mode"
+        }
+      }
+    },
+    "keybindings": [
+      {
+        "command": "codeAlphaAgent.pause",
+        "key": "ctrl+shift+alt+p",
+        "when": "codeAlphaAgent.isRunning"
+      },
+      {
+        "command": "codeAlphaAgent.resume",
+        "key": "ctrl+shift+alt+r",
+        "when": "codeAlphaAgent.isPaused"
+      },
+      {
+        "command": "codeAlphaAgent.stop",
+        "key": "ctrl+shift+alt+x",
+        "when": "codeAlphaAgent.activated"
+      }
+    ]
+  },
+  "devDependencies": {
+    "@types/node": "^18.0.0",
+    "@types/vscode": "^1.80.0",
+    "@vscode/test-electron": "^2.3.0",
+    "esbuild": "^0.28.2",
+    "typescript": "^5.1.0"
+  },
+  "dependencies": {
+    "ws": "^8.13.0"
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile && npm run lint",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "lint": "eslint src --ext ts",
+    "build": "esbuild ./src/extension.ts --bundle --outfile=out/extension.js --external:vscode --platform=node --target=node14",
+    "build:watch": "npm run build -- --watch",
+    "test": "node ./out/test/runTest.js"
+  }
+}

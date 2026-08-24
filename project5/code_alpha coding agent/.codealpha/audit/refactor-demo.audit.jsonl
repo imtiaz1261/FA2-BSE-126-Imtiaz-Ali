@@ -1,0 +1,22 @@
+{"timestamp": 1786293524.122993, "task_id": "refactor-demo", "action": "run_command", "detail": "pytest -q --junitxml=.codealpha/test-report.xml", "allowed": true, "error": null, "duration_ms": 1108.2883000053698}
+{"timestamp": 1786293524.138429, "task_id": "refactor-demo", "action": "read_file", "detail": ".codealpha/test-report.xml", "allowed": true, "error": null, "duration_ms": null}
+{"timestamp": 1786293524.5863333, "task_id": "refactor-demo", "action": "run_command", "detail": "radon cc --json calc.py", "allowed": true, "error": null, "duration_ms": 446.36989998980425}
+{"timestamp": 1786293524.9115286, "task_id": "refactor-demo", "action": "run_command", "detail": "vulture calc.py --min-confidence 80", "allowed": true, "error": null, "duration_ms": 321.002500000759}
+{"timestamp": 1786293524.9123194, "task_id": "refactor-demo", "action": "read_file", "detail": "calc.py", "allowed": true, "error": null, "duration_ms": null}
+{"timestamp": 1786293524.918894, "task_id": "refactor-demo", "action": "read_file", "detail": "calc.py", "allowed": true, "error": null, "duration_ms": null}
+{"timestamp": 1786293524.92086, "task_id": "refactor-demo", "action": "read_file", "detail": "calc.py", "allowed": true, "error": null, "duration_ms": null}
+{"timestamp": 1786293524.921851, "task_id": "refactor-demo", "action": "read_file", "detail": "calc.py", "allowed": true, "error": null, "duration_ms": null}
+{"timestamp": 1786293524.922675, "task_id": "refactor-demo", "action": "read_file", "detail": "calc.py", "allowed": true, "error": null, "duration_ms": null}
+{"timestamp": 1786293524.9243293, "task_id": "refactor-demo", "action": "write_file", "detail": "calc.py (1160 bytes)", "allowed": true, "error": null, "duration_ms": null}
+{"timestamp": 1786293525.814377, "task_id": "refactor-demo", "action": "run_command", "detail": "pytest -q --junitxml=.codealpha/test-report.xml", "allowed": true, "error": null, "duration_ms": 889.1323000134435}
+{"timestamp": 1786293525.8279693, "task_id": "refactor-demo", "action": "read_file", "detail": ".codealpha/test-report.xml", "allowed": true, "error": null, "duration_ms": null}
+{"timestamp": 1786293525.8289595, "task_id": "refactor-demo", "action": "read_file", "detail": "calc.py", "allowed": true, "error": null, "duration_ms": null}
+{"timestamp": 1786293525.8300378, "task_id": "refactor-demo", "action": "read_file", "detail": "calc.py", "allowed": true, "error": null, "duration_ms": null}
+{"timestamp": 1786293525.8308735, "task_id": "refactor-demo", "action": "read_file", "detail": "calc.py", "allowed": true, "error": null, "duration_ms": null}
+{"timestamp": 1786293525.8322887, "task_id": "refactor-demo", "action": "write_file", "detail": "calc.py (1169 bytes)", "allowed": true, "error": null, "duration_ms": null}
+{"timestamp": 1786293526.9917839, "task_id": "refactor-demo", "action": "run_command", "detail": "pytest -q --junitxml=.codealpha/test-report.xml", "allowed": true, "error": "", "duration_ms": 1158.5592000046745}
+{"timestamp": 1786293527.0111182, "task_id": "refactor-demo", "action": "read_file", "detail": ".codealpha/test-report.xml", "allowed": true, "error": null, "duration_ms": null}
+{"timestamp": 1786293527.0129416, "task_id": "refactor-demo", "action": "write_file", "detail": "calc.py (1160 bytes)", "allowed": true, "error": null, "duration_ms": null}
+{"timestamp": 1786293528.0365841, "task_id": "refactor-demo", "action": "run_command", "detail": "pytest -q --junitxml=.codealpha/test-report.xml", "allowed": true, "error": null, "duration_ms": 1021.7688999982784}
+{"timestamp": 1786293528.0508816, "task_id": "refactor-demo", "action": "read_file", "detail": ".codealpha/test-report.xml", "allowed": true, "error": null, "duration_ms": null}
+{"timestamp": 1786293528.0552285, "task_id": "refactor-demo", "action": "destroy", "detail": "refactor-demo", "allowed": true, "error": null, "duration_ms": null}

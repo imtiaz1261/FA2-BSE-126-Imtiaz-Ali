@@ -1,0 +1,131 @@
+# CircleCI Configuration for Code Alpha
+
+version: 2.1
+
+orbs:
+  python: circleci/python@2.1.1
+
+jobs:
+  code-alpha-generation:
+    docker:
+      - image: cimg/python:3.10
+    
+    steps:
+      - checkout
+      
+      - python/install-packages:
+          pkg-manager: pip
+          pyproject: true
+      
+      - run:
+          name: Install Code Alpha
+          command: |
+            pip install -e .
+            pip install typer rich pydantic fastapi uvicorn
+      
+      - run:
+          name: Run Code Alpha
+          command: |
+            codealpha run "Improve code quality and add tests" \
+              --repo . \
+              --auto-approve-low-risk \
+              --max-retries 3 \
+              --json > result.json
+          no_output_timeout: 1h
+      
+      - run:
+          name: Process Results
+          command: |
+            python3 << 'EOF'
+import json
+import sys
+
+with open('result.json') as f:
+    result = json.load(f)
+
+print(f"\n=== Code Alpha Results ===")
+print(f"Status: {result['status']}")
+print(f"Success: {result['success']}")
+print(f"Files Changed: {result['metrics']['total_edits']}")
+print(f"Tests Passed: {result['metrics']['passing_tests']}/{result['metrics']['total_tests']}")
+print(f"Duration: {result['duration_seconds']:.1f}s")
+print(f"Lines Changed: {result['metrics']['total_lines_changed']}")
+
+if result['error']:
+    print(f"\nError: {result['error']}")
+    sys.exit(1)
+
+sys.exit(0 if result['success'] else 1)
+EOF
+      
+      - store_artifacts:
+          path: result.json
+          destination: code-alpha-results
+      
+      - run:
+          name: Create Pull Request
+          command: |
+            if [ -n "$(git status --short)" ]; then
+              git config user.email "circleci@example.com"
+              git config user.name "CircleCI Bot"
+              
+              BRANCH_NAME="code-alpha-improvements-${CIRCLE_BUILD_NUM}"
+              git checkout -b "$BRANCH_NAME"
+              git add -A
+              git commit -m "chore: Code Alpha improvements (Build #${CIRCLE_BUILD_NUM})"
+              git push -u origin "$BRANCH_NAME"
+              
+              # Create PR using GitHub API
+              python3 << 'PYEOF'
+import os
+import requests
+import json
+
+with open('result.json') as f:
+    result = json.load(f)
+
+pr_body = f"""
+## 🤖 Code Alpha Results
+
+- **Status:** {result['status']}
+- **Files Changed:** {result['metrics']['total_edits']}
+- **Tests:** {result['metrics']['passing_tests']}/{result['metrics']['total_tests']}
+- **Duration:** {result['duration_seconds']:.1f}s
+
+This is an automated PR from Code Alpha CI/CD pipeline.
+"""
+
+pr_data = {
+    "title": f"[Code Alpha] Automated improvements (Build #{os.environ['CIRCLE_BUILD_NUM']})",
+    "body": pr_body,
+    "head": os.environ['BRANCH_NAME'],
+    "base": os.environ['CIRCLE_BRANCH']
+}
+
+headers = {
+    "Authorization": f"token {os.environ['GITHUB_TOKEN']}",
+    "Accept": "application/vnd.github.v3+json"
+}
+
+url = f"https://api.github.com/repos/{os.environ['CIRCLE_REPOSITORY_URL'].split(':')[1]}/pulls"
+response = requests.post(url, json=pr_data, headers=headers)
+
+if response.status_code == 201:
+    pr = response.json()
+    print(f"✅ Created PR: {pr['html_url']}")
+else:
+    print(f"⚠️  Could not create PR: {response.text}")
+PYEOF
+            else
+              echo "No changes detected"
+            fi
+
+workflows:
+  code-generation:
+    jobs:
+      - code-alpha-generation:
+          filters:
+            branches:
+              only:
+                - main
+                - develop

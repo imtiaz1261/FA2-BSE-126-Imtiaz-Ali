@@ -1,0 +1,207 @@
+# Kubernetes Deployment for Sandbox Worker Services
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sandbox-worker
+  namespace: code-alpha
+  labels:
+    app: sandbox-worker
+    component: workers
+    version: "1.0"
+spec:
+  replicas: 3  # Start with 3, scaled by HPA
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  selector:
+    matchLabels:
+      app: sandbox-worker
+  template:
+    metadata:
+      labels:
+        app: sandbox-worker
+        component: workers
+        version: "1.0"
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8002"
+        prometheus.io/path: "/metrics"
+    spec:
+      serviceAccountName: code-alpha-worker
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        fsGroup: 1000
+      containers:
+        - name: sandbox-worker
+          image: codealpha-registry/sandbox-worker:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 8002
+              protocol: TCP
+          env:
+            - name: ENVIRONMENT
+              value: "production"
+            - name: LOG_LEVEL
+              value: "INFO"
+            - name: PYTHONUNBUFFERED
+              value: "1"
+            - name: SERVICE_TYPE
+              value: "sandbox_worker"
+            - name: ORCHESTRATOR_URL
+              value: "http://orchestrator:8001"
+            - name: REDIS_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: sandbox-config
+                  key: redis_url
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: connection_string
+            - name: SANDBOX_MODE
+              value: "enabled"
+            - name: SAFETY_MODE
+              value: "strict"
+            - name: MAX_CONCURRENT_TASKS
+              value: "2"
+            - name: DOCKER_HOST
+              value: "unix:///var/run/docker.sock"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8002
+            initialDelaySeconds: 30
+            periodSeconds: 15
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /health/ready
+              port: 8002
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          resources:
+            requests:
+              cpu: 500m
+              memory: 1Gi
+            limits:
+              cpu: 2
+              memory: 2Gi
+          volumeMounts:
+            - name: docker-socket
+              mountPath: /var/run/docker.sock
+            - name: tmp
+              mountPath: /tmp
+          securityContext:
+            allowPrivilegeEscalation: true  # Needed for Docker
+            readOnlyRootFilesystem: false
+            capabilities:
+              add:
+                - SYS_ADMIN
+              drop:
+                - ALL
+      volumes:
+        - name: docker-socket
+          hostPath:
+            path: /var/run/docker.sock
+            type: Socket
+        - name: tmp
+          emptyDir: {}
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: app
+                      operator: In
+                      values:
+                        - sandbox-worker
+                topologyKey: kubernetes.io/hostname
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sandbox-worker
+  namespace: code-alpha
+  labels:
+    app: sandbox-worker
+spec:
+  type: ClusterIP
+  clusterIP: None  # Headless service
+  selector:
+    app: sandbox-worker
+  ports:
+    - name: http
+      port: 8002
+      targetPort: 8002
+      protocol: TCP
+
+---
+apiVersion: autoscaling.k8s.io/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: sandbox-worker-hpa
+  namespace: code-alpha
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: sandbox-worker
+  minReplicas: 3
+  maxReplicas: 20
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 60
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: 75
+  behavior:
+    scaleDown:
+      stabilizationWindowSeconds: 300
+      policies:
+        - type: Percent
+          value: 50
+          periodSeconds: 60
+    scaleUp:
+      stabilizationWindowSeconds: 30
+      policies:
+        - type: Percent
+          value: 100
+          periodSeconds: 30
+        - type: Pods
+          value: 3
+          periodSeconds: 30
+      selectPolicy: Max
+
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: sandbox-worker-pdb
+  namespace: code-alpha
+spec:
+  minAvailable: 2
+  selector:
+    matchLabels:
+      app: sandbox-worker

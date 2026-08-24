@@ -1,0 +1,98 @@
+# Docker Compose for Code Alpha - Testing Environment
+# Lightweight stack for running tests and integration tests
+
+version: '3.8'
+
+services:
+  # Redis - Test queue
+  redis:
+    image: redis:7-alpine
+    container_name: codealpha-redis-test
+    ports:
+      - "6380:6379"
+    volumes:
+      - redis_data_test:/data
+    environment:
+      - REDIS_LOGLEVEL=warning
+    command: redis-server --appendonly no --save ""
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    networks:
+      - codealpha-net-test
+
+  # PostgreSQL - Test database
+  postgres:
+    image: postgres:15-alpine
+    container_name: codealpha-postgres-test
+    environment:
+      POSTGRES_DB: codealpha_test
+      POSTGRES_USER: codealpha
+      POSTGRES_PASSWORD: testpassword
+      POSTGRES_INITDB_ARGS: "-c fsync=off"
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data_test:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U codealpha"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    networks:
+      - codealpha-net-test
+
+  # Test Runner - Executes pytest suite
+  test-runner:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.api-gateway
+    container_name: codealpha-test-runner
+    volumes:
+      - ..:/workspace
+      - ../.codealpha:/app/.codealpha
+      - test_results:/app/test_results
+    environment:
+      PYTHONUNBUFFERED: "1"
+      LOG_LEVEL: INFO
+      ENVIRONMENT: testing
+      REDIS_URL: redis://redis:6379/0
+      DATABASE_URL: postgresql://codealpha:testpassword@postgres:5432/codealpha_test
+      SANDBOX_ENABLED: "false"
+      PYTEST_OUTPUT: /app/test_results
+    depends_on:
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    networks:
+      - codealpha-net-test
+    command: >
+      pytest
+      tests/
+      -v
+      --tb=short
+      --junit-xml=/app/test_results/junit.xml
+      --cov=code_alpha
+      --cov-report=html:/app/test_results/coverage
+      --cov-report=term-missing
+
+volumes:
+  redis_data_test:
+  postgres_data_test:
+  test_results:
+
+networks:
+  codealpha-net-test:
+    driver: bridge
+
+# Usage:
+#   docker-compose -f docker/docker-compose.test.yml up          # Run tests
+#   docker-compose -f docker/docker-compose.test.yml up --abort-on-container-exit  # Run and exit
+#   docker-compose -f docker/docker-compose.test.yml down -v     # Cleanup
+#
+# View results:
+#   - test_results/junit.xml - JUnit format results
+#   - test_results/coverage/index.html - Coverage report

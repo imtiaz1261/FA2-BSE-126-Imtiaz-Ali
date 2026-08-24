@@ -1,0 +1,90 @@
+# Kubernetes Ingress Configuration for Code Alpha API
+
+---
+# Ingress - Routes external HTTP/HTTPS traffic
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: code-alpha-ingress
+  namespace: code-alpha
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/rate-limit: "100"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/proxy-body-size: "100m"
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: "600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "600"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - api.codealpha.example.com
+      secretName: code-alpha-tls
+  rules:
+    - host: api.codealpha.example.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: api
+                port:
+                  number: 8000
+          - path: /orchestrator
+            pathType: Prefix
+            backend:
+              service:
+                name: orchestrator
+                port:
+                  number: 8001
+          - path: /health
+            pathType: Exact
+            backend:
+              service:
+                name: api
+                port:
+                  number: 8000
+
+---
+# Certificate - Let's Encrypt TLS certificate
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: code-alpha-cert
+  namespace: code-alpha
+spec:
+  secretName: code-alpha-tls
+  duration: 2160h  # 90 days
+  renewBefore: 720h  # 30 days
+  commonName: api.codealpha.example.com
+  dnsNames:
+    - api.codealpha.example.com
+    - "*.codealpha.example.com"
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+
+---
+# NetworkPolicy for Ingress - Allow external traffic
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: code-alpha-ingress-allow
+  namespace: code-alpha
+spec:
+  podSelector:
+    matchLabels:
+      app: api
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              name: ingress-nginx
+      ports:
+        - protocol: TCP
+          port: 8000

@@ -1,0 +1,385 @@
+╔════════════════════════════════════════════════════════════════════════════╗
+║                                                                            ║
+║            📋 CODE ALPHA KIRO - COMPLETE STEP-BY-STEP COMMANDS           ║
+║                                                                            ║
+║                     Copy & Paste Each Command                             ║
+║                                                                            ║
+╚════════════════════════════════════════════════════════════════════════════╝
+
+
+════════════════════════════════════════════════════════════════════════════
+⚡ FASTEST WAY (30 SECONDS) - JUST RUN THIS
+════════════════════════════════════════════════════════════════════════════
+
+👇 Copy and paste this ONE command into PowerShell:
+
+cd "c:\Users\IJAZ AHMAD\Desktop\Internship Work\week5\task56" && start cmd /k "cd kiro_backend && python app.py" && start "" code .
+
+Then wait 10 seconds and press: Ctrl + Shift + K
+
+
+════════════════════════════════════════════════════════════════════════════
+📋 DETAILED STEP-BY-STEP INSTRUCTIONS
+════════════════════════════════════════════════════════════════════════════
+
+STEP 1: Open PowerShell
+────────────────────────────────────────────────────────────────────────────
+
+Do ONE of these:
+
+OPTION A - Search Windows:
+  1. Press: Windows Key
+  2. Type: PowerShell
+  3. Click: Windows PowerShell or PowerShell 7
+  
+OPTION B - Right-click in Explorer:
+  1. Open: File Explorer
+  2. Navigate to: C:\Users\IJAZ AHMAD\Desktop\Internship Work\week5\task56
+  3. Right-click in empty space
+  4. Select: "Open PowerShell here"
+
+OPTION C - Use Command Prompt:
+  1. Press: Windows Key + R
+  2. Type: cmd
+  3. Press: Enter
+
+
+════════════════════════════════════════════════════════════════════════════
+STEP 2: Navigate to Backend Directory
+────────────────────────────────────────────────────────────────────────────
+
+Copy and paste THIS command:
+
+cd "c:\Users\IJAZ AHMAD\Desktop\Internship Work\week5\task56\kiro_backend"
+
+Press: Enter
+
+Expected: Prompt changes to show you're in kiro_backend folder
+
+
+════════════════════════════════════════════════════════════════════════════
+STEP 3: Start Backend Server
+────────────────────────────────────────────────────────────────────────────
+
+Copy and paste THIS command:
+
+python app.py
+
+Press: Enter
+
+Wait 3-5 seconds
+
+Expected output:
+   INFO:     Started server process [xxxxx]
+   INFO:     Waiting for application startup.
+   INFO:     Application startup complete.
+   INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+
+✅ If you see this, backend is RUNNING
+
+
+════════════════════════════════════════════════════════════════════════════
+STEP 4: Open NEW PowerShell Window (Keep previous one open!)
+────────────────────────────────────────────────────────────────────────────
+
+Do ONE of these:
+
+OPTION A - Right-click taskbar:
+  1. Right-click Windows taskbar
+  2. Click: Windows PowerShell (or Terminal)
+  
+OPTION B - Keyboard shortcut:
+  1. Press: Windows Key + I (opens Settings)
+  2. Search: PowerShell
+  3. Click: Open
+  
+OPTION C - From current window:
+  1. Press: Ctrl + Shift + N (opens new PowerShell window)
+
+⚠️ IMPORTANT: Keep first PowerShell window open (backend running)
+
+
+════════════════════════════════════════════════════════════════════════════
+STEP 5: Navigate to Project Directory
+────────────────────────────────────────────────────────────────────────────
+
+In the NEW PowerShell window, copy and paste:
+
+cd "c:\Users\IJAZ AHMAD\Desktop\Internship Work\week5\task56"
+
+Press: Enter
+
+
+════════════════════════════════════════════════════════════════════════════
+STEP 6: Open VS Code
+────────────────────────────────────────────────────────────────────────────
+
+Copy and paste THIS command:
+
+code .
+
+Press: Enter
+
+Wait 10-15 seconds for VS Code to load
+
+Expected: VS Code opens showing the project folder
+
+
+════════════════════════════════════════════════════════════════════════════
+STEP 7: Open Kiro Interface (THE MAGIC STEP!)
+────────────────────────────────────────────────────────────────────────────
+
+In VS Code, press:
+
+Ctrl + Shift + K
+
+Wait 2-3 seconds
+
+Expected: Beautiful 3D interface appears with:
+   • Left: 3D animated canvas
+   • Right: Task input and output
+
+
+════════════════════════════════════════════════════════════════════════════
+STEP 8: Test Code Generation
+────────────────────────────────────────────────────────────────────────────
+
+In the Kiro interface:
+
+1. Click in the textarea (right side)
+
+2. Type this:
+
+Create a fibonacci function
+
+3. Click: ▶ EXECUTE button
+
+4. Watch:
+   • Progress bar fills 0→100%
+   • Logs show real-time updates
+   • Status badge turns green
+   • Code appears in Code tab
+
+
+════════════════════════════════════════════════════════════════════════════
+✅ YOU'RE DONE! 
+════════════════════════════════════════════════════════════════════════════
+
+
+════════════════════════════════════════════════════════════════════════════
+🔧 ALTERNATIVE: ALL-IN-ONE BATCH FILE
+════════════════════════════════════════════════════════════════════════════
+
+If you prefer one command that does everything:
+
+Copy and paste this into PowerShell:
+
+START_KIRO_COMPLETE.bat
+
+Press: Enter
+
+This batch file will:
+  ✓ Check Python & Node.js
+  ✓ Start backend
+  ✓ Open VS Code
+  ✓ Show instructions
+
+
+════════════════════════════════════════════════════════════════════════════
+📝 FULL COMMAND LIST (Copy-Paste Ready)
+════════════════════════════════════════════════════════════════════════════
+
+COMMAND 1 - Navigate to backend:
+───────────────────────────────────────────────────────────────────────────
+cd "c:\Users\IJAZ AHMAD\Desktop\Internship Work\week5\task56\kiro_backend"
+
+
+COMMAND 2 - Start backend server:
+───────────────────────────────────────────────────────────────────────────
+python app.py
+
+
+COMMAND 3 - Open new PowerShell (in same window after Ctrl+C):
+───────────────────────────────────────────────────────────────────────────
+(Press Ctrl+Shift+N or just open new window separately)
+
+
+COMMAND 4 - Navigate to project:
+───────────────────────────────────────────────────────────────────────────
+cd "c:\Users\IJAZ AHMAD\Desktop\Internship Work\week5\task56"
+
+
+COMMAND 5 - Open VS Code:
+───────────────────────────────────────────────────────────────────────────
+code .
+
+
+COMMAND 6 - In VS Code, press keyboard shortcut:
+───────────────────────────────────────────────────────────────────────────
+Ctrl + Shift + K
+
+
+════════════════════════════════════════════════════════════════════════════
+🎮 KEYBOARD SHORTCUTS
+════════════════════════════════════════════════════════════════════════════
+
+While using Kiro interface:
+
+Ctrl + Shift + K     Open/Focus Kiro interface
+Ctrl + Shift + P     VS Code Command Palette
+Ctrl + Shift + I     Browser DevTools
+Tab                  Switch between Logs/Code/Files tabs
+Ctrl + A             Select all (in textarea)
+Ctrl + C             Copy (generated code)
+Ctrl + X             Cut
+
+
+════════════════════════════════════════════════════════════════════════════
+🐛 TROUBLESHOOTING COMMANDS
+════════════════════════════════════════════════════════════════════════════
+
+If backend won't start:
+───────────────────────────────────────────────────────────────────────────
+
+Check Python installed:
+  python --version
+
+Install dependencies:
+  pip install fastapi uvicorn pydantic
+
+Kill process on port 8000:
+  netstat -ano | findstr :8000
+  (Note the PID number, then:)
+  taskkill /PID <number> /F
+
+Example:
+  taskkill /PID 860 /F
+
+
+If VS Code extension won't load:
+───────────────────────────────────────────────────────────────────────────
+
+Navigate to extension folder:
+  cd "c:\Users\IJAZ AHMAD\Desktop\Internship Work\week5\task56\kiro_interface"
+
+Build extension:
+  npm install
+  npm run build
+
+Then in VS Code:
+  Ctrl + Shift + P
+  Type: "Reload Window"
+  Press: Enter
+
+
+Check health endpoint:
+───────────────────────────────────────────────────────────────────────────
+
+In PowerShell or Command Prompt:
+  curl http://localhost:8000/health
+
+Or in browser:
+  http://localhost:8000/health
+
+
+View generated files:
+───────────────────────────────────────────────────────────────────────────
+
+Open File Explorer, go to:
+  C:\Users\IJAZ AHMAD\AppData\Local\Temp\code_alpha_tasks\
+
+Or in PowerShell:
+  explorer "$env:TEMP\code_alpha_tasks"
+
+
+View API documentation:
+───────────────────────────────────────────────────────────────────────────
+
+Open browser, go to:
+  http://localhost:8000/docs
+
+
+════════════════════════════════════════════════════════════════════════════
+📋 COMPLETE WORKFLOW
+════════════════════════════════════════════════════════════════════════════
+
+Terminal 1 (Backend):
+──────────────────────────────────────────────────────────────────────────
+cd "c:\Users\IJAZ AHMAD\Desktop\Internship Work\week5\task56\kiro_backend"
+python app.py
+
+[Keep this window open - backend runs here]
+
+
+Terminal 2 (VS Code):
+──────────────────────────────────────────────────────────────────────────
+cd "c:\Users\IJAZ AHMAD\Desktop\Internship Work\week5\task56"
+code .
+
+[VS Code opens in new window]
+
+
+In VS Code:
+──────────────────────────────────────────────────────────────────────────
+Ctrl + Shift + K
+
+[3D interface appears]
+
+[Type task] → Click EXECUTE → See generated code ✅
+
+
+════════════════════════════════════════════════════════════════════════════
+🚀 EXAMPLE OUTPUT
+════════════════════════════════════════════════════════════════════════════
+
+When you run "python app.py", you should see:
+
+   PS C:\Users\IJAZ AHMAD\Desktop\Internship Work\week5\task56\kiro_backend> python app.py
+   INFO:     Started server process [13268]
+   INFO:     Waiting for application startup.
+   INFO:     Application startup complete.
+   INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+   INFO:     127.0.0.1:64779 - "GET /health HTTP/1.1" 200 OK
+
+If you see this: ✅ BACKEND IS WORKING
+
+
+When you press Ctrl+Shift+K in VS Code, you should see:
+
+   • 3D canvas with blue particles
+   • Status badge "INITIALIZING"
+   • Task input box
+   • ▶ EXECUTE button
+   • Progress bar
+   • Output tabs
+
+If you see this: ✅ INTERFACE IS WORKING
+
+
+════════════════════════════════════════════════════════════════════════════
+⏱️ TIMING
+════════════════════════════════════════════════════════════════════════════
+
+Backend startup:        3-5 seconds
+VS Code open:           10-15 seconds
+Interface load:         2-3 seconds
+Code generation:        0.5-1 second
+Total time:             ~30 seconds
+
+
+════════════════════════════════════════════════════════════════════════════
+✨ YOU'RE READY!
+════════════════════════════════════════════════════════════════════════════
+
+Copy the commands above and run them one by one.
+
+Expected end result:
+  ✅ Backend running on port 8000
+  ✅ VS Code open with project
+  ✅ Kiro 3D interface visible
+  ✅ Ready to generate code!
+
+
+════════════════════════════════════════════════════════════════════════════
+Version: 1.0.0 | Status: READY ✅
+════════════════════════════════════════════════════════════════════════════

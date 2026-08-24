@@ -1,0 +1,125 @@
+# Docker build context exclusions
+
+# Version control
+.git
+.gitignore
+.gitattributes
+
+# IDE
+.vscode
+.idea
+.DS_Store
+*.swp
+*.swo
+*~
+.code-workspace
+
+# Python
+__pycache__
+*.py[cod]
+*$py.class
+*.so
+.Python
+pip-log.txt
+pip-delete-this-directory.txt
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+.pytest_cache/
+*.egg-info/
+dist/
+build/
+
+# Virtual environments
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# Testing
+.pytest_cache/
+test_results/
+htmlcov/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+
+# Documentation
+docs/_build/
+site/
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+*.tmp
+*.temp
+.tmp/
+temp/
+
+# Node (if applicable)
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Docker
+docker-compose.override.yml
+Dockerfile.*
+
+# CI/CD
+.github/workflows/
+.gitlab-ci.yml
+
+# Audio/Video
+*.mp4
+*.mp3
+*.wav
+
+# Large files
+*.iso
+*.dmg
+*.exe
+
+# Package managers
+*.deb
+*.rpm
+
+# Backup
+*.bak
+*.backup
+
+# Temporary containers/volumes
+.container_data/
+.volumes/
+
+# Demo/test files that shouldn't go in production image
+demo_repo/
+sandbox_demo_source_repo/
+codegen_demo_repo/
+refactor_demo_repo/
+healing_demo_repo/
+testing_demo_repo/
+orch_demo_repo/
+examples/
+ci_examples/
+
+# README and docs in root (use dedicated docs volume)
+*.md
+!requirements*.txt
+
+# Miscellaneous
+.codealpha/audit
+.codealpha/logs
+screenshot*.png
+.kiro/

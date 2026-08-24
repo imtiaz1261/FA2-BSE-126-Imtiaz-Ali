@@ -1,0 +1,72 @@
+# Dockerfile for Code Alpha Sandbox Worker Service
+
+FROM python:3.10-slim
+
+LABEL maintainer="Code Alpha"
+LABEL description="Code Alpha Sandbox Worker - Isolated tool execution"
+LABEL version="1.0.0"
+
+# Set working directory
+WORKDIR /app
+
+# Install system dependencies (including Docker CLI for container operations)
+RUN apt-get update && apt-get install -y \
+    git \
+    curl \
+    build-essential \
+    pkg-config \
+    libssl-dev \
+    docker.io \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy project files
+COPY . /app/
+
+# Install Python dependencies
+RUN pip install --upgrade pip && \
+    pip install -e . && \
+    pip install -r requirements_cli_api.txt
+
+# Create non-root user and add to docker group
+RUN useradd -m -u 1000 codealpha && \
+    usermod -aG docker codealpha && \
+    chown -R codealpha:codealpha /app
+
+# Create directories
+RUN mkdir -p /app/logs /app/sandbox /app/.codealpha && \
+    chown -R codealpha:codealpha /app/logs /app/sandbox /app/.codealpha
+
+USER codealpha
+
+# Expose worker port
+EXPOSE 8002
+
+# Set environment variables
+ENV PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV SERVICE_TYPE=sandbox_worker
+ENV LOG_LEVEL=INFO
+ENV SANDBOX_MODE=enabled
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+    CMD curl -f http://localhost:8002/health || exit 1
+
+# Sandbox worker entrypoint
+CMD ["python", "-m", "code_alpha.safety.sandbox_integration", \
+     "--host", "0.0.0.0", \
+     "--port", "8002", \
+     "--workers", "2"]
+
+# Build:
+# docker build -f docker/Dockerfile.sandbox-worker -t codealpha-sandbox-worker:latest .
+
+# Run:
+# docker run -p 8002:8002 \
+#   -v $(pwd):/workspace \
+#   -v /var/run/docker.sock:/var/run/docker.sock \
+#   -e ORCHESTRATOR_URL=http://orchestrator:8001 \
+#   -e REDIS_URL=redis://redis:6379 \
+#   codealpha-sandbox-worker:latest
+
+# Note: Docker socket mount allows sandbox workers to spawn isolated containers

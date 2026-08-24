@@ -1,0 +1,187 @@
+╔════════════════════════════════════════════════════════════════════════════╗
+║                                                                            ║
+║         ✅ IF Ctrl+Shift+K DOESN'T WORK - USE COMMAND PALETTE            ║
+║                                                                            ║
+╚════════════════════════════════════════════════════════════════════════════╝
+
+
+════════════════════════════════════════════════════════════════════════════
+QUICK FIX - USE COMMAND PALETTE
+════════════════════════════════════════════════════════════════════════════
+
+In VS Code, follow these steps:
+
+STEP 1: Open Command Palette
+───────────────────────────────────────────────────────────────────────────
+Press: Ctrl + Shift + P
+
+(A search box appears at the top of VS Code)
+
+
+STEP 2: Type Command Name
+───────────────────────────────────────────────────────────────────────────
+Type: Code Alpha
+
+(Or type any of these variations:)
+  • "Kiro"
+  • "Open Interface"
+  • "Open Kiro"
+  • "Code Alpha: Open Interface"
+
+
+STEP 3: Select from Dropdown
+───────────────────────────────────────────────────────────────────────────
+Look for: "Code Alpha: Open Interface"
+
+Click it or press: Enter
+
+
+STEP 4: Interface Loads
+───────────────────────────────────────────────────────────────────────────
+Wait 2-3 seconds
+
+You should see the 3D interface appear!
+
+
+════════════════════════════════════════════════════════════════════════════
+VISUAL STEPS
+════════════════════════════════════════════════════════════════════════════
+
+1. VS Code window is open
+2. Press: Ctrl + Shift + P
+   ↓
+3. Search box appears at top
+   [Type: Code Alpha]
+   ↓
+4. Command shows in dropdown
+   "Code Alpha: Open Interface"
+   ↓
+5. Press: Enter or Click
+   ↓
+6. 3D interface loads in side panel ✨
+
+
+════════════════════════════════════════════════════════════════════════════
+EXPECTED OUTPUT
+════════════════════════════════════════════════════════════════════════════
+
+When interface loads, you'll see:
+
+LEFT SIDE:
+  ✓ 3D canvas
+  ✓ Blue particles moving
+  ✓ Animated grid
+  ✓ Status badge "INITIALIZING"
+
+RIGHT SIDE:
+  ✓ Task input textarea
+  ✓ ▶ EXECUTE button
+  ✓ Progress bar
+  ✓ Tabs: Logs, Code, Files
+
+
+════════════════════════════════════════════════════════════════════════════
+IF COMMAND DOESN'T APPEAR
+════════════════════════════════════════════════════════════════════════════
+
+Try these alternatives:
+
+OPTION 1: Search for "Run Task"
+───────────────────────────────────────────────────────────────────────────
+Ctrl + Shift + P
+Type: "Tasks: Run Task"
+
+
+OPTION 2: Check Extensions
+───────────────────────────────────────────────────────────────────────────
+Ctrl + Shift + X (Extensions panel)
+Search: "Code Alpha"
+See if extension is installed/enabled
+
+
+OPTION 3: Reload Window
+───────────────────────────────────────────────────────────────────────────
+Ctrl + Shift + P
+Type: "Reload Window"
+Press: Enter
+
+Then try Command Palette again:
+Ctrl + Shift + P
+Type: "Code Alpha: Open Interface"
+
+
+OPTION 4: Rebuild Extension
+───────────────────────────────────────────────────────────────────────────
+1. Open PowerShell in kiro_interface folder:
+   cd "c:\Users\IJAZ AHMAD\Desktop\Internship Work\week5\task56\kiro_interface"
+
+2. Run:
+   npm run build
+
+3. Back in VS Code:
+   Ctrl + Shift + P → "Reload Window"
+
+4. Try again:
+   Ctrl + Shift + P → Type "Code Alpha"
+
+
+════════════════════════════════════════════════════════════════════════════
+COMMAND PALETTE SHORTCUT
+════════════════════════════════════════════════════════════════════════════
+
+Different VS Code versions use:
+
+Windows/Linux:
+  • Ctrl + Shift + P (Primary)
+  • F1 (Alternative)
+
+macOS:
+  • Cmd + Shift + P
+  • Cmd + K Cmd + P (Alternative)
+
+
+Try: Ctrl + Shift + P or F1
+
+
+════════════════════════════════════════════════════════════════════════════
+✅ STEPS SUMMARY
+════════════════════════════════════════════════════════════════════════════
+
+1. Press: Ctrl + Shift + P (or F1)
+2. Type: Code Alpha
+3. Click: "Code Alpha: Open Interface"
+4. Interface loads ✨
+
+
+════════════════════════════════════════════════════════════════════════════
+TROUBLESHOOTING
+════════════════════════════════════════════════════════════════════════════
+
+Issue: Command Palette doesn't appear
+  Solution: Make sure VS Code window is in focus
+  Try: Click in VS Code editor first, then Ctrl+Shift+P
+
+Issue: "Code Alpha" command doesn't appear
+  Solution: Extension might not be loaded
+  Try: Reload Window (Ctrl+Shift+P → "Reload Window")
+
+Issue: Still can't find command
+  Solution: Rebuild extension
+  Run in PowerShell:
+    cd kiro_interface
+    npm run build
+
+
+════════════════════════════════════════════════════════════════════════════
+NEXT STEPS
+════════════════════════════════════════════════════════════════════════════
+
+1. Press: Ctrl + Shift + P
+2. Type: Code Alpha
+3. Select: "Code Alpha: Open Interface"
+4. Wait 2-3 seconds
+5. See beautiful 3D interface!
+6. Type task and click EXECUTE
+
+
+════════════════════════════════════════════════════════════════════════════

@@ -1,0 +1,212 @@
+# OpenTelemetry Collector Configuration
+# Collects metrics, traces, and logs from Code Alpha services
+
+receivers:
+  # Prometheus scrape configuration
+  prometheus:
+    config:
+      scrape_configs:
+        - job_name: 'code-alpha-api'
+          scrape_interval: 15s
+          static_configs:
+            - targets: ['api:8000']
+              labels:
+                service: api
+
+        - job_name: 'code-alpha-orchestrator'
+          scrape_interval: 15s
+          static_configs:
+            - targets: ['orchestrator:8001']
+              labels:
+                service: orchestrator
+
+        - job_name: 'code-alpha-sandbox-worker'
+          scrape_interval: 15s
+          static_configs:
+            - targets: ['sandbox-worker:8002']
+              labels:
+                service: sandbox-worker
+
+        - job_name: 'code-alpha-indexing-worker'
+          scrape_interval: 15s
+          static_configs:
+            - targets: ['indexing-worker:8003']
+              labels:
+                service: indexing-worker
+
+  # OTLP gRPC receiver (from instrumented apps)
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+      http:
+        endpoint: 0.0.0.0:4318
+
+  # Jaeger receiver for traces
+  jaeger:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:14250
+      thrift_http:
+        endpoint: 0.0.0.0:14268
+
+  # Logs from syslog/files
+  syslog:
+    protocol_config:
+      protocol: tcp
+      listen_address: 0.0.0.0:514
+    operators:
+      - type: parse_json
+        parse_from: body
+
+  # Kafka for high-volume logs
+  kafka:
+    brokers: [kafka:9092]
+    topic: code-alpha-logs
+    group_id: otel-collector
+    auth:
+      plain_text:
+        username: collector
+        password: ${KAFKA_PASSWORD}
+
+processors:
+  # Batch processor for efficiency
+  batch:
+    send_batch_size: 100
+    timeout: 10s
+
+  # Memory limiter to prevent OOM
+  memory_limiter:
+    check_interval: 1s
+    limit_mib: 512
+    spike_limit_mib: 128
+
+  # Resource detection (add cloud/container attributes)
+  resourcedetection:
+    detectors: [env, docker, system, gcp, aws, azure]
+    timeout: 2s
+    override: false
+
+  # Attribute processor
+  attributes:
+    actions:
+      - key: service.version
+        value: ${SERVICE_VERSION}
+        action: insert
+      - key: deployment.environment
+        value: production
+        action: insert
+
+  # Metrics transform
+  metricstransform:
+    transforms:
+      - include: '.*'
+        match_type: regexp
+        action: update
+        operations:
+          - action: add_label
+            new_label: service_tier
+            new_value: backend
+
+  # Tail sampling for traces (keep error traces, 10% of successful)
+  tail_sampling:
+    policies:
+      - name: error-traces
+        type: status_code
+        status_code:
+          status_codes: [ERROR]
+      - name: success-sample
+        type: probabilistic
+        probabilistic:
+          sampling_percentage: 10
+      - name: slow-traces
+        type: latency
+        latency:
+          threshold_ms: 1000
+
+exporters:
+  # Prometheus remote write
+  prometheusremotewrite:
+    endpoint: http://prometheus:9090/api/v1/write
+    resource_to_telemetry_conversion:
+      enabled: true
+    tls:
+      insecure: true
+
+  # Jaeger for traces
+  jaeger:
+    endpoint: jaeger:14250
+    tls:
+      insecure: true
+
+  # Loki for logs
+  loki:
+    endpoint: http://loki:3100/loki/api/v1/push
+    labels:
+      attributes:
+        service: service.name
+        pod: kubernetes.pod.name
+
+  # Datadog exporter (optional)
+  datadog:
+    api:
+      key: ${DATADOG_API_KEY}
+      hostname: api.datadoghq.com
+    tls:
+      insecure: false
+
+  # New Relic exporter (optional)
+  newrelic:
+    api_key: ${NEW_RELIC_API_KEY}
+    tls:
+      insecure: false
+
+  # Elastic APM
+  otlp:
+    endpoint: apm-server:8200
+    tls:
+      insecure: true
+
+  # Logging exporter (for debugging)
+  logging:
+    loglevel: debug
+
+  # Splunk HEC exporter
+  splunk_hec:
+    token: ${SPLUNK_HEC_TOKEN}
+    endpoint: https://splunk:8088
+
+extensions:
+  # Health check endpoint
+  health_check:
+    endpoint: 0.0.0.0:13133
+
+  # Performance profiler
+  pprof:
+    endpoint: 0.0.0.0:1777
+
+  # Zipkin for trace visualization
+  zpages:
+    endpoint: 0.0.0.0:55679
+
+service:
+  extensions: [health_check, pprof, zpages]
+
+  pipelines:
+    # Traces pipeline
+    traces:
+      receivers: [otlp, jaeger]
+      processors: [memory_limiter, resourcedetection, tail_sampling, batch]
+      exporters: [jaeger, otlp, logging]
+
+    # Metrics pipeline
+    metrics:
+      receivers: [otlp, prometheus]
+      processors: [memory_limiter, resourcedetection, attributes, batch]
+      exporters: [prometheusremotewrite, logging]
+
+    # Logs pipeline
+    logs:
+      receivers: [otlp, syslog, kafka]
+      processors: [memory_limiter, resourcedetection, batch]
+      exporters: [loki, logging]

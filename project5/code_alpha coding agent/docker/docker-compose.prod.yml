@@ -1,0 +1,298 @@
+# Docker Compose for Code Alpha - Production Environment
+# Includes replicas, resource limits, health checks, and security best practices
+
+version: '3.8'
+
+services:
+  # Redis Cluster - High availability caching and job queue
+  redis:
+    image: redis:7-alpine
+    container_name: codealpha-redis-prod
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data_prod:/data
+    environment:
+      - REDIS_LOGLEVEL=warning
+    command: >
+      redis-server
+      --appendonly yes
+      --appendfsync always
+      --requirepass changeme
+      --maxmemory 2gb
+      --maxmemory-policy allkeys-lru
+    healthcheck:
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - codealpha-net-prod
+    restart: always
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 2G
+        reservations:
+          cpus: '1'
+          memory: 1G
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # PostgreSQL with replication - Persistent storage
+  postgres:
+    image: postgres:15-alpine
+    container_name: codealpha-postgres-prod
+    environment:
+      POSTGRES_DB: codealpha_prod
+      POSTGRES_USER: codealpha
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-changeme}
+      POSTGRES_INITDB_ARGS: "-c shared_buffers=256MB -c max_connections=200 -c log_statement=mod"
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data_prod:/var/lib/postgresql/data
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U codealpha"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - codealpha-net-prod
+    restart: always
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 2G
+        reservations:
+          cpus: '1'
+          memory: 1G
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # API Gateway - Multiple replicas behind load balancer
+  api:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.api-gateway
+    container_name: codealpha-api-prod
+    ports:
+      - "8000:8000"
+    volumes:
+      - ..:/workspace:ro
+      - ../.codealpha:/app/.codealpha
+    environment:
+      PYTHONUNBUFFERED: "1"
+      LOG_LEVEL: INFO
+      ENVIRONMENT: production
+      ORCHESTRATOR_URL: http://orchestrator:8001
+      REDIS_URL: redis://:${REDIS_PASSWORD:-changeme}@redis:6379/0
+      DATABASE_URL: postgresql://codealpha:${DB_PASSWORD:-changeme}@postgres:5432/codealpha_prod
+      SANDBOX_ENABLED: "true"
+      AUDIT_LOG_PATH: /app/.codealpha/audit.jsonl
+      SAFETY_MODE: strict
+    depends_on:
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - codealpha-net-prod
+    restart: always
+    deploy:
+      replicas: 2
+      resources:
+        limits:
+          cpus: '1'
+          memory: 1G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+      update_config:
+        parallelism: 1
+        delay: 10s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
+
+  # Orchestrator - Single master instance
+  orchestrator:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.orchestrator
+    container_name: codealpha-orchestrator-prod
+    ports:
+      - "8001:8001"
+    volumes:
+      - ..:/workspace:ro
+      - ../.codealpha:/app/.codealpha
+    environment:
+      PYTHONUNBUFFERED: "1"
+      LOG_LEVEL: INFO
+      ENVIRONMENT: production
+      REDIS_URL: redis://:${REDIS_PASSWORD:-changeme}@redis:6379/1
+      DATABASE_URL: postgresql://codealpha:${DB_PASSWORD:-changeme}@postgres:5432/codealpha_prod
+      SANDBOX_ENABLED: "true"
+      SAFETY_MODE: strict
+    depends_on:
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - codealpha-net-prod
+    restart: always
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 2G
+        reservations:
+          cpus: '1'
+          memory: 1G
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
+
+  # Sandbox Workers - Multiple replicas for isolation
+  sandbox-worker:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.sandbox-worker
+    container_name: codealpha-sandbox-worker-prod
+    volumes:
+      - ..:/workspace:ro
+      - ../.codealpha:/app/.codealpha
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      PYTHONUNBUFFERED: "1"
+      LOG_LEVEL: INFO
+      ENVIRONMENT: production
+      ORCHESTRATOR_URL: http://orchestrator:8001
+      REDIS_URL: redis://:${REDIS_PASSWORD:-changeme}@redis:6379/2
+      DATABASE_URL: postgresql://codealpha:${DB_PASSWORD:-changeme}@postgres:5432/codealpha_prod
+      SANDBOX_MODE: enabled
+      SAFETY_MODE: strict
+    depends_on:
+      - redis
+      - orchestrator
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8002/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - codealpha-net-prod
+    restart: always
+    deploy:
+      replicas: 3
+      resources:
+        limits:
+          cpus: '1'
+          memory: 1G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
+
+  # Indexing Workers - Multiple replicas for parallel indexing
+  indexing-worker:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.indexing-worker
+    container_name: codealpha-indexing-worker-prod
+    volumes:
+      - ..:/workspace:ro
+      - ../.codealpha:/app/.codealpha
+      - indexing_vectors_prod:/app/vectors
+    environment:
+      PYTHONUNBUFFERED: "1"
+      LOG_LEVEL: INFO
+      ENVIRONMENT: production
+      ORCHESTRATOR_URL: http://orchestrator:8001
+      REDIS_URL: redis://:${REDIS_PASSWORD:-changeme}@redis:6379/3
+      DATABASE_URL: postgresql://codealpha:${DB_PASSWORD:-changeme}@postgres:5432/codealpha_prod
+      VECTOR_STORE_PATH: /app/vectors
+    depends_on:
+      - redis
+      - orchestrator
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8003/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    networks:
+      - codealpha-net-prod
+    restart: always
+    deploy:
+      replicas: 2
+      resources:
+        limits:
+          cpus: '2'
+          memory: 2G
+        reservations:
+          cpus: '1'
+          memory: 1G
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
+
+volumes:
+  redis_data_prod:
+  postgres_data_prod:
+  indexing_vectors_prod:
+
+networks:
+  codealpha-net-prod:
+    driver: bridge
+
+# Usage:
+#   docker-compose -f docker/docker-compose.prod.yml up -d         # Start all services
+#   docker-compose -f docker/docker-compose.prod.yml ps             # Check status
+#   docker-compose -f docker/docker-compose.prod.yml logs -f api    # View API logs
+#   docker-compose -f docker/docker-compose.prod.yml restart        # Restart all services
+#   docker-compose -f docker/docker-compose.prod.yml down           # Graceful shutdown
+#
+# Important:
+#   - Set environment variables: REDIS_PASSWORD, DB_PASSWORD
+#   - Use SSL certificates for production
+#   - Configure monitoring and alerting
+#   - Set resource limits appropriately for your infrastructure
+#   - Enable log rotation as shown
+#
+# Environment file (.env):
+#   REDIS_PASSWORD=prod_redis_password_here
+#   DB_PASSWORD=prod_db_password_here

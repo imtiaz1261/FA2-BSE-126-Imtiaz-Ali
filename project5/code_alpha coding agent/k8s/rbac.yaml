@@ -1,0 +1,180 @@
+# Kubernetes RBAC Configuration for Code Alpha
+
+---
+# ServiceAccount for application pods
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: code-alpha-app
+  namespace: code-alpha
+  labels:
+    app: code-alpha
+    component: application
+
+---
+# ServiceAccount for worker pods
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: code-alpha-worker
+  namespace: code-alpha
+  labels:
+    app: code-alpha
+    component: worker
+
+---
+# ClusterRole for application services
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: code-alpha-app
+  labels:
+    app: code-alpha
+rules:
+  # Read ConfigMaps
+  - apiGroups: [""]
+    resources: ["configmaps"]
+    verbs: ["get", "list", "watch"]
+  # Read Secrets
+  - apiGroups: [""]
+    resources: ["secrets"]
+    verbs: ["get", "list"]
+  # Read Services and Pods
+  - apiGroups: [""]
+    resources: ["services", "pods"]
+    verbs: ["get", "list", "watch"]
+  # Access logs
+  - apiGroups: [""]
+    resources: ["pods/log"]
+    verbs: ["get"]
+  # Read PersistentVolumes
+  - apiGroups: [""]
+    resources: ["persistentvolumeclaims"]
+    verbs: ["get", "list"]
+
+---
+# ClusterRole for worker services
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: code-alpha-worker
+  labels:
+    app: code-alpha
+rules:
+  # Read ConfigMaps
+  - apiGroups: [""]
+    resources: ["configmaps"]
+    verbs: ["get", "list", "watch"]
+  # Read Secrets
+  - apiGroups: [""]
+    resources: ["secrets"]
+    verbs: ["get"]
+  # Read Services and Pods
+  - apiGroups: [""]
+    resources: ["services", "pods"]
+    verbs: ["get", "list", "watch"]
+  # Create/delete pods (for sandbox)
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["create", "delete", "get", "list", "watch"]
+  # Pod exec (for debugging)
+  - apiGroups: [""]
+    resources: ["pods/exec"]
+    verbs: ["create"]
+  # Read PersistentVolumes
+  - apiGroups: [""]
+    resources: ["persistentvolumeclaims"]
+    verbs: ["get", "list"]
+
+---
+# ClusterRoleBinding for app ServiceAccount
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: code-alpha-app
+  labels:
+    app: code-alpha
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: code-alpha-app
+subjects:
+  - kind: ServiceAccount
+    name: code-alpha-app
+    namespace: code-alpha
+
+---
+# ClusterRoleBinding for worker ServiceAccount
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: code-alpha-worker
+  labels:
+    app: code-alpha
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: code-alpha-worker
+subjects:
+  - kind: ServiceAccount
+    name: code-alpha-worker
+    namespace: code-alpha
+
+---
+# Role for namespace-specific operations
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: code-alpha-namespace
+  namespace: code-alpha
+  labels:
+    app: code-alpha
+rules:
+  # Manage events
+  - apiGroups: [""]
+    resources: ["events"]
+    verbs: ["create", "patch"]
+  # Read all resources in namespace
+  - apiGroups: [""]
+    resources: ["*"]
+    verbs: ["get", "list", "watch"]
+  # Manage deployments (for canary/blue-green)
+  - apiGroups: ["apps"]
+    resources: ["deployments", "deployments/scale"]
+    verbs: ["get", "list", "watch", "patch", "update"]
+
+---
+# RoleBinding for app ServiceAccount
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: code-alpha-app
+  namespace: code-alpha
+  labels:
+    app: code-alpha
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: code-alpha-namespace
+subjects:
+  - kind: ServiceAccount
+    name: code-alpha-app
+    namespace: code-alpha
+
+---
+# RoleBinding for worker ServiceAccount
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: code-alpha-worker
+  namespace: code-alpha
+  labels:
+    app: code-alpha
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: code-alpha-namespace
+subjects:
+  - kind: ServiceAccount
+    name: code-alpha-worker
+    namespace: code-alpha

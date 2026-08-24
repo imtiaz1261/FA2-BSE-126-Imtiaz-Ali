@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Code Alpha - Kiro Interface</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0e27;
+            color: #e0e0e0;
+            overflow: hidden;
+        }
+
+        .container {
+            display: flex;
+            height: 100vh;
+            gap: 1px;
+        }
+
+        /* 3D Canvas Section */
+        .canvas-section {
+            flex: 1;
+            position: relative;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+            border-right: 1px solid rgba(100, 200, 255, 0.2);
+        }
+
+        #canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .status-badge {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            padding: 10px 20px;
+            background: rgba(30, 144, 255, 0.9);
+            border: 2px solid #00ffff;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+            animation: pulse 2s infinite;
+        }
+
+        .status-badge.complete {
+            background: rgba(34, 197, 94, 0.9);
+            border-color: #00ff00;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
+        }
+
+        .status-badge.error {
+            background: rgba(239, 68, 68, 0.9);
+            border-color: #ff0000;
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+
+        /* Control Panel */
+        .control-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #0d1117;
+            border-left: 1px solid rgba(100, 200, 255, 0.2);
+        }
+
+        .panel-header {
+            padding: 20px;
+            border-bottom: 1px solid rgba(100, 200, 255, 0.1);
+            background: linear-gradient(180deg, #1a1f3a 0%, #0d1117 100%);
+        }
+
+        .panel-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #00ffff, #ff00ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 1px;
+        }
+
+        .panel-subtitle {
+            font-size: 12px;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .input-section {
+            padding: 20px;
+            border-bottom: 1px solid rgba(100, 200, 255, 0.1);
+        }
+
+        .input-label {
+            font-size: 12px;
+            color: #00ffff;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            display: block;
+            font-weight: 600;
+        }
+
+        .task-input {
+            width: 100%;
+            padding: 12px;
+            background: rgba(20, 30, 60, 0.8);
+            border: 2px solid rgba(100, 200, 255, 0.3);
+            color: #e0e0e0;
+            border-radius: 8px;
+            font-size: 13px;
+            font-family: 'Courier New', monospace;
+            transition: all 0.3s ease;
+            resize: vertical;
+            min-height: 80px;
+            margin-bottom: 10px;
+        }
+
+        .task-input:focus {
+            outline: none;
+            border-color: #00ffff;
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+            background: rgba(20, 30, 60, 1);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: transparent;
+            text-align: center;
+        }
+
+        .btn-primary {
+            border-color: #00ffff;
+            color: #00ffff;
+        }
+
+        .btn-primary:hover {
+            background: rgba(0, 255, 255, 0.2);
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
+            transform: translateY(-2px);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+        }
+
+        /* Output Section */
+        .output-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            border-bottom: 1px solid rgba(100, 200, 255, 0.1);
+        }
+
+        .output-header {
+            padding: 12px 20px;
+            background: rgba(0, 255, 255, 0.1);
+            border-bottom: 1px solid rgba(100, 200, 255, 0.2);
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #00ffff;
+        }
+
+        .output-tabs {
+            display: flex;
+            border-bottom: 1px solid rgba(100, 200, 255, 0.1);
+            padding: 0 20px;
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .output-tab {
+            padding: 10px 15px;
+            border: none;
+            background: transparent;
+            color: #888;
+            cursor: pointer;
+            font-size: 12px;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .output-tab.active {
+            color: #00ffff;
+            border-bottom-color: #00ffff;
+            box-shadow: 0 2px 10px rgba(0, 255, 255, 0.3);
+        }
+
+        .output-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px 20px;
+            font-size: 12px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .log-entry {
+            margin: 4px 0;
+            padding: 5px 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border-left: 2px solid #666;
+            animation: slideIn 0.3s ease;
+        }
+
+        .log-entry.info {
+            border-left-color: #00ffff;
+            color: #00ffff;
+        }
+
+        .log-entry.success {
+            border-left-color: #00ff00;
+            color: #00ff00;
+        }
+
+        .log-entry.error {
+            border-left-color: #ff0000;
+            color: #ff4444;
+        }
+
+        .log-entry.warning {
+            border-left-color: #ffaa00;
+            color: #ffaa00;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .code-display {
+            background: rgba(10, 14, 39, 0.8);
+            border: 1px solid rgba(100, 200, 255, 0.2);
+            border-radius: 6px;
+            padding: 15px;
+            margin: 10px 0;
+            overflow-x: auto;
+        }
+
+        .code-display pre {
+            margin: 0;
+            font-size: 11px;
+            line-height: 1.5;
+        }
+
+        .code-display code {
+            color: #00ffff;
+        }
+
+        /* Progress Bar */
+        .progress-bar {
+            height: 3px;
+            background: rgba(100, 200, 255, 0.1);
+            border-radius: 2px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00ffff, #ff00ff);
+            width: 0%;
+            transition: width 0.3s ease;
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.8);
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(100, 200, 255, 0.05);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(0, 255, 255, 0.3);
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 255, 255, 0.6);
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease;
+        }
+
+        /* Glow effect */
+        .glow {
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+        }
+
+        /* Loading animation */
+        .spinner {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border: 2px solid rgba(0, 255, 255, 0.3);
+            border-top-color: #00ffff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .file-list {
+            margin: 10px 0;
+            padding: 10px;
+            background: rgba(0, 255, 255, 0.05);
+            border-left: 3px solid #00ffff;
+            border-radius: 4px;
+        }
+
+        .file-item {
+            padding: 6px 0;
+            font-size: 12px;
+            font-family: monospace;
+            color: #00ffff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 3D Canvas Section -->
+        <div class="canvas-section">
+            <canvas id="canvas"></canvas>
+            <div class="status-badge" id="statusBadge">
+                <span class="spinner"></span> INITIALIZING
+            </div>
+        </div>
+
+        <!-- Control Panel -->
+        <div class="control-panel">
+            <!-- Header -->
+            <div class="panel-header">
+                <div class="panel-title">⚡ CODE ALPHA</div>
+                <div class="panel-subtitle">Autonomous Code Generation AI</div>
+            </div>
+
+            <!-- Input Section -->
+            <div class="input-section">
+                <label class="input-label">📝 Task Description</label>
+                <textarea class="task-input" id="taskInput" placeholder="Example: Create a fibonacci function&#10;Example: Build a REST API with user endpoints&#10;Example: Write unit tests for calculator"></textarea>
+                <div class="button-group">
+                    <button class="btn btn-primary" id="submitBtn">▶ EXECUTE</button>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+            </div>
+
+            <!-- Output Section -->
+            <div class="output-section">
+                <div class="output-header">📊 EXECUTION OUTPUT</div>
+                <div class="output-tabs">
+                    <button class="output-tab active" data-tab="logs">Logs</button>
+                    <button class="output-tab" data-tab="code">Generated Code</button>
+                    <button class="output-tab" data-tab="files">Files</button>
+                </div>
+                <div class="output-content">
+                    <div id="logsPanel" class="tab-panel active">
+                        <div class="log-entry info">Waiting for task submission...</div>
+                    </div>
+                    <div id="codePanel" class="tab-panel" style="display:none;">
+                        <div class="code-display">
+                            <pre><code id="codeDisplay">// Generated code will appear here</code></pre>
+                        </div>
+                    </div>
+                    <div id="filesPanel" class="tab-panel" style="display:none;">
+                        <div class="file-list">
+                            <div class="file-item">No files yet</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ========== 3D Canvas Setup ==========
+        let scene, camera, renderer;
+        let particles = [];
+        let codeLines = [];
+        let animationId;
+
+        function initThreeJS() {
+            // Scene
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x0a0e27);
+
+            // Camera
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / 2 / window.innerHeight, 0.1, 1000);
+            camera.position.z = 30;
+
+            // Renderer
+            const canvas = document.getElementById('canvas');
+            renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+            renderer.setSize(window.innerWidth / 2, window.innerHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
+
+            // Create particle system
+            createParticles();
+
+            // Create animated grid
+            createGrid();
+
+            // Animation loop
+            animate();
+
+            // Handle window resize
+            window.addEventListener('resize', onWindowResize);
+        }
+
+        function createParticles() {
+            const geometry = new THREE.BufferGeometry();
+            const count = 200;
+            const positions = new Float32Array(count * 3);
+
+            for (let i = 0; i < count * 3; i += 3) {
+                positions[i] = (Math.random() - 0.5) * 100;
+                positions[i + 1] = (Math.random() - 0.5) * 100;
+                positions[i + 2] = (Math.random() - 0.5) * 100;
+            }
+
+            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+
+            const material = new THREE.PointsMaterial({
+                color: 0x00ffff,
+                size: 0.5,
+                sizeAttenuation: true,
+                transparent: true,
+                opacity: 0.6
+            });
+
+            const points = new THREE.Points(geometry, material);
+            scene.add(points);
+
+            particles.push({
+                object: points,
+                velocity: new THREE.Vector3(
+                    (Math.random() - 0.5) * 0.1,
+                    (Math.random() - 0.5) * 0.1,
+                    (Math.random() - 0.5) * 0.1
+                )
+            });
+        }
+
+        function createGrid() {
+            const gridHelper = new THREE.GridHelper(100, 20, 0x00ffff, 0x0a0e27);
+            gridHelper.position.y = -20;
+            scene.add(gridHelper);
+        }
+
+        function animate() {
+            animationId = requestAnimationFrame(animate);
+
+            // Update particles
+            particles.forEach(particle => {
+                const positions = particle.object.geometry.attributes.position.array;
+                for (let i = 0; i < positions.length; i += 3) {
+                    positions[i] += particle.velocity.x;
+                    positions[i + 1] += particle.velocity.y;
+                    positions[i + 2] += particle.velocity.z;
+
+                    if (Math.abs(positions[i]) > 50) particle.velocity.x *= -1;
+                    if (Math.abs(positions[i + 1]) > 50) particle.velocity.y *= -1;
+                    if (Math.abs(positions[i + 2]) > 50) particle.velocity.z *= -1;
+                }
+                particle.object.geometry.attributes.position.needsUpdate = true;
+            });
+
+            // Rotate camera
+            camera.position.x = Math.cos(Date.now() * 0.0001) * 30;
+            camera.position.z = Math.sin(Date.now() * 0.0001) * 30;
+            camera.lookAt(0, 0, 0);
+
+            renderer.render(scene, camera);
+        }
+
+        function onWindowResize() {
+            const width = window.innerWidth / 2;
+            const height = window.innerHeight;
+            camera.aspect = width / height;
+            camera.updateProjectionMatrix();
+            renderer.setSize(width, height);
+        }
+
+        // ========== UI Logic ==========
+        const taskInput = document.getElementById('taskInput');
+        const submitBtn = document.getElementById('submitBtn');
+        const statusBadge = document.getElementById('statusBadge');
+        const progressFill = document.getElementById('progressFill');
+        const logsPanel = document.getElementById('logsPanel');
+        const codePanel = document.getElementById('codePanel');
+        const filesPanel = document.getElementById('filesPanel');
+        const codeDisplay = document.getElementById('codeDisplay');
+        const outputTabs = document.querySelectorAll('.output-tab');
+
+        // Tab switching
+        outputTabs.forEach(tab => {
+            tab.addEventListener('click', (e) => {
+                outputTabs.forEach(t => t.classList.remove('active'));
+                e.target.classList.add('active');
+
+                document.querySelectorAll('.tab-panel').forEach(p => p.style.display = 'none');
+                const tabName = e.target.dataset.tab;
+                document.getElementById(tabName + 'Panel').style.display = 'block';
+            });
+        });
+
+        // Submit task
+        submitBtn.addEventListener('click', async () => {
+            const prompt = taskInput.value.trim();
+            if (!prompt) {
+                addLog('Please enter a task description', 'warning');
+                return;
+            }
+
+            submitBtn.disabled = true;
+            logsPanel.innerHTML = '';
+            progressFill.style.width = '0%';
+            statusBadge.textContent = '⏳ PROCESSING';
+            statusBadge.className = 'status-badge';
+
+            try {
+                // Create task
+                addLog('Creating task...', 'info');
+                const createResponse = await fetch('http://localhost:8000/tasks', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ prompt, repo_path: '.' })
+                });
+
+                if (!createResponse.ok) throw new Error('Failed to create task');
+                const task = await createResponse.json();
+                addLog(`Task ID: ${task.task_id}`, 'success');
+
+                // Stream events
+                await streamTaskEvents(task.task_id);
+
+            } catch (error) {
+                addLog(`Error: ${error.message}`, 'error');
+                statusBadge.textContent = '❌ ERROR';
+                statusBadge.classList.add('error');
+            } finally {
+                submitBtn.disabled = false;
+            }
+        });
+
+        async function streamTaskEvents(taskId) {
+            try {
+                const response = await fetch(`http://localhost:8000/tasks/${taskId}/stream`);
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+
+                    const text = decoder.decode(value);
+                    const lines = text.split('\n');
+
+                    for (const line of lines) {
+                        if (line.startsWith('data: ')) {
+                            try {
+                                const event = JSON.parse(line.slice(6));
+                                handleEvent(event);
+                            } catch (e) {
+                                // Parsing error, skip
+                            }
+                        }
+                    }
+                }
+            } catch (error) {
+                addLog(`Stream error: ${error.message}`, 'error');
+            }
+        }
+
+        function handleEvent(event) {
+            if (event.event === 'log') {
+                addLog(event.data, 'info');
+            } else if (event.event === 'progress') {
+                updateProgress(event.data);
+            } else if (event.event === 'code') {
+                displayCode(event.data);
+            } else if (event.event === 'complete') {
+                statusBadge.textContent = '✅ COMPLETE';
+                statusBadge.classList.add('complete');
+                addLog('Task completed successfully!', 'success');
+                updateProgress(100);
+            }
+        }
+
+        function addLog(message, type = 'info') {
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${type}`;
+            entry.textContent = message;
+            logsPanel.appendChild(entry);
+            logsPanel.scrollTop = logsPanel.scrollHeight;
+        }
+
+        function updateProgress(progress) {
+            progressFill.style.width = progress + '%';
+        }
+
+        function displayCode(code) {
+            codeDisplay.textContent = code;
+            hljs.highlightElement(codeDisplay);
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', initThreeJS);
+    </script>
+</body>
+</html>

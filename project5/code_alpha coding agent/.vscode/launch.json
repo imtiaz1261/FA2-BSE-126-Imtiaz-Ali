@@ -1,0 +1,17 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Run Code Alpha Extension",
+      "type": "extensionHost",
+      "request": "launch",
+      "args": [
+        "${workspaceFolder}"
+      ],
+      "outFiles": [
+        "${workspaceFolder}/kiro_interface/out/**/*.js"
+      ],
+      "preLaunchTask": "npm: build"
+    }
+  ]
+}

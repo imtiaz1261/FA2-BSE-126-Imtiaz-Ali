@@ -1,0 +1,210 @@
+# Kubernetes Deployment for Indexing Worker Services
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: indexing-worker
+  namespace: code-alpha
+  labels:
+    app: indexing-worker
+    component: workers
+    version: "1.0"
+spec:
+  replicas: 2  # Start with 2, scaled by HPA
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: indexing-worker
+  template:
+    metadata:
+      labels:
+        app: indexing-worker
+        component: workers
+        version: "1.0"
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8003"
+        prometheus.io/path: "/metrics"
+    spec:
+      serviceAccountName: code-alpha-worker
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        fsGroup: 1000
+      containers:
+        - name: indexing-worker
+          image: codealpha-registry/indexing-worker:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 8003
+              protocol: TCP
+          env:
+            - name: ENVIRONMENT
+              value: "production"
+            - name: LOG_LEVEL
+              value: "INFO"
+            - name: PYTHONUNBUFFERED
+              value: "1"
+            - name: SERVICE_TYPE
+              value: "indexing_worker"
+            - name: ORCHESTRATOR_URL
+              value: "http://orchestrator:8001"
+            - name: REDIS_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: indexing-config
+                  key: redis_url
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: connection_string
+            - name: VECTOR_STORE_PATH
+              value: "/mnt/vectors"
+            - name: MAX_CONCURRENT_TASKS
+              value: "3"
+            - name: EMBEDDING_MODEL
+              value: "sentence-transformers/all-MiniLM-L6-v2"
+            - name: BATCH_SIZE
+              value: "32"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8003
+            initialDelaySeconds: 60  # Longer startup for model loading
+            periodSeconds: 15
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /health/ready
+              port: 8003
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          startupProbe:
+            httpGet:
+              path: /health
+              port: 8003
+            failureThreshold: 30
+            periodSeconds: 10
+          resources:
+            requests:
+              cpu: 1            # CPU-intensive embeddings
+              memory: 2Gi
+            limits:
+              cpu: 2
+              memory: 4Gi
+          volumeMounts:
+            - name: vectors
+              mountPath: /mnt/vectors
+            - name: tmp
+              mountPath: /tmp
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: false
+            capabilities:
+              drop:
+                - ALL
+      volumes:
+        - name: vectors
+          persistentVolumeClaim:
+            claimName: vectors-pvc
+        - name: tmp
+          emptyDir: {}
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: app
+                      operator: In
+                      values:
+                        - indexing-worker
+                topologyKey: kubernetes.io/hostname
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 60
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: indexing-worker
+  namespace: code-alpha
+  labels:
+    app: indexing-worker
+spec:
+  type: ClusterIP
+  clusterIP: None  # Headless service
+  selector:
+    app: indexing-worker
+  ports:
+    - name: http
+      port: 8003
+      targetPort: 8003
+      protocol: TCP
+
+---
+apiVersion: autoscaling.k8s.io/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: indexing-worker-hpa
+  namespace: code-alpha
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: indexing-worker
+  minReplicas: 2
+  maxReplicas: 10
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 70
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: 80
+  behavior:
+    scaleDown:
+      stabilizationWindowSeconds: 300
+      policies:
+        - type: Percent
+          value: 50
+          periodSeconds: 60
+    scaleUp:
+      stabilizationWindowSeconds: 60
+      policies:
+        - type: Percent
+          value: 100
+          periodSeconds: 60
+        - type: Pods
+          value: 1
+          periodSeconds: 60
+      selectPolicy: Max
+
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: indexing-worker-pdb
+  namespace: code-alpha
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app: indexing-worker

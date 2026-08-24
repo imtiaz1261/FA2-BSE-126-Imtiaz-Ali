@@ -1,0 +1,207 @@
+# Kubernetes Deployment for PostgreSQL (Persistent Storage)
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-init-config
+  namespace: code-alpha
+data:
+  init-db.sql: |
+    -- Enable required extensions
+    CREATE EXTENSION IF NOT EXISTS uuid-ossp;
+    CREATE EXTENSION IF NOT EXISTS pgcrypto;
+
+    -- Create schemas
+    CREATE SCHEMA IF NOT EXISTS code_alpha;
+    CREATE SCHEMA IF NOT EXISTS audit;
+    CREATE SCHEMA IF NOT EXISTS metrics;
+
+    -- Audit tables
+    CREATE TABLE IF NOT EXISTS audit.audit_log (
+      id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+      task_id VARCHAR(255) NOT NULL,
+      action_type VARCHAR(50) NOT NULL,
+      target VARCHAR(500),
+      status VARCHAR(20) NOT NULL,
+      reason TEXT,
+      timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      user_id VARCHAR(255),
+      previous_hash VARCHAR(64),
+      entry_hash VARCHAR(64) NOT NULL,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE INDEX idx_audit_task_id ON audit.audit_log(task_id);
+    CREATE INDEX idx_audit_timestamp ON audit.audit_log(timestamp);
+
+    -- Metrics tables
+    CREATE TABLE IF NOT EXISTS metrics.task_metrics (
+      id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+      task_id VARCHAR(255) NOT NULL UNIQUE,
+      files_touched INTEGER DEFAULT 0,
+      lines_added INTEGER DEFAULT 0,
+      lines_removed INTEGER DEFAULT 0,
+      api_calls INTEGER DEFAULT 0,
+      shell_commands INTEGER DEFAULT 0,
+      blocked_actions INTEGER DEFAULT 0,
+      total_actions INTEGER DEFAULT 0,
+      status VARCHAR(20) DEFAULT 'ok',
+      started_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      completed_at TIMESTAMP,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE INDEX idx_metrics_task_id ON metrics.task_metrics(task_id);
+
+    -- Core tables
+    CREATE TABLE IF NOT EXISTS code_alpha.tasks (
+      id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+      task_id VARCHAR(255) NOT NULL UNIQUE,
+      name TEXT,
+      description TEXT,
+      status VARCHAR(20) NOT NULL DEFAULT 'pending',
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE INDEX idx_tasks_task_id ON code_alpha.tasks(task_id);
+
+    -- Approval requests
+    CREATE TABLE IF NOT EXISTS code_alpha.approval_requests (
+      id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+      request_id UUID NOT NULL UNIQUE,
+      task_id VARCHAR(255) NOT NULL,
+      action_type VARCHAR(100),
+      target VARCHAR(500),
+      risk_level VARCHAR(20),
+      status VARCHAR(20) DEFAULT 'pending',
+      requested_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      expires_at TIMESTAMP,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE INDEX idx_approval_status ON code_alpha.approval_requests(status);
+
+    GRANT CONNECT ON DATABASE codealpha TO codealpha;
+    GRANT USAGE ON SCHEMA code_alpha, audit, metrics TO codealpha;
+    GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA code_alpha TO codealpha;
+    GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA audit TO codealpha;
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres
+  namespace: code-alpha
+  labels:
+    app: postgres
+    component: database
+spec:
+  replicas: 1  # Single instance (use operator for HA)
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+        component: database
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9187"
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:15-alpine
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: postgres
+              containerPort: 5432
+              protocol: TCP
+          env:
+            - name: POSTGRES_DB
+              value: codealpha
+            - name: POSTGRES_USER
+              value: codealpha
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: password
+            - name: PGDATA
+              value: /var/lib/postgresql/data/pgdata
+          livenessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - exec pg_isready -U codealpha -d codealpha -h 127.0.0.1
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - exec pg_isready -U codealpha -d codealpha -h 127.0.0.1
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 5
+            failureThreshold: 3
+          resources:
+            requests:
+              cpu: 500m
+              memory: 1Gi
+            limits:
+              cpu: 2
+              memory: 4Gi
+          volumeMounts:
+            - name: postgres-data
+              mountPath: /var/lib/postgresql/data
+            - name: postgres-init
+              mountPath: /docker-entrypoint-initdb.d
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 999
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: false
+            capabilities:
+              drop:
+                - ALL
+      volumes:
+        - name: postgres-data
+          persistentVolumeClaim:
+            claimName: postgres-pvc
+        - name: postgres-init
+          configMap:
+            name: postgres-init-config
+      securityContext:
+        fsGroup: 999
+      restartPolicy: Always
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+  namespace: code-alpha
+  labels:
+    app: postgres
+spec:
+  type: ClusterIP
+  selector:
+    app: postgres
+  ports:
+    - name: postgres
+      port: 5432
+      targetPort: 5432
+      protocol: TCP
+
+---
+# Secret for PostgreSQL password
+apiVersion: v1
+kind: Secret
+metadata:
+  name: postgres-secret
+  namespace: code-alpha
+type: Opaque
+stringData:
+  password: "changeme"  # IMPORTANT: Change this in production!

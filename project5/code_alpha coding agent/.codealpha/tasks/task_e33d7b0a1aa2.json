@@ -1,0 +1,27 @@
+{
+  "task_id": "task_e33d7b0a1aa2",
+  "prompt": "Task",
+  "repo_path": ".",
+  "status": "pending",
+  "progress": 0,
+  "created_at": "2026-08-09T18:35:28.732611",
+  "started_at": null,
+  "completed_at": null,
+  "auto_approve_low_risk": false,
+  "max_retries": 3,
+  "timeout_seconds": 3600,
+  "on_failure": "ask",
+  "logs": [],
+  "edits": [],
+  "test_results": [],
+  "error": null,
+  "error_type": null,
+  "tags": [
+    "spec-only"
+  ],
+  "metadata": {},
+  "current_operation": null,
+  "current_file": null,
+  "awaiting_approval": false,
+  "pending_changes": null
+}

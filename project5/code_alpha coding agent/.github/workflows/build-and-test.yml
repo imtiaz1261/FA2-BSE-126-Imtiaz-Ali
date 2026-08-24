@@ -1,0 +1,300 @@
+# GitHub Actions Workflow: Build, Test, and Push Docker Images
+
+name: Build and Test
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+  schedule:
+    - cron: '0 2 * * 0'  # Weekly test run
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_PREFIX: ${{ github.repository_owner }}/codealpha
+
+jobs:
+  # Test Python code
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      matrix:
+        python-version: ['3.10']
+    
+    services:
+      postgres:
+        image: postgres:15-alpine
+        env:
+          POSTGRES_DB: codealpha_test
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+      
+      redis:
+        image: redis:7-alpine
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 6379:6379
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .
+          pip install -r requirements_cli_api.txt
+          pip install pytest pytest-cov pytest-xdist pytest-timeout
+
+      - name: Lint with flake8
+        run: |
+          pip install flake8
+          # Stop build if there are syntax errors
+          flake8 code_alpha --count --select=E9,F63,F7,F82 --show-source --statistics
+          # Exit-zero treats all errors as warnings
+          flake8 code_alpha --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+
+      - name: Type check with mypy
+        run: |
+          pip install mypy
+          mypy code_alpha --ignore-missing-imports || true
+
+      - name: Run pytest
+        env:
+          DATABASE_URL: postgresql://test:test@localhost:5432/codealpha_test
+          REDIS_URL: redis://localhost:6379/0
+        run: |
+          pytest tests/ \
+            -v \
+            --tb=short \
+            --cov=code_alpha \
+            --cov-report=xml \
+            --cov-report=term-missing \
+            --junit-xml=test-results.xml \
+            -n auto
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          files: ./coverage.xml
+          flags: unittests
+          name: codecov-umbrella
+          fail_ci_if_error: false
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-results-${{ matrix.python-version }}
+          path: |
+            test-results.xml
+            .coverage
+
+      - name: Publish test results
+        if: always()
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        with:
+          files: test-results.xml
+          check_name: Test Results (${{ matrix.python-version }})
+
+  # Security scanning
+  security:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+          severity: 'CRITICAL,HIGH'
+
+      - name: Upload Trivy results to GitHub Security
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: 'trivy-results.sarif'
+
+      - name: Bandit security check
+        run: |
+          pip install bandit
+          bandit -r code_alpha -f json -o bandit-report.json || true
+
+      - name: Upload Bandit results
+        uses: actions/upload-artifact@v3
+        with:
+          name: bandit-report
+          path: bandit-report.json
+
+  # Build and push Docker images
+  build:
+    needs: [test, security]
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    
+    permissions:
+      contents: read
+      packages: write
+
+    strategy:
+      matrix:
+        image:
+          - name: api
+            dockerfile: docker/Dockerfile.api-gateway
+          - name: orchestrator
+            dockerfile: docker/Dockerfile.orchestrator
+          - name: sandbox-worker
+            dockerfile: docker/Dockerfile.sandbox-worker
+          - name: indexing-worker
+            dockerfile: docker/Dockerfile.indexing-worker
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Log in to Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}/${{ matrix.image.name }}
+          tags: |
+            type=ref,event=branch
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=sha,prefix={{branch}}-
+            type=raw,value=latest,enable={{is_default_branch}}
+
+      - name: Build and push image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: ${{ matrix.image.dockerfile }}
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}/${{ matrix.image.name }}:buildcache
+          cache-to: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}/${{ matrix.image.name }}:buildcache,mode=max
+
+      - name: Scan image with Trivy
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}/${{ matrix.image.name }}:${{ steps.meta.outputs.version }}
+          format: 'sarif'
+          output: 'image-scan-${{ matrix.image.name }}.sarif'
+
+      - name: Upload image scan results
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: 'image-scan-${{ matrix.image.name }}.sarif'
+
+  # Integration tests
+  integration-tests:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Compose
+        run: docker-compose --version
+
+      - name: Start services
+        run: |
+          docker-compose -f docker/docker-compose.test.yml up -d
+          sleep 30
+
+      - name: Run integration tests
+        run: |
+          docker-compose -f docker/docker-compose.test.yml exec -T test-runner pytest tests/integration/ -v
+
+      - name: Collect logs
+        if: always()
+        run: |
+          docker-compose -f docker/docker-compose.test.yml logs > integration-test-logs.txt
+
+      - name: Upload logs
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: integration-test-logs
+          path: integration-test-logs.txt
+
+      - name: Clean up
+        if: always()
+        run: docker-compose -f docker/docker-compose.test.yml down -v
+
+  # Notify on completion
+  notify:
+    runs-on: ubuntu-latest
+    needs: [test, security, build]
+    if: always()
+
+    steps:
+      - name: Determine status
+        id: status
+        run: |
+          if [[ "${{ needs.test.result }}" == "failure" || "${{ needs.security.result }}" == "failure" || "${{ needs.build.result }}" == "failure" ]]; then
+            echo "status=failed" >> $GITHUB_OUTPUT
+            echo "message=❌ Build failed" >> $GITHUB_OUTPUT
+          else
+            echo "status=success" >> $GITHUB_OUTPUT
+            echo "message=✅ Build succeeded" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Send Slack notification
+        if: always()
+        uses: slackapi/slack-github-action@v1.24.0
+        with:
+          payload: |
+            {
+              "text": "${{ steps.status.outputs.message }}",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*Code Alpha Build*\n${{ steps.status.outputs.message }}\nBranch: ${{ github.ref }}\nCommit: ${{ github.sha }}"
+                  }
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK

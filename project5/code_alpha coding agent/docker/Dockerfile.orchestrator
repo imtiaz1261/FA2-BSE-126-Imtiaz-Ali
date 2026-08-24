@@ -1,0 +1,66 @@
+# Dockerfile for Code Alpha Orchestrator Service
+
+FROM python:3.10-slim
+
+LABEL maintainer="Code Alpha"
+LABEL description="Code Alpha Orchestrator - Task orchestration and scheduling"
+LABEL version="1.0.0"
+
+# Set working directory
+WORKDIR /app
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    git \
+    curl \
+    build-essential \
+    pkg-config \
+    libssl-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy project files
+COPY . /app/
+
+# Install Python dependencies
+RUN pip install --upgrade pip && \
+    pip install -e . && \
+    pip install -r requirements_cli_api.txt
+
+# Create non-root user
+RUN useradd -m -u 1000 codealpha && \
+    chown -R codealpha:codealpha /app
+
+# Create directories
+RUN mkdir -p /app/logs /app/.codealpha && \
+    chown -R codealpha:codealpha /app/logs /app/.codealpha
+
+USER codealpha
+
+# Expose orchestrator port
+EXPOSE 8001
+
+# Set environment variables
+ENV PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV SERVICE_TYPE=orchestrator
+ENV LOG_LEVEL=INFO
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+    CMD curl -f http://localhost:8001/health || exit 1
+
+# Orchestrator entrypoint
+CMD ["python", "-m", "code_alpha.orchestration.orchestrator", \
+     "--host", "0.0.0.0", \
+     "--port", "8001", \
+     "--workers", "4"]
+
+# Build:
+# docker build -f docker/Dockerfile.orchestrator -t codealpha-orchestrator:latest .
+
+# Run:
+# docker run -p 8001:8001 \
+#   -v $(pwd):/workspace \
+#   -e REDIS_URL=redis://redis:6379 \
+#   -e DB_URL=postgresql://user:pass@postgres:5432/codealpha \
+#   codealpha-orchestrator:latest

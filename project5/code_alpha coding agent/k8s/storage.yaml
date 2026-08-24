@@ -1,0 +1,90 @@
+# Kubernetes Storage Configuration for Code Alpha
+# Persistent volumes for databases, audit logs, and embeddings
+
+---
+# StorageClass for fast SSD storage
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: code-alpha-fast
+provisioner: kubernetes.io/aws-ebs  # For AWS (change for your cloud provider)
+parameters:
+  type: gp3              # SSD
+  iops: "3000"
+  throughput: "125"
+  fstype: ext4
+volumeBindingMode: WaitForFirstConsumer
+allowVolumeExpansion: true
+
+---
+# StorageClass for slower general-purpose storage
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: code-alpha-standard
+provisioner: kubernetes.io/aws-ebs
+parameters:
+  type: gp2              # Standard SSD
+  fstype: ext4
+volumeBindingMode: WaitForFirstConsumer
+allowVolumeExpansion: true
+
+---
+# PersistentVolumeClaim for PostgreSQL data
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-pvc
+  namespace: code-alpha
+spec:
+  accessModes:
+    - ReadWriteOnce     # Single pod can read/write
+  storageClassName: code-alpha-fast
+  resources:
+    requests:
+      storage: 20Gi     # Adjust based on needs
+
+---
+# PersistentVolumeClaim for Redis data
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: redis-pvc
+  namespace: code-alpha
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: code-alpha-fast
+  resources:
+    requests:
+      storage: 10Gi
+
+---
+# PersistentVolumeClaim for vector embeddings
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: vectors-pvc
+  namespace: code-alpha
+spec:
+  accessModes:
+    - ReadWriteMany     # Multiple pods can read
+  storageClassName: code-alpha-standard
+  resources:
+    requests:
+      storage: 50Gi     # For large vector stores
+
+---
+# PersistentVolumeClaim for audit logs
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: audit-logs-pvc
+  namespace: code-alpha
+spec:
+  accessModes:
+    - ReadWriteMany     # Multiple readers
+  storageClassName: code-alpha-standard
+  resources:
+    requests:
+      storage: 30Gi     # For audit trail retention

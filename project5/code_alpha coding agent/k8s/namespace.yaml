@@ -1,0 +1,108 @@
+# Kubernetes Namespace for Code Alpha
+# Isolates all Code Alpha resources in a dedicated namespace
+
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: code-alpha
+  labels:
+    app: code-alpha
+    environment: production
+    managed-by: code-alpha
+  annotations:
+    description: "Code Alpha autonomous agent namespace"
+    version: "1.0.0"
+
+---
+# ResourceQuota - Limit total resource consumption
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: code-alpha-quota
+  namespace: code-alpha
+spec:
+  hard:
+    requests.cpu: "20"              # Total CPU requests
+    requests.memory: "40Gi"         # Total memory requests
+    limits.cpu: "40"                # Total CPU limits
+    limits.memory: "80Gi"           # Total memory limits
+    pods: "50"                      # Max pods
+    services: "10"
+    persistentvolumeclaims: "10"
+
+---
+# NetworkPolicy - Restrict traffic between pods
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: code-alpha-network-policy
+  namespace: code-alpha
+spec:
+  podSelector: {}
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              name: code-alpha
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              name: ingress-nginx
+  egress:
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              name: code-alpha
+    - to:
+        - podSelector: {}
+          ports:
+            - protocol: TCP
+              port: 53    # DNS
+            - protocol: UDP
+              port: 53
+    - to:
+        - namespaceSelector: {}
+          podSelector:
+            matchLabels:
+              k8s-app: kube-dns
+
+---
+# LimitRange - Set default resource limits for pods
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: code-alpha-limits
+  namespace: code-alpha
+spec:
+  limits:
+    # Pod limits
+    - type: Pod
+      max:
+        cpu: "4"
+        memory: "8Gi"
+      min:
+        cpu: "100m"
+        memory: "128Mi"
+    # Container limits
+    - type: Container
+      max:
+        cpu: "2"
+        memory: "4Gi"
+      min:
+        cpu: "100m"
+        memory: "128Mi"
+      default:
+        cpu: "500m"
+        memory: "512Mi"
+      defaultRequest:
+        cpu: "250m"
+        memory: "256Mi"
+    # PVC limits
+    - type: PersistentVolumeClaim
+      max:
+        storage: "10Gi"
+      min:
+        storage: "1Gi"

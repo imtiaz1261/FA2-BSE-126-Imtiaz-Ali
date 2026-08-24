@@ -1,0 +1,58 @@
+{
+  "run_id": "run-001",
+  "graph": {
+    "T1": {
+      "description": "Add rate_limit field to User model (design.md: Data model)",
+      "depends_on": [],
+      "status": "PASSED",
+      "attempts": 0,
+      "history": [
+        "review: (stub) You are the Reviewer agent. You are READ-ONLY \u2014 you n",
+        "passed"
+      ]
+    },
+    "T2": {
+      "description": "Add rate-limit check middleware",
+      "depends_on": [
+        "T1"
+      ],
+      "status": "PASSED",
+      "attempts": 1,
+      "history": [
+        "failed attempt 1: AssertionError in T2 (attempt 1)",
+        "review: (stub) You are the Reviewer agent. You are READ-ONLY \u2014 you n",
+        "passed"
+      ]
+    },
+    "T3": {
+      "description": "Write rate-limit unit tests",
+      "depends_on": [],
+      "status": "PASSED",
+      "attempts": 0,
+      "history": [
+        "review: (stub) You are the Reviewer agent. You are READ-ONLY \u2014 you n",
+        "passed"
+      ]
+    },
+    "T4": {
+      "description": "Wire middleware into /signup route",
+      "depends_on": [
+        "T2",
+        "T3"
+      ],
+      "status": "PASSED",
+      "attempts": 3,
+      "history": [
+        "failed attempt 1: AssertionError in T4 (attempt 1)",
+        "failed attempt 2: AssertionError in T4 (attempt 2)",
+        "failed attempt 3: AssertionError in T4 (attempt 3)",
+        "review: (stub) You are the Reviewer agent. You are READ-ONLY \u2014 you n",
+        "passed"
+      ]
+    }
+  },
+  "extra": {
+    "design_md": "(design doc)",
+    "requirements_md": "(requirements doc)"
+  }
+}

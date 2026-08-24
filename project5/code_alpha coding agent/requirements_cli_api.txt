@@ -1,0 +1,77 @@
+# Code Alpha CLI & API Requirements
+
+# CLI Framework
+typer[all]==0.9.0
+click==8.1.7
+
+# API Framework
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+pydantic==2.5.0
+pydantic-settings==2.1.0
+
+# Data Processing
+python-multipart==0.0.6
+aiofiles==23.2.1
+
+# WebSocket Support
+python-socketio==5.10.0
+websockets==12.0
+
+# Async Support
+asyncio-contextmanager==1.0.0
+asgiref==3.7.1
+
+# Testing & Analysis
+pytest==7.4.3
+pytest-asyncio==0.21.1
+pytest-cov==4.1.0
+pytest-timeout==2.1.0
+
+# Code Quality
+ruff==0.1.8
+mypy==1.7.1
+black==23.12.0
+isort==5.13.2
+
+# Monitoring & Logging
+python-json-logger==2.0.7
+loguru==0.7.2
+structlog==23.2.0
+
+# Rich Terminal Output
+rich==13.7.0
+rich-tables==0.1.0
+
+# HTTP Clients (for API calls from CLI)
+httpx==0.25.2
+requests==2.31.0
+
+# Database/Storage (optional, for task persistence)
+sqlalchemy==2.0.23
+alembic==1.12.1
+
+# Environment Management
+python-dotenv==1.0.0
+
+# Async HTTP
+aiohttp==3.9.1
+
+# JSON Processing
+orjson==3.9.10
+
+# Task Queue (optional)
+celery==5.3.4
+redis==5.0.1
+
+# Monitoring
+prometheus-client==0.19.0
+
+# CI/CD Integrations
+PyGithub==2.1.1
+python-gitlab==3.15.0
+
+# Additional utilities
+tqdm==4.66.1  # Progress bars
+tabulate==0.9.0  # Table formatting
+click-spinner==0.1.10  # CLI spinners

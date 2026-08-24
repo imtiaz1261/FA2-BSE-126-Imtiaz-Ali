@@ -1,0 +1,204 @@
+╔════════════════════════════════════════════════════════════════════════════╗
+║                                                                            ║
+║              🎯 QUICK COPY-PASTE COMMANDS - ONE PLACE                    ║
+║                                                                            ║
+║                   Just Copy & Paste Each Line                             ║
+║                                                                            ║
+╚════════════════════════════════════════════════════════════════════════════╝
+
+
+════════════════════════════════════════════════════════════════════════════
+⚡ FASTEST (Just Run This):
+════════════════════════════════════════════════════════════════════════════
+
+START_KIRO_COMPLETE.bat
+
+
+════════════════════════════════════════════════════════════════════════════
+📋 STEP-BY-STEP (Copy & Paste Each)
+════════════════════════════════════════════════════════════════════════════
+
+COMMAND 1️⃣  - Start Backend (Terminal 1):
+─────────────────────────────────────────────────────────────────────────────
+
+cd "c:\Users\IJAZ AHMAD\Desktop\Internship Work\week5\task56\kiro_backend"
+
+
+COMMAND 2️⃣  - Run Backend Server:
+─────────────────────────────────────────────────────────────────────────────
+
+python app.py
+
+
+[KEEP THIS WINDOW OPEN - Backend runs here]
+[Open new PowerShell window for next commands]
+
+
+COMMAND 3️⃣  - Navigate to Project (Terminal 2):
+─────────────────────────────────────────────────────────────────────────────
+
+cd "c:\Users\IJAZ AHMAD\Desktop\Internship Work\week5\task56"
+
+
+COMMAND 4️⃣  - Open VS Code:
+─────────────────────────────────────────────────────────────────────────────
+
+code .
+
+
+[Wait 10-15 seconds for VS Code to load]
+
+
+COMMAND 5️⃣  - Open Kiro Interface (In VS Code):
+─────────────────────────────────────────────────────────────────────────────
+
+Press: Ctrl + Shift + K
+
+[Wait 2-3 seconds]
+
+
+COMMAND 6️⃣  - Test in Kiro Interface:
+─────────────────────────────────────────────────────────────────────────────
+
+1. Click in textarea
+2. Type:
+   
+   Create a fibonacci function
+
+3. Click: ▶ EXECUTE
+
+
+════════════════════════════════════════════════════════════════════════════
+🔧 TROUBLESHOOTING COMMANDS
+════════════════════════════════════════════════════════════════════════════
+
+Check Python installed:
+────────────────────────────────────────────────────────────────────────────
+python --version
+
+
+Install dependencies:
+────────────────────────────────────────────────────────────────────────────
+pip install fastapi uvicorn pydantic
+
+
+Check backend health:
+────────────────────────────────────────────────────────────────────────────
+curl http://localhost:8000/health
+
+
+Kill process on port 8000:
+────────────────────────────────────────────────────────────────────────────
+netstat -ano | findstr :8000
+
+
+(Note the PID number, then:)
+
+taskkill /PID 860 /F
+
+
+View generated files:
+────────────────────────────────────────────────────────────────────────────
+explorer "$env:TEMP\code_alpha_tasks"
+
+
+Open API documentation:
+────────────────────────────────────────────────────────────────────────────
+(Open in browser:)
+http://localhost:8000/docs
+
+
+Rebuild extension:
+────────────────────────────────────────────────────────────────────────────
+cd "c:\Users\IJAZ AHMAD\Desktop\Internship Work\week5\task56\kiro_interface"
+npm install
+npm run build
+
+
+════════════════════════════════════════════════════════════════════════════
+✨ EXAMPLE OUTPUT
+════════════════════════════════════════════════════════════════════════════
+
+When you run "python app.py", you see:
+
+   INFO:     Started server process [13268]
+   INFO:     Waiting for application startup.
+   INFO:     Application startup complete.
+   INFO:     Uvicorn running on http://0.0.0.0:8000
+
+
+When you generate code, you see in Kiro:
+
+   Logs:
+   [14:02:48] Analysis phase...
+   [14:02:49] Generating code for: Create a fibonacci function
+   [14:02:49] Code generation complete
+   [14:02:49] File written successfully
+   [14:02:50] Task completed successfully!
+
+   Code:
+   def fibonacci(n):
+       """Generate Fibonacci sequence up to n terms"""
+       if n <= 0:
+           return []
+       ...
+
+
+════════════════════════════════════════════════════════════════════════════
+🎯 COMMANDS AT A GLANCE
+════════════════════════════════════════════════════════════════════════════
+
+Backend setup:
+  cd "c:\Users\IJAZ AHMAD\Desktop\Internship Work\week5\task56\kiro_backend"
+  python app.py
+
+VS Code + Interface:
+  cd "c:\Users\IJAZ AHMAD\Desktop\Internship Work\week5\task56"
+  code .
+  [Then press] Ctrl + Shift + K
+
+Test generation:
+  [Type in Kiro] Create a fibonacci function
+  [Click] ▶ EXECUTE
+
+
+════════════════════════════════════════════════════════════════════════════
+⏱️  TIMING
+════════════════════════════════════════════════════════════════════════════
+
+Backend start:    3-5 seconds
+VS Code open:     10-15 seconds
+Interface load:   2-3 seconds
+Code generation:  0.5-1 second
+
+TOTAL TIME: ~30 seconds
+
+
+════════════════════════════════════════════════════════════════════════════
+📚 FILES WITH MORE INFO
+════════════════════════════════════════════════════════════════════════════
+
+FINAL_INSTRUCTIONS.md           Full markdown guide
+COMMANDS_STEP_BY_STEP.txt       Detailed with explanations
+VSCODE_LAUNCH_INSTRUCTIONS.txt  Interface usage guide
+KIRO_INTERFACE_GUIDE.txt        Complete interface reference
+
+
+════════════════════════════════════════════════════════════════════════════
+✅ YOU'RE READY!
+════════════════════════════════════════════════════════════════════════════
+
+Just copy the commands above one by one.
+
+Start with:
+  cd "c:\Users\IJAZ AHMAD\Desktop\Internship Work\week5\task56\kiro_backend"
+  python app.py
+
+Then in new window:
+  cd "c:\Users\IJAZ AHMAD\Desktop\Internship Work\week5\task56"
+  code .
+
+Then press:
+  Ctrl + Shift + K
+
+Enjoy! 🚀✨

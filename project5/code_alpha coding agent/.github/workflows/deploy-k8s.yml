@@ -1,0 +1,262 @@
+# GitHub Actions Workflow: Deploy to Kubernetes
+
+name: Deploy to Kubernetes
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'k8s/**'
+      - '.github/workflows/deploy-k8s.yml'
+      - 'docker/**'
+  workflow_run:
+    workflows: ['Build and Test']
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Deployment environment'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+          - staging
+          - production
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_PREFIX: ${{ github.repository_owner }}/codealpha
+  K8S_NAMESPACE: code-alpha
+
+jobs:
+  # Deploy to staging environment
+  deploy-staging:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    environment:
+      name: staging
+      url: https://staging-api.codealpha.example.com
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure kubectl
+        run: |
+          mkdir -p $HOME/.kube
+          echo "${{ secrets.KUBE_CONFIG_STAGING }}" | base64 -d > $HOME/.kube/config
+          chmod 600 $HOME/.kube/config
+          kubectl cluster-info
+
+      - name: Set image tags
+        id: tags
+        run: |
+          SHA_SHORT=$(git rev-parse --short HEAD)
+          echo "api_image=${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}/api:$SHA_SHORT" >> $GITHUB_OUTPUT
+          echo "orchestrator_image=${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}/orchestrator:$SHA_SHORT" >> $GITHUB_OUTPUT
+          echo "sandbox_image=${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}/sandbox-worker:$SHA_SHORT" >> $GITHUB_OUTPUT
+          echo "indexing_image=${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}/indexing-worker:$SHA_SHORT" >> $GITHUB_OUTPUT
+
+      - name: Update Kubernetes manifests
+        run: |
+          cd k8s
+          sed -i "s|codealpha-registry/api:.*|${{ steps.tags.outputs.api_image }}|g" api-deployment.yaml
+          sed -i "s|codealpha-registry/orchestrator:.*|${{ steps.tags.outputs.orchestrator_image }}|g" orchestrator-deployment.yaml
+          sed -i "s|codealpha-registry/sandbox-worker:.*|${{ steps.tags.outputs.sandbox_image }}|g" sandbox-worker-deployment.yaml
+          sed -i "s|codealpha-registry/indexing-worker:.*|${{ steps.tags.outputs.indexing_image }}|g" indexing-worker-deployment.yaml
+          cat api-deployment.yaml | grep image
+
+      - name: Create namespace if needed
+        run: |
+          kubectl create namespace ${{ env.K8S_NAMESPACE }} --dry-run=client -o yaml | kubectl apply -f -
+
+      - name: Apply Kubernetes manifests
+        run: |
+          cd k8s
+          kubectl apply -f namespace.yaml
+          kubectl apply -f storage.yaml
+          kubectl apply -f rbac.yaml
+          kubectl apply -f configmap-secrets.yaml
+          kubectl apply -f redis-deployment.yaml
+          kubectl apply -f postgres-deployment.yaml
+          kubectl apply -f api-deployment.yaml
+          kubectl apply -f orchestrator-deployment.yaml
+          kubectl apply -f sandbox-worker-deployment.yaml
+          kubectl apply -f indexing-worker-deployment.yaml
+          kubectl apply -f ingress.yaml
+
+      - name: Wait for deployments
+        run: |
+          kubectl rollout status deployment/api -n ${{ env.K8S_NAMESPACE }} --timeout=5m || true
+          kubectl rollout status deployment/orchestrator -n ${{ env.K8S_NAMESPACE }} --timeout=5m || true
+          kubectl rollout status deployment/sandbox-worker -n ${{ env.K8S_NAMESPACE }} --timeout=5m || true
+          kubectl rollout status deployment/indexing-worker -n ${{ env.K8S_NAMESPACE }} --timeout=5m || true
+
+      - name: Verify deployment
+        run: |
+          kubectl get all -n ${{ env.K8S_NAMESPACE }}
+          kubectl get events -n ${{ env.K8S_NAMESPACE }} --sort-by='.lastTimestamp' | tail -20
+
+      - name: Health check
+        run: |
+          kubectl port-forward -n ${{ env.K8S_NAMESPACE }} svc/api 8000:8000 &
+          sleep 10
+          curl -f http://localhost:8000/health || exit 1
+          kill %1
+
+      - name: Notify deployment
+        if: success()
+        run: |
+          echo "✅ Deployment to staging succeeded"
+          echo "API: https://staging-api.codealpha.example.com"
+
+      - name: Notify failure
+        if: failure()
+        run: |
+          echo "❌ Deployment to staging failed"
+          exit 1
+
+  # Deploy to production environment
+  deploy-production:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
+    environment:
+      name: production
+      url: https://api.codealpha.example.com
+    needs: []  # No dependencies
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure kubectl for production
+        run: |
+          mkdir -p $HOME/.kube
+          echo "${{ secrets.KUBE_CONFIG_PRODUCTION }}" | base64 -d > $HOME/.kube/config
+          chmod 600 $HOME/.kube/config
+          kubectl cluster-info
+
+      - name: Set image tags
+        id: tags
+        run: |
+          TAG=$(git describe --tags --always)
+          echo "api_image=${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}/api:$TAG" >> $GITHUB_OUTPUT
+          echo "orchestrator_image=${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}/orchestrator:$TAG" >> $GITHUB_OUTPUT
+          echo "sandbox_image=${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}/sandbox-worker:$TAG" >> $GITHUB_OUTPUT
+          echo "indexing_image=${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}/indexing-worker:$TAG" >> $GITHUB_OUTPUT
+
+      - name: Update Kubernetes manifests for production
+        run: |
+          cd k8s
+          sed -i "s|codealpha-registry/api:.*|${{ steps.tags.outputs.api_image }}|g" api-deployment.yaml
+          sed -i "s|codealpha-registry/orchestrator:.*|${{ steps.tags.outputs.orchestrator_image }}|g" orchestrator-deployment.yaml
+          sed -i "s|codealpha-registry/sandbox-worker:.*|${{ steps.tags.outputs.sandbox_image }}|g" sandbox-worker-deployment.yaml
+          sed -i "s|codealpha-registry/indexing-worker:.*|${{ steps.tags.outputs.indexing_image }}|g" indexing-worker-deployment.yaml
+
+      - name: Create namespace if needed
+        run: |
+          kubectl create namespace ${{ env.K8S_NAMESPACE }} --dry-run=client -o yaml | kubectl apply -f -
+
+      - name: Apply Kubernetes manifests (production)
+        run: |
+          cd k8s
+          kubectl apply -f namespace.yaml
+          kubectl apply -f storage.yaml
+          kubectl apply -f rbac.yaml
+          kubectl apply -f configmap-secrets.yaml
+
+      - name: Rolling update deployments
+        run: |
+          cd k8s
+          kubectl apply -f redis-deployment.yaml
+          kubectl apply -f postgres-deployment.yaml
+          
+          # Rolling update with health checks
+          kubectl apply -f api-deployment.yaml
+          kubectl rollout status deployment/api -n ${{ env.K8S_NAMESPACE }} --timeout=10m
+          
+          kubectl apply -f orchestrator-deployment.yaml
+          kubectl rollout status deployment/orchestrator -n ${{ env.K8S_NAMESPACE }} --timeout=10m
+          
+          kubectl apply -f sandbox-worker-deployment.yaml
+          kubectl rollout status deployment/sandbox-worker -n ${{ env.K8S_NAMESPACE }} --timeout=10m
+          
+          kubectl apply -f indexing-worker-deployment.yaml
+          kubectl rollout status deployment/indexing-worker -n ${{ env.K8S_NAMESPACE }} --timeout=10m
+
+      - name: Apply ingress and networking
+        run: |
+          cd k8s
+          kubectl apply -f ingress.yaml
+
+      - name: Smoke tests
+        run: |
+          # Wait for endpoints
+          kubectl wait --for=condition=ready pod -l app=api -n ${{ env.K8S_NAMESPACE }} --timeout=300s
+          
+          # Port forward and test
+          kubectl port-forward -n ${{ env.K8S_NAMESPACE }} svc/api 8000:8000 &
+          sleep 5
+          
+          # Health check
+          curl -f http://localhost:8000/health || exit 1
+          
+          # API version
+          curl -f http://localhost:8000/version || true
+          
+          kill %1 || true
+
+      - name: Verify production deployment
+        run: |
+          kubectl get all -n ${{ env.K8S_NAMESPACE }}
+          kubectl top nodes || true
+          kubectl top pods -n ${{ env.K8S_NAMESPACE }} || true
+
+      - name: Create deployment record
+        run: |
+          echo "Deployment successful"
+          echo "Tag: $(git describe --tags --always)"
+          echo "Timestamp: $(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+
+      - name: Notify Slack on success
+        if: success()
+        uses: slackapi/slack-github-action@v1.24.0
+        with:
+          payload: |
+            {
+              "text": "✅ Production deployment successful",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*Code Alpha Production Deployment*\n✅ Deployment successful\nVersion: ${{ steps.tags.outputs.api_image }}\nURL: https://api.codealpha.example.com"
+                  }
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+      - name: Notify Slack on failure
+        if: failure()
+        uses: slackapi/slack-github-action@v1.24.0
+        with:
+          payload: |
+            {
+              "text": "❌ Production deployment failed",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*Code Alpha Production Deployment*\n❌ Deployment failed\nCheck: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                  }
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

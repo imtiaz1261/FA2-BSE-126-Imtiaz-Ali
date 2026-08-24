@@ -1,0 +1,331 @@
+# Prometheus Alert Rules for Code Alpha
+
+groups:
+  # API Gateway alerts
+  - name: code-alpha-api
+    interval: 30s
+    rules:
+      - alert: APIHighErrorRate
+        expr: |
+          (
+            sum(rate(http_requests_total{service="api", status=~"5.."}[5m]))
+            /
+            sum(rate(http_requests_total{service="api"}[5m]))
+          ) > 0.05
+        for: 5m
+        labels:
+          severity: critical
+          component: api
+        annotations:
+          summary: "High error rate in API (> 5%)"
+          description: "API error rate is {{ $value | humanizePercentage }} for the last 5 minutes"
+
+      - alert: APIHighLatency
+        expr: |
+          histogram_quantile(0.99, rate(http_request_duration_seconds_bucket{service="api"}[5m])) > 1.0
+        for: 5m
+        labels:
+          severity: warning
+          component: api
+        annotations:
+          summary: "High latency in API (p99 > 1s)"
+          description: "API p99 latency is {{ $value | humanizeDuration }} "
+
+      - alert: APIHighMemory
+        expr: |
+          (
+            process_resident_memory_bytes{service="api"}
+            /
+            1024 / 1024 / 1024
+          ) > 1.5
+        for: 5m
+        labels:
+          severity: warning
+          component: api
+        annotations:
+          summary: "High memory usage in API (> 1.5GB)"
+          description: "API memory usage is {{ $value | humanize }}GB"
+
+      - alert: APIDown
+        expr: |
+          up{service="api"} == 0
+        for: 2m
+        labels:
+          severity: critical
+          component: api
+        annotations:
+          summary: "API is down"
+          description: "API has been unreachable for 2 minutes"
+
+  # Orchestrator alerts
+  - name: code-alpha-orchestrator
+    interval: 30s
+    rules:
+      - alert: OrchestratorHighQueueDepth
+        expr: |
+          orchestrator_queue_depth{} > 1000
+        for: 10m
+        labels:
+          severity: warning
+          component: orchestrator
+        annotations:
+          summary: "High orchestrator queue depth (> 1000)"
+          description: "Task queue has {{ $value | humanize }} pending tasks"
+
+      - alert: OrchestratorTaskTimeout
+        expr: |
+          rate(orchestrator_tasks_timeout_total[5m]) > 0.5
+        for: 5m
+        labels:
+          severity: warning
+          component: orchestrator
+        annotations:
+          summary: "High task timeout rate in orchestrator"
+          description: "{{ $value | humanize }} tasks/sec timing out"
+
+      - alert: OrchestratorProcessing
+        expr: |
+          orchestrator_tasks_processing > 100
+        for: 5m
+        labels:
+          severity: warning
+          component: orchestrator
+        annotations:
+          summary: "High concurrent tasks in orchestrator (> 100)"
+          description: "Currently processing {{ $value | humanize }} tasks"
+
+  # Sandbox Worker alerts
+  - name: code-alpha-sandbox
+    interval: 30s
+    rules:
+      - alert: SandboxWorkerHighCPU
+        expr: |
+          process_cpu_seconds_total{service="sandbox-worker"} > 0.8
+        for: 5m
+        labels:
+          severity: warning
+          component: sandbox-worker
+        annotations:
+          summary: "High CPU usage in Sandbox Worker (> 80%)"
+          description: "CPU usage is {{ $value | humanizePercentage }}"
+
+      - alert: SandboxBlockedAction
+        expr: |
+          rate(sandbox_blocked_actions_total[5m]) > 1
+        for: 5m
+        labels:
+          severity: critical
+          component: sandbox-worker
+        annotations:
+          summary: "Sandbox Worker blocking actions"
+          description: "{{ $value | humanize }} blocked actions/sec detected"
+
+      - alert: SandboxWorkerDown
+        expr: |
+          up{service="sandbox-worker"} == 0
+        for: 2m
+        labels:
+          severity: critical
+          component: sandbox-worker
+        annotations:
+          summary: "Sandbox Worker is down"
+          description: "Sandbox Worker has been unreachable for 2 minutes"
+
+  # Indexing Worker alerts
+  - name: code-alpha-indexing
+    interval: 30s
+    rules:
+      - alert: IndexingWorkerLag
+        expr: |
+          indexing_queue_depth{} > 500
+        for: 10m
+        labels:
+          severity: warning
+          component: indexing-worker
+        annotations:
+          summary: "High indexing queue lag (> 500)"
+          description: "Queue depth is {{ $value | humanize }} items"
+
+      - alert: EmbeddingGenerationSlow
+        expr: |
+          histogram_quantile(0.95, rate(embedding_generation_duration_seconds_bucket[5m])) > 2.0
+        for: 5m
+        labels:
+          severity: warning
+          component: indexing-worker
+        annotations:
+          summary: "Slow embedding generation (p95 > 2s)"
+          description: "Embedding p95 latency is {{ $value | humanizeDuration }}"
+
+  # Database alerts
+  - name: code-alpha-database
+    interval: 30s
+    rules:
+      - alert: PostgreSQLConnections
+        expr: |
+          pg_stat_activity_count > 180
+        for: 5m
+        labels:
+          severity: warning
+          component: database
+        annotations:
+          summary: "High PostgreSQL connection count (> 180)"
+          description: "Active connections: {{ $value | humanize }}"
+
+      - alert: PostgreSQLSlowQueries
+        expr: |
+          rate(pg_slow_queries_total[5m]) > 0.1
+        for: 5m
+        labels:
+          severity: warning
+          component: database
+        annotations:
+          summary: "High rate of slow queries in PostgreSQL"
+          description: "{{ $value | humanize }} slow queries/sec"
+
+      - alert: PostgreSQLDiskUsage
+        expr: |
+          (
+            pg_database_size_bytes
+            /
+            1024 / 1024 / 1024
+          ) > 15
+        for: 5m
+        labels:
+          severity: warning
+          component: database
+        annotations:
+          summary: "High PostgreSQL disk usage (> 15GB)"
+          description: "Database size is {{ $value | humanize }}GB"
+
+  # Redis alerts
+  - name: code-alpha-redis
+    interval: 30s
+    rules:
+      - alert: RedisHighMemory
+        expr: |
+          (
+            redis_memory_used_bytes
+            /
+            redis_memory_max_bytes
+          ) > 0.9
+        for: 5m
+        labels:
+          severity: critical
+          component: redis
+        annotations:
+          summary: "High Redis memory usage (> 90%)"
+          description: "Memory utilization is {{ $value | humanizePercentage }}"
+
+      - alert: RedisEvictions
+        expr: |
+          rate(redis_evicted_keys_total[5m]) > 0
+        for: 5m
+        labels:
+          severity: warning
+          component: redis
+        annotations:
+          summary: "Redis is evicting keys"
+          description: "{{ $value | humanize }} keys/sec being evicted"
+
+      - alert: RedisCmdLatency
+        expr: |
+          redis_command_duration_seconds > 0.1
+        for: 5m
+        labels:
+          severity: warning
+          component: redis
+        annotations:
+          summary: "High Redis command latency (> 100ms)"
+          description: "Command latency is {{ $value | humanizeDuration }}"
+
+  # Audit & Safety alerts
+  - name: code-alpha-safety
+    interval: 30s
+    rules:
+      - alert: HighBlockedActions
+        expr: |
+          rate(safety_blocked_actions_total[5m]) > 5
+        for: 5m
+        labels:
+          severity: critical
+          component: safety
+        annotations:
+          summary: "High rate of blocked actions"
+          description: "{{ $value | humanize }} blocked actions/sec"
+
+      - alert: PolicyViolation
+        expr: |
+          increase(policy_violations_total[5m]) > 0
+        for: 1m
+        labels:
+          severity: warning
+          component: safety
+        annotations:
+          summary: "Policy violation detected"
+          description: "{{ $value | humanize }} policy violations in last 5 minutes"
+
+      - alert: AuditLogGrowth
+        expr: |
+          audit_log_entries_total > 1000000
+        for: 5m
+        labels:
+          severity: warning
+          component: audit
+        annotations:
+          summary: "Large audit log size"
+          description: "Audit log has {{ $value | humanize }} entries"
+
+  # Infrastructure alerts
+  - name: code-alpha-infrastructure
+    interval: 30s
+    rules:
+      - alert: KubernetesNodeNotReady
+        expr: |
+          kube_node_status_condition{condition="Ready", status="true"} == 0
+        for: 5m
+        labels:
+          severity: critical
+          component: infrastructure
+        annotations:
+          summary: "Kubernetes node not ready"
+          description: "Node {{ $labels.node }} is not ready"
+
+      - alert: KubeNodeHighCPU
+        expr: |
+          (
+            100 - (avg by(instance) (rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100)
+          ) > 80
+        for: 5m
+        labels:
+          severity: warning
+          component: infrastructure
+        annotations:
+          summary: "High CPU on Kubernetes node (> 80%)"
+          description: "Node {{ $labels.instance }} CPU is {{ $value | humanize }}%"
+
+      - alert: KubeNodeHighMemory
+        expr: |
+          (
+            (node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes)
+            /
+            node_memory_MemTotal_bytes
+          ) * 100 > 85
+        for: 5m
+        labels:
+          severity: warning
+          component: infrastructure
+        annotations:
+          summary: "High memory on Kubernetes node (> 85%)"
+          description: "Node {{ $labels.instance }} memory is {{ $value | humanize }}%"
+
+      - alert: KubeNodeDiskPressure
+        expr: |
+          kube_node_status_condition{condition="DiskPressure", status="true"} == 1
+        for: 5m
+        labels:
+          severity: critical
+          component: infrastructure
+        annotations:
+          summary: "Kubernetes node has disk pressure"
+          description: "Node {{ $labels.node }} has disk pressure"
