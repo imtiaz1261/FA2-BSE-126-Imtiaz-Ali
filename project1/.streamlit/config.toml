@@ -1,0 +1,23 @@
+[theme]
+# Enable theme toggle in the UI
+primaryColor = "#1d4ed8"
+backgroundColor = "#0f172a"
+secondaryBackgroundColor = "#1e293b"
+textColor = "#e2e8f0"
+font = "sans serif"
+
+[client]
+# Show theme toggle button in settings menu
+showErrorDetails = true
+showSidebarNavigation = true
+
+[logger]
+level = "info"
+
+[browser]
+# Collect usage stats to help us improve Streamlit
+gatherUsageStats = false
+
+[server]
+# Allows multiple connections to the same app
+maxUploadSize = 200

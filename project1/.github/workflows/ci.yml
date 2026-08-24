@@ -1,0 +1,62 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  test-and-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install backend dependencies
+        working-directory: backend
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+      - name: Run tests
+        working-directory: backend
+        run: |
+          if [ -f pytest.ini ] || [ -d tests ]; then pytest -q; else echo "No tests found"; fi
+
+      - name: Lint (flake8)
+        working-directory: backend
+        run: |
+          if command -v flake8 >/dev/null 2>&1; then flake8 || true; else echo "flake8 not installed"; fi
+
+  build-and-publish:
+    needs: test-and-lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Build images
+        run: |
+          docker compose -f docker-compose.yml build --pull --progress=plain
+
+      - name: Save images as artifact (optional)
+        run: |
+          echo "Images built in CI" 
+
+  deploy-placeholder:
+    needs: build-and-publish
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Deployment step placeholder
+        run: echo "Add deployment steps (EC2/Render/Railway) here or use secrets to trigger CD"

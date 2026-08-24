@@ -1,0 +1,176 @@
+# =============================================================
+# AIHub — Docker Compose
+# =============================================================
+# Services:
+#   postgres   — Primary database (PostgreSQL 16 + pgvector)
+#   redis      — Cache and rate-limit store
+#   backend    — FastAPI application  (uncomment when ready)
+#   frontend   — Streamlit application (uncomment when ready)
+#
+# Usage:
+#   Start infrastructure only (recommended during development):
+#     docker compose up postgres redis -d
+#
+#   Start entire stack:
+#     docker compose up --build -d
+#
+#   Stop and remove containers (keeps volumes):
+#     docker compose down
+#
+#   Stop and remove containers AND volumes (full reset):
+#     docker compose down -v
+# =============================================================
+
+version: "3.9"
+
+# ----- Shared network ---------------------------------------
+# All services communicate on this internal network.
+# Only published ports are accessible from your host machine.
+networks:
+  aihub_network:
+    driver: bridge
+
+# ----- Named volumes ----------------------------------------
+# Volumes persist data across container restarts.
+# Without a named volume, your database is wiped every time
+# the container is removed.
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  chroma_data:
+    driver: local
+  upload_data:
+    driver: local
+
+# ----- Services ---------------------------------------------
+services:
+
+  # -----------------------------------------------------------
+  # PostgreSQL 16 with pgvector extension
+  # -----------------------------------------------------------
+  # pgvector adds a native vector column type to Postgres so we
+  # can store and similarity-search embeddings without a separate
+  # vector DB in production.
+  # -----------------------------------------------------------
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: aihub_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-aihub}
+      POSTGRES_USER: ${POSTGRES_USER:-aihub_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-aihub_password}
+      # Enable locale for proper text sorting
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8 --locale=en_US.utf8"
+    ports:
+      # host:container — only expose to localhost for security
+      - "127.0.0.1:5432:5432"
+    volumes:
+      # Persist database files across restarts
+      - postgres_data:/var/lib/postgresql/data
+      # Init scripts run once when the container is first created
+      - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/01_init.sql:ro
+    networks:
+      - aihub_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-aihub_user} -d ${POSTGRES_DB:-aihub}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  # -----------------------------------------------------------
+  # Redis 7
+  # -----------------------------------------------------------
+  # Used for:
+  #   - JWT token blacklisting (logout / token revocation)
+  #   - API rate limiting counters
+  #   - Caching frequent DB queries
+  #   - Session storage
+  # -----------------------------------------------------------
+  redis:
+    image: redis:7.2-alpine
+    container_name: aihub_redis
+    restart: unless-stopped
+    command: >
+      redis-server
+      --appendonly yes
+      --appendfsync everysec
+      --maxmemory 256mb
+      --maxmemory-policy allkeys-lru
+      ${REDIS_PASSWORD:+--requirepass ${REDIS_PASSWORD}}
+    ports:
+      - "127.0.0.1:6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - aihub_network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+
+  # -----------------------------------------------------------
+  # FastAPI Backend
+  # -----------------------------------------------------------
+  # Uncomment this block when backend/main.py is ready (Step 2).
+  # -----------------------------------------------------------
+  backend:
+    build:
+      context: .
+      dockerfile: docker/backend.Dockerfile
+    container_name: aihub_backend
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      # Override DB/Redis hosts to use container service names
+      POSTGRES_HOST: postgres
+      REDIS_HOST: redis
+    ports:
+      - "127.0.0.1:8000:8000"
+    volumes:
+      # Mount app code for hot-reload in development
+      - ./backend:/app/backend
+      - upload_data:/app/data/uploads
+      - chroma_data:/app/data/chroma
+    networks:
+      - aihub_network
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+
+  # -----------------------------------------------------------
+  # Streamlit Frontend
+  # -----------------------------------------------------------
+  # Uncomment this block when frontend/Home.py is ready (Step 3).
+  # -----------------------------------------------------------
+  frontend:
+    build:
+      context: .
+      dockerfile: docker/frontend.Dockerfile
+    container_name: aihub_frontend
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      BACKEND_URL: http://backend:8000
+    ports:
+      - "127.0.0.1:8501:8501"
+    networks:
+      - aihub_network
+    depends_on:
+      backend:
+        condition: service_healthy
