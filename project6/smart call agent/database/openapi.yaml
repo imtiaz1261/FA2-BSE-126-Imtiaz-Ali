@@ -1,0 +1,143 @@
+openapi: 3.0.3
+info:
+  title: Smart Call Agent Administration API
+  version: 1.0.0
+  description: Admin and staff endpoints for login, check-in, status updates, capacity management, analytics, and voice automation.
+servers:
+  - url: http://localhost:8080/api
+paths:
+  /auth/login:
+    post:
+      summary: Staff login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: JWT token and staff profile
+  /me:
+    get:
+      summary: Current staff user
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: User profile returned from token
+  /dashboard:
+    get:
+      summary: Daily appointments dashboard
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Dashboard and appointment list
+  /appointments/{trackingNumber}/check-in:
+    post:
+      summary: Check in an appointment from QR scan or direct lookup
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: trackingNumber
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: Appointment checked in successfully
+  /appointments/{trackingNumber}/status:
+    put:
+      summary: Advance appointment status through workflow
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: trackingNumber
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [to_status, staff_id]
+              properties:
+                to_status:
+                  type: string
+                  enum: [Booked, CheckedIn, DocumentsVerified, Processing, ReadyForCollection, Completed]
+                staff_id:
+                  type: string
+                note:
+                  type: string
+      responses:
+        '200':
+          description: Status updated and logged
+  /capacity:
+    get:
+      summary: Read all configured slot capacities
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Capacity list
+    put:
+      summary: Set capacity for a specific slot
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [serviceId, locationId, date, timeBlock, capacity]
+              properties:
+                serviceId: { type: string }
+                locationId: { type: string }
+                date: { type: string, format: date }
+                timeBlock: { type: string }
+                capacity: { type: integer }
+      responses:
+        '200':
+          description: Capacity updated
+  /analytics:
+    get:
+      summary: Staff analytics for call volume and service demand
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Analytics snapshot
+  /voice/command:
+    post:
+      summary: Turn a voice/text command into a spoken and textual response
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [command]
+              properties:
+                command:
+                  type: string
+      responses:
+        '200':
+          description: Text and voice response payload
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

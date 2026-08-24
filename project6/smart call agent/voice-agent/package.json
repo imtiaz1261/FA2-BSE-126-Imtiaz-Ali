@@ -1,0 +1,16 @@
+{
+  "name": "voice-agent",
+  "version": "1.0.0",
+  "description": "Conversational dialogue agent (STT -> LLM dialogue manager -> TTS) for the Smart Appointment Call Agent (Module 3)",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.27.0",
+    "ws": "^8.17.0",
+    "node-fetch": "^3.3.2",
+    "dotenv": "^16.4.5"
+  }
+}
