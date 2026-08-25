@@ -1,0 +1,5 @@
+secret_key.py
+__pycache__/
+*.pyc
+.venv/
+venv/
