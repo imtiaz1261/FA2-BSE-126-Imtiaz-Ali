@@ -1,0 +1,32 @@
+{
+  "name": "realtime-ai-collaborative-editor",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently \"npm:server\" \"npm:client\"",
+    "server": "node server/index.js",
+    "client": "vite --host 0.0.0.0",
+    "build": "vite build",
+    "start": "node server/index.js"
+  },
+  "dependencies": {
+    "@tiptap/core": "^3.30.2",
+    "@tiptap/extension-collaboration": "^3.30.2",
+    "@tiptap/extension-collaboration-caret": "^3.30.2",
+    "@tiptap/extension-placeholder": "^3.30.2",
+    "@tiptap/react": "^3.30.2",
+    "@tiptap/starter-kit": "^3.30.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "openai": "^4.76.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "y-websocket": "^2.0.4",
+    "yjs": "^13.6.20",
+    "concurrently": "^9.1.2",
+    "vite": "^6.0.7",
+    "ws": "^8.18.0",
+    "@vitejs/plugin-react": "^4.3.4"
+  },
+  "devDependencies": {}
+}
