@@ -1,64 +1,79 @@
-# Dynamic Email Draft Generator
+# Task 82 — Smart Message Composer
 
-Generates an email draft from a **topic** and a **tone** (professional or
-funny), using a `PromptTemplate` with two input variables run through an
-LCEL chain (`prompt | model | output_parser`).
+An AI-powered message generation tool that creates customized email drafts based on a user-provided **subject** and **writing style**. It uses LangChain's prompt templates and an LCEL pipeline to dynamically generate responses without changing the application code.
 
 ## What it demonstrates
 
-- A `ChatPromptTemplate` with multiple placeholders (`{topic}`, `{tone}`)
-- Passing a dict of variables into `chain.invoke({...})`
-- How the same chain structure adapts its output just by changing the
-  input values — no code changes needed to switch tone or topic
+* Using `ChatPromptTemplate` with multiple dynamic input variables.
+* Passing user-provided values into an LCEL chain using `chain.invoke({...})`.
+* Dynamically modifying the generated message based on subject and style.
+* Separating prompt logic, model processing, and output parsing into a simple pipeline.
+* Reusing the same AI workflow for different types of email content.
 
 ## Files
 
-| File                    | Purpose                                       |
-|--------------------------|------------------------------------------------|
-| `email_generator.py`    | Main script — run this                        |
-| `requirements.txt`      | Python dependencies                           |
-| `secret_key.py`         | Your API key (never commit this file)         |
-| `.gitignore`            | Keeps `secret_key.py` out of version control   |
+| File                  | Purpose                                       |
+| --------------------- | --------------------------------------------- |
+| `message_composer.py` | Main application script                       |
+| `requirements.txt`    | Required Python packages                      |
+| `secret_key.py`       | Stores the API key locally                    |
+| `.gitignore`          | Prevents sensitive files from being committed |
 
 ## Setup
 
-1. **Create and activate a virtual environment**
-   ```
-   python -m venv venv
-   venv\Scripts\Activate.ps1
-   ```
+### 1. Create and activate a virtual environment
 
-2. **Install dependencies**
-   ```
-   pip install -r requirements.txt
-   ```
+```powershell
+python -m venv venv
+venv\Scripts\Activate.ps1
+```
 
-3. **Add your API key** in `secret_key.py` (get a free one at
-   [console.groq.com/keys](https://console.groq.com/keys)).
+### 2. Install dependencies
+
+```powershell
+pip install -r requirements.txt
+```
+
+### 3. Configure your API key
+
+Add your Groq API key to `secret_key.py`.
+
+Get an API key from:
+
+https://console.groq.com/keys
 
 ## Usage
 
-**Interactive mode:**
-```
-python email_generator.py
-```
-It will prompt you for a topic and a tone.
+### Interactive Mode
 
-**Command-line mode:**
-```
-python email_generator.py --topic "asking for a deadline extension" --tone professional
-python email_generator.py --topic "reminding the team about the office party" --tone funny
+```powershell
+python message_composer.py
 ```
 
-## Example output
+The program will ask for the message subject and preferred writing style.
 
+### Command-Line Mode
+
+```powershell
+python message_composer.py --subject "project meeting reminder" --style formal
 ```
-Subject: Request for Deadline Extension
 
-Dear [Manager's Name],
+Another example:
 
-I hope this email finds you well. I am writing to request a short
-extension on the upcoming project deadline...
+```powershell
+python message_composer.py --subject "team lunch invitation" --style friendly
+```
+
+## Example Output
+
+```text
+Subject: Project Meeting Reminder
+
+Hello Team,
+
+This is a reminder about our upcoming project meeting.
+We will discuss the current progress, pending tasks, and
+the next development milestones.
 
 Best regards,
 [Your Name]
@@ -66,7 +81,6 @@ Best regards,
 
 ## Notes
 
-- The tone parameter isn't hardcoded to just two values — the prompt
-  instructs the model on how to handle "professional" and "funny"
-  specifically, but you can pass other tones (e.g. "urgent",
-  "apologetic") and the model will still adapt reasonably.
+The style input is flexible and is not restricted to predefined values. You can use styles such as **formal, friendly, concise, persuasive, humorous, apologetic, or urgent**, and the AI model will adjust the generated message accordingly.
+
+**Task 82 demonstrates how dynamic prompt variables can make a single LangChain workflow reusable for many different email-generation scenarios.**
