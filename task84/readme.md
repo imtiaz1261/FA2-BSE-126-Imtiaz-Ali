@@ -1,75 +1,83 @@
-# Task 7 — Custom Callback Handler: LLM Cost Logger
+# Task 84 — AI Token & Cost Monitoring Logger
 
-A `CustomCallbackHandler` that hooks into LangChain's callback system and
-logs the exact token counts and cost of every LLM request to a `.txt`
-file.
+A custom LangChain callback handler that monitors LLM usage by capturing token consumption and calculating the estimated cost of each model request. The results are automatically stored in a text log with timestamps for easy tracking and analysis.
 
 ## What it demonstrates
 
-- Subclassing `BaseCallbackHandler` and overriding `on_llm_end`, which
-  fires automatically whenever a model finishes generating a response
-- Extracting token usage (`prompt_tokens`, `completion_tokens`,
-  `total_tokens`) from `response.llm_output`
-- Calculating cost from a per-model $/1K-token pricing table
-- Appending a structured log line to `cost_log.txt` for every request,
-  with a timestamp
+* Creating a custom callback handler by extending `BaseCallbackHandler`.
+* Using `on_llm_end` to capture information after an LLM request completes.
+* Extracting prompt, completion, and total token usage from the model response.
+* Calculating estimated API costs using configurable per-model pricing.
+* Recording usage information with timestamps in a persistent log file.
+* Monitoring multiple LLM calls using the same callback handler.
 
 ## Files
 
-| File                 | Purpose                                       |
-|-----------------------|------------------------------------------------|
-| `cost_logger.py`     | Main script — run this                        |
-| `requirements.txt`   | Python dependencies                           |
-| `secret_key.py`      | Your API key (never commit this file)         |
-| `.gitignore`         | Excludes `secret_key.py` and generated `cost_log.txt` |
-| `cost_log.txt`       | Generated automatically — the running cost log |
+| File               | Purpose                                        |
+| ------------------ | ---------------------------------------------- |
+| `usage_monitor.py` | Main application script                        |
+| `requirements.txt` | Required Python dependencies                   |
+| `secret_key.py`    | Stores the API key locally                     |
+| `.gitignore`       | Excludes sensitive and generated files         |
+| `usage_log.txt`    | Automatically generated usage and cost history |
 
 ## Setup
 
-1. **Create and activate a virtual environment**
-   ```
-   python -m venv venv
-   venv\Scripts\Activate.ps1
-   ```
+### 1. Create and activate a virtual environment
 
-2. **Install dependencies**
-   ```
-   pip install -r requirements.txt
-   ```
+```powershell
+python -m venv venv
+venv\Scripts\Activate.ps1
+```
 
-3. **Add your API key** in `secret_key.py` (get a free one at
-   [console.groq.com/keys](https://console.groq.com/keys)).
+### 2. Install dependencies
+
+```powershell
+pip install -r requirements.txt
+```
+
+### 3. Configure the API key
+
+Add your API key to `secret_key.py`.
+
+For Groq:
+
+https://console.groq.com/keys
 
 ## Usage
 
-```
-python cost_logger.py --question "What is the capital of France?"
-```
+### Command-Line Mode
 
-or interactively:
-```
-python cost_logger.py
+```powershell
+python usage_monitor.py --question "Explain artificial intelligence in simple words."
 ```
 
-Each run appends one line to `cost_log.txt` in the same folder, e.g.:
+### Interactive Mode
+
+```powershell
+python usage_monitor.py
 ```
-[2026-07-10 14:32:07] model=llama-3.3-70b-versatile prompt_tokens=14 completion_tokens=8 total_tokens=22 cost=$0.000000
+
+The application will prompt you to enter a question.
+
+After each successful LLM request, a new usage record is added to `usage_log.txt`.
+
+## Example Log
+
+```text
+[2026-08-26 14:32:07] model=llama-3.3-70b-versatile prompt_tokens=18 completion_tokens=42 total_tokens=60 cost=$0.000000
 ```
 
-## Why the cost shows $0.0000 with Groq
+## Why Token Monitoring Matters
 
-Groq's hosted open-weight models are currently free to use, so their price
-in the `PRICING` table is `(0.0, 0.0)`. The token counts and cost
-calculation are real — only the price-per-token is zero. To see non-zero
-costs, switch the model in `cost_logger.py` to an OpenAI model (e.g.
-`gpt-4o-mini`, priced in the table) and use your `OPENAI_API_KEY` instead.
+Tracking token usage helps developers understand how much data their applications send to and receive from LLMs. It is especially useful for monitoring application performance, estimating API expenses, optimizing prompts, and controlling usage in production systems.
 
-## Extending this
+## Extending the Project
 
-- Add more models to the `PRICING` dict as needed — check the provider's
-  current pricing page since rates change over time.
-- To log costs from a chain with multiple LLM calls, attach the same
-  `handler` instance across all model instances in the chain — each call
-  will append its own log line.
-- To also see prompts/responses in the log (not just costs), you can
-  override `on_llm_start` too, which receives the prompts being sent.
+* Add additional models and their current pricing to the pricing configuration.
+* Track usage across multiple LLM calls in a LangChain chain or agent.
+* Store usage data in a database instead of a text file.
+* Add daily, weekly, or monthly usage summaries.
+* Extend the callback handler to record prompts, responses, latency, and errors.
+
+**Task 84 demonstrates how LangChain callbacks can be used to build practical LLM observability and usage-monitoring features.**
