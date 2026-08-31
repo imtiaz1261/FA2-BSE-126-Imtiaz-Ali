@@ -1,30 +1,30 @@
-# 🎙️ AI Text-to-Speech
+# 🎙️ VoiceForge AI — Offline Text-to-Speech
 
-A professional Streamlit Text-to-Speech application using **Python 3.11+**, **Streamlit**, and **pyttsx3**.
+**VoiceForge AI** is a professional and user-friendly Streamlit-based Text-to-Speech application built with **Python 3.11+**, **Streamlit**, and **pyttsx3**.
 
-The application converts typed or pasted text into a WAV audio file using the local operating-system speech engine.
+The application converts typed or pasted text into a high-quality **WAV audio file** using the local operating-system speech engine. It works offline and does not require an API key or external cloud service.
 
-## Features
+## ✨ Features
 
-- Large text input
-- 5,000-character validation limit
-- Character and word counter
-- Generate Speech button
-- Integrated audio player
-- WAV audio download
-- Installed voice selection
-- Speech speed/rate control
-- Volume control
-- Clear text button
-- User-friendly error handling
-- Modular TTS service
-- Offline/local TTS with pyttsx3
-- No API key required
+* 📝 Large text input area
+* 🔢 5,000-character validation limit
+* 📊 Character and word counter
+* 🎙️ Generate Speech button
+* 🔊 Integrated audio player
+* 💾 WAV audio download
+* 🗣️ Installed system voice selection
+* ⚡ Speech speed/rate control
+* 🔉 Volume control
+* 🧹 Clear text button
+* ⚠️ User-friendly error handling
+* 🧩 Modular TTS service architecture
+* 🔒 Offline/local speech processing
+* 🔑 No API key required
 
-## Project structure
+## 📁 Project Structure
 
 ```text
-text_to_speech/
+voiceforge_ai/
 │
 ├── app.py
 ├── services/
@@ -41,13 +41,15 @@ text_to_speech/
 └── README.md
 ```
 
-## Requirements
+## ⚙️ Requirements
 
-- Python 3.11 or newer
-- Windows/macOS/Linux
-- A system TTS voice/speech engine
+* Python 3.11 or newer
+* Windows / macOS / Linux
+* A system TTS voice/speech engine
+* Streamlit
+* pyttsx3
 
-## Windows installation
+## 🪟 Windows Installation
 
 Open PowerShell inside the project folder:
 
@@ -58,7 +60,7 @@ python -m pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-Run:
+Run the application:
 
 ```powershell
 streamlit run app.py
@@ -70,7 +72,7 @@ Open the URL shown by Streamlit, normally:
 http://localhost:8501
 ```
 
-## macOS/Linux
+## 🍎 macOS / 🐧 Linux
 
 ```bash
 python3.11 -m venv .venv
@@ -80,9 +82,9 @@ pip install -r requirements.txt
 streamlit run app.py
 ```
 
-Depending on the operating system, pyttsx3 may require a system speech engine. For example, Linux systems commonly need `espeak-ng` installed separately.
+Depending on the operating system, **pyttsx3** may require a system speech engine. For example, Linux systems commonly require `espeak-ng` to be installed separately.
 
-## How it works
+## 🔄 How It Works
 
 ```text
 User enters text
@@ -95,42 +97,46 @@ TTSService
        ↓
 pyttsx3 local speech engine
        ↓
-WAV file
+WAV audio file
        ↓
 Streamlit audio player
        ↓
-Download
+Download audio
 ```
 
-## Adding another TTS provider
+## 🧩 Modular TTS Architecture
 
-TTS logic is isolated in:
+The core speech-generation logic is separated from the Streamlit interface and is located in:
 
 ```text
 services/tts_service.py
 ```
 
-You can later add providers such as gTTS or another cloud TTS API without putting provider-specific logic into `app.py`.
+This makes the application easier to maintain and extend.
 
-## Important note about Play/Stop
+Additional TTS providers such as **gTTS** or cloud-based speech APIs can be added later without placing provider-specific logic directly inside `app.py`.
 
-`st.audio()` provides browser-native playback controls. The exact play/pause/seek/volume controls depend on the browser. The application therefore generates a standard WAV file and lets the browser handle playback.
+## ▶️ Play / Stop Controls
 
-## Troubleshooting
+`st.audio()` provides browser-native audio playback controls.
+
+The exact play, pause, seek, and volume controls may vary depending on the browser being used. The application therefore generates a standard **WAV audio file**, allowing the browser to handle playback.
+
+## 🛠️ Troubleshooting
 
 ### `No module named pyttsx3`
 
-Run:
+Install pyttsx3:
 
 ```powershell
 pip install pyttsx3
 ```
 
-### Windows voices are missing
+### Windows Voices Are Missing
 
-Check Windows speech settings and ensure at least one speech voice is installed.
+Check your Windows speech settings and make sure at least one compatible speech voice is installed.
 
-### `pywin32` problem on Windows
+### `pywin32` Problem on Windows
 
 Run:
 
@@ -138,18 +144,40 @@ Run:
 pip install --upgrade pywin32
 ```
 
-Then retry:
+Then restart the application:
 
 ```powershell
 streamlit run app.py
 ```
 
-### Audio file is not generated
+### Audio File Is Not Generated
 
-Make sure a local TTS voice is installed and test the Windows speech engine with another application first.
+Make sure a local TTS voice/speech engine is installed and working. You can test the Windows speech engine with another application before running VoiceForge AI again.
 
-## Security/privacy
+## 🔒 Security & Privacy
 
-This version uses local pyttsx3 processing. The entered text is not intentionally sent to an external TTS service.
+VoiceForge AI uses **local pyttsx3 processing** for speech generation.
 
-Do not add API keys to source code. If you later add a cloud provider, keep credentials in `.env` and load them with environment variables.
+The text entered into the application is not intentionally sent to an external TTS service.
+
+No API key is required for the current version.
+
+If a cloud-based provider is added in the future, credentials should be stored securely using environment variables rather than being placed directly in the source code.
+
+## 🚀 Future Improvements
+
+Possible future enhancements include:
+
+* Multiple TTS provider support
+* MP3 export
+* Additional voice customization
+* Voice preview
+* Audio history
+* Cloud TTS integration
+* More advanced speech controls
+* AI-powered voice styles
+* Multi-language support
+
+## 📌 Project Summary
+
+**VoiceForge AI** provides a simple, professional, and privacy-friendly way to convert text into speech directly on your computer. By using Streamlit for the interface and pyttsx3 for local speech generation, the application remains lightweight, easy to use, and independent of external APIs.
